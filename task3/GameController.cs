@@ -37,6 +37,7 @@ namespace task3
         {
             while (true)
             {
+                Console.Write("Enter your selection:");
                 string selection = Console.ReadLine().Trim().ToUpper();
 
                 if (selection == "X")

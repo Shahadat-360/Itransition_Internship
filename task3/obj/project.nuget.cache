@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "/9BnnmAhZ1Q=",
+  "success": true,
+  "projectFilePath": "D:\\ITransition\\task3\\task3.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Shahadat\\.nuget\\packages\\consoletables\\2.6.2\\consoletables.2.6.2.nupkg.sha512",
+    "C:\\Users\\Shahadat\\.nuget\\packages\\spectre.console\\0.49.1\\spectre.console.0.49.1.nupkg.sha512",
+    "C:\\Users\\Shahadat\\.nuget\\packages\\wcwidth\\1.0.0\\wcwidth.1.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}

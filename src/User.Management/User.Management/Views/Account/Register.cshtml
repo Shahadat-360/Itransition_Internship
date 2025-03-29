@@ -1,0 +1,68 @@
+﻿@model RegisterViewModel
+@{
+    ViewData["Title"] = "Register";
+}
+
+<div class="row g-0 h-100">
+    <!-- Registration Form Section -->
+    <div class="col-md-6 d-flex align-items-center justify-content-center bg-white">
+        <div class="p-5 w-100" style="max-width: 500px;">
+            <h2 class="mb-4 text-center">Register</h2>
+            <form asp-action="Register" asp-controller="Account" asp-antiforgery="true" method="post">
+                <div class="text-bg-danger mb-3" asp-validation-summary="All"></div>
+
+                <!-- First Name and Last Name -->
+                <div class="row mb-3">
+                    <div class="col-md-6 mb-3 mb-md-0">
+                        <label asp-for="FirstName" class="form-label"></label>
+                        <input asp-for="FirstName" class="form-control" required />
+                        <span asp-validation-for="FirstName" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="LastName" class="form-label"></label>
+                        <input asp-for="LastName" class="form-control" required />
+                        <span asp-validation-for="LastName" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <!-- Address -->
+                <div class="mb-3">
+                    <label asp-for="Address" class="form-label"></label>
+                    <input asp-for="Address" class="form-control" required />
+                    <span asp-validation-for="Address" class="text-danger"></span>
+                </div>
+
+                <!-- Email -->
+                <div class="mb-3">
+                    <label asp-for="Email" class="form-label"></label>
+                    <input asp-for="Email" type="email" class="form-control" required />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+
+                <!-- Password -->
+                <div class="mb-3">
+                    <label asp-for="Password" class="form-label"></label>
+                    <input asp-for="Password" type="password" class="form-control" required />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn btn-primary w-100 py-2">Create Account</button>
+
+                <!-- Login Redirect Link -->
+                <p class="text-center mt-3">
+                    Already registered?
+                    <a asp-action="Login" asp-controller="Account" class="text-decoration-none">Sign in</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Illustration Section -->
+    <div class="col-md-6 d-none d-md-block">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Microsoft_.NET_logo.svg/1200px-Microsoft_.NET_logo.svg.png"
+             alt="Registration illustration"
+             class="img-fluid h-100 w-100 object-fit-cover">
+    </div>
+</div>
+

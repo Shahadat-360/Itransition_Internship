@@ -1,0 +1,15 @@
+﻿
+@{
+    ViewData["Title"] = "Registration Successful";
+}
+
+    <script>
+        // Redirect after 3 seconds
+        setTimeout(function () {
+            window.location.href = '@Url.Action("Login", "Account")';
+        }, 4000);
+    </script>
+    <div class="alert alert-success align-content-center">
+        @TempData["SuccessMessage"]
+        You will be redirected to the login page shortly...
+    </div>

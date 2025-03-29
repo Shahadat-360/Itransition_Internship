@@ -29,16 +29,36 @@ try
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
     builder.Services.AddControllersWithViews();
-    builder.Services.AddIdentity<AppUser, IdentityRole>(o =>
+    builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
     {
-        o.Password.RequireDigit = false;
-        o.Password.RequireLowercase = false;
-        o.Password.RequireUppercase = false;
-        o.Password.RequireNonAlphanumeric = false;
-        o.Password.RequiredLength = 1;
-    }).AddDefaultTokenProviders()
-    .AddEntityFrameworkStores<ApplicationDbContext>();
+        options.User.RequireUniqueEmail = true;
+        options.SignIn.RequireConfirmedAccount = false;
+        options.SignIn.RequireConfirmedEmail = false;
+        
+        // Password settings (you can adjust these)
+        options.Password.RequireDigit = false;
+        options.Password.RequireLowercase = false;
+        options.Password.RequireNonAlphanumeric = false;
+        options.Password.RequireUppercase = false;
+        options.Password.RequiredLength = 1;
+    })
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders();
 
+    // Configure cookie policy
+    builder.Services.ConfigureApplicationCookie(options =>
+    {
+        options.Cookie.HttpOnly = true;
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+        options.LoginPath = "/Account/Login";
+        options.LogoutPath = "/Account/Logout";
+        options.AccessDeniedPath = "/Account/AccessDenied";
+        options.SlidingExpiration = true;
+    });
+
+    // Add services to DI container
+    builder.Services.AddScoped<SignInManager<AppUser>>();
+    builder.Services.AddScoped<UserManager<AppUser>>();
 
     var app = builder.Build();
 
@@ -53,6 +73,7 @@ try
     app.UseHttpsRedirection();
     app.UseRouting();
 
+    app.UseAuthentication();
     app.UseAuthorization();
 
     app.MapStaticAssets();

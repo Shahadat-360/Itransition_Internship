@@ -723,3 +723,62 @@ Microsoft.Extensions.Hosting.HostAbortedException: The host was aborted.
 2025-03-29 05:53:35.028 +06:00 [INF] Application Starting Up...
 2025-03-29 06:03:30.977 +06:00 [INF] Application Starting Up...
 2025-03-29 06:05:46.986 +06:00 [INF] Application Starting Up...
+2025-03-29 11:38:34.263 +06:00 [INF] Application Starting Up...
+2025-03-29 11:38:34.768 +06:00 [FTL] Application start-up failed
+System.ArgumentException: GenericArguments[1], 'Microsoft.AspNetCore.Identity.IdentityRole`1[System.Guid]', on 'Microsoft.AspNetCore.Identity.EntityFrameworkCore.UserStore`9[TUser,TRole,TContext,TKey,TUserClaim,TUserRole,TUserLogin,TUserToken,TRoleClaim]' violates the constraint of type 'TRole'.
+ ---> System.TypeLoadException: GenericArguments[1], 'Microsoft.AspNetCore.Identity.IdentityRole`1[System.Guid]', on 'Microsoft.AspNetCore.Identity.UserStoreBase`8[TUser,TRole,TKey,TUserClaim,TUserRole,TUserLogin,TUserToken,TRoleClaim]' violates the constraint of type parameter 'TRole'.
+   at System.RuntimeTypeHandle.Instantiate(Type[] inst)
+   at System.RuntimeType.MakeGenericType(Type[] instantiation)
+   --- End of inner exception stack trace ---
+   at System.RuntimeType.ValidateGenericArguments(MemberInfo definition, RuntimeType[] genericArguments, Exception e)
+   at System.RuntimeType.MakeGenericType(Type[] instantiation)
+   at Microsoft.Extensions.DependencyInjection.IdentityEntityFrameworkBuilderExtensions.AddStores(IServiceCollection services, Type userType, Type roleType, Type contextType)
+   at Microsoft.Extensions.DependencyInjection.IdentityEntityFrameworkBuilderExtensions.AddEntityFrameworkStores[TContext](IdentityBuilder builder)
+   at Program.<Main>$(String[] args) in D:\ITransition\tasks\Itransition_Internship\src\User.Management\User.Management\Program.cs:line 32
+2025-03-29 11:45:30.219 +06:00 [INF] Application Starting Up...
+2025-03-29 11:47:28.547 +06:00 [INF] Application Starting Up...
+2025-03-29 12:19:05.171 +06:00 [INF] Application Starting Up...
+2025-03-29 12:20:27.581 +06:00 [INF] Application Starting Up...
+2025-03-29 12:26:23.458 +06:00 [INF] Application Starting Up...
+2025-03-29 12:26:41.847 +06:00 [INF] Attempting login for email: Shahadat1@gmail.com
+2025-03-29 12:28:57.997 +06:00 [INF] Application Starting Up...
+2025-03-29 12:29:12.909 +06:00 [INF] Attempting login for email: Shahadat1@gmail.com
+2025-03-29 12:30:44.225 +06:00 [INF] Application Starting Up...
+2025-03-29 12:30:59.799 +06:00 [INF] Attempting login for email: Shahadat1@gmail.com
+2025-03-29 12:31:47.667 +06:00 [WRN] No user found with email: Shahadat1@gmail.com
+2025-03-29 12:31:47.727 +06:00 [INF] Attempting login for email: Shahadat1@gmail.com
+2025-03-29 12:32:10.765 +06:00 [WRN] No user found with email: Shahadat1@gmail.com
+2025-03-29 12:32:10.860 +06:00 [INF] Attempting login for email: Shahadat1@gmail.com
+2025-03-29 12:32:12.733 +06:00 [WRN] No user found with email: Shahadat1@gmail.com
+2025-03-29 12:32:17.210 +06:00 [INF] Attempting login for email: Shahadat1@gmail.com
+2025-03-29 12:35:07.726 +06:00 [INF] Application Starting Up...
+2025-03-29 12:35:23.253 +06:00 [INF] Attempting login for email: Shahadat1@gmail.com
+2025-03-29 12:36:49.921 +06:00 [INF] Application Starting Up...
+2025-03-29 12:37:09.822 +06:00 [INF] Attempting to create user with email: Shahadat2@g.com
+2025-03-29 12:37:10.629 +06:00 [WRN] User creation error: Email '' is invalid.
+2025-03-29 12:38:27.650 +06:00 [INF] Application Starting Up...
+2025-03-29 12:38:27.786 +06:00 [FTL] Application start-up failed
+Microsoft.Extensions.Hosting.HostAbortedException: The host was aborted.
+   at Microsoft.Extensions.Hosting.HostFactoryResolver.HostingListener.ThrowHostAborted()
+   at Microsoft.Extensions.Hosting.HostFactoryResolver.HostingListener.OnNext(KeyValuePair`2 value)
+   at System.Diagnostics.DiagnosticListener.Write(String name, Object value)
+   at Microsoft.Extensions.Hosting.HostBuilder.ResolveHost(IServiceProvider serviceProvider, DiagnosticListener diagnosticListener)
+   at Microsoft.Extensions.Hosting.HostApplicationBuilder.Build()
+   at Microsoft.AspNetCore.Builder.WebApplicationBuilder.Build()
+   at Program.<Main>$(String[] args) in D:\ITransition\tasks\Itransition_Internship\src\User.Management\User.Management\Program.cs:line 63
+2025-03-29 12:38:57.916 +06:00 [INF] Application Starting Up...
+2025-03-29 12:38:58.049 +06:00 [FTL] Application start-up failed
+Microsoft.Extensions.Hosting.HostAbortedException: The host was aborted.
+   at Microsoft.Extensions.Hosting.HostFactoryResolver.HostingListener.ThrowHostAborted()
+   at Microsoft.Extensions.Hosting.HostFactoryResolver.HostingListener.OnNext(KeyValuePair`2 value)
+   at System.Diagnostics.DiagnosticListener.Write(String name, Object value)
+   at Microsoft.Extensions.Hosting.HostBuilder.ResolveHost(IServiceProvider serviceProvider, DiagnosticListener diagnosticListener)
+   at Microsoft.Extensions.Hosting.HostApplicationBuilder.Build()
+   at Microsoft.AspNetCore.Builder.WebApplicationBuilder.Build()
+   at Program.<Main>$(String[] args) in D:\ITransition\tasks\Itransition_Internship\src\User.Management\User.Management\Program.cs:line 63
+2025-03-29 12:39:06.161 +06:00 [INF] Application Starting Up...
+2025-03-29 12:39:25.893 +06:00 [INF] Attempting to create user with email: Shahadat2@gmail.com
+2025-03-29 12:39:26.888 +06:00 [INF] User created successfully: Shahadat2@gmail.com
+2025-03-29 12:39:43.203 +06:00 [INF] Attempting login for email: Shahadat2@gmail.com
+2025-03-29 12:39:48.776 +06:00 [INF] User found with ID: 00000000-0000-0000-0000-000000000000
+2025-03-29 12:39:48.921 +06:00 [INF] User logged in successfully: Shahadat2@gmail.com

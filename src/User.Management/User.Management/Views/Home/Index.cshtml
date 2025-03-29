@@ -2,7 +2,139 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container-fluid p-3 bg-light">
+    <!-- Action buttons and filter row -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <button class="btn btn-outline-primary me-1">
+                <i class="bi bi-lock-fill"></i> Block
+            </button>
+            <button class="btn btn-outline-primary me-1">
+                <i class="bi bi-clipboard"></i>
+            </button>
+            <button class="btn btn-outline-danger">
+                <i class="bi bi-trash"></i>
+            </button>
+        </div>
+        <div>
+            <input type="text" class="form-control" placeholder="Filter">
+        </div>
+    </div>
+    <!-- Table container -->
+    <div class="bg-white rounded">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th width="50px">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="selectAll">
+                            </div>
+                        </th>
+                        <th>Name</th>
+                        <th>Email <i class="bi bi-arrow-down-short text-secondary"></i></th>
+                        <th>Last seen</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Row 1 -->
+                    <tr>
+                        <td>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" checked>
+                            </div>
+                        </td>
+                        <td>
+                            <div>Clare, Alex</div>
+                            <div class="job-title">N/A</div>
+                        </td>
+                        <td>a_clare42@gmail.com</td>
+                        <td>
+                            <div>5 minutes ago</div>
+                            <div class="mt-1">
+                                <span class="activity-bar"></span>
+                                <span class="activity-bar"></span>
+                                <span class="activity-bar tall"></span>
+                                <span class="activity-bar"></span>
+                                <span class="activity-bar tall"></span>
+                                <span class="activity-bar"></span>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Row 2 -->
+                    <tr>
+                        <td>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox">
+                            </div>
+                        </td>
+                        <td>
+                            <div>Morrison, Jim</div>
+                            <div class="job-title">CFO, Meta Platforms, Inc.</div>
+                        </td>
+                        <td>dmtimer9@dealyaari.com</td>
+                        <td>
+                            <div>less than a minute ago</div>
+                            <div class="mt-1">
+                                <span class="activity-bar"></span>
+                                <span class="activity-bar"></span>
+                                <span class="activity-bar"></span>
+                                <span class="activity-bar"></span>
+                                <span class="activity-bar tall"></span>
+                                <span class="activity-bar tall"></span>
+                                <span class="activity-bar tall"></span>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Row 3 (strikethrough) -->
+                    <tr>
+                        <td>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" checked>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="struck-text">Simone, Nina</div>
+                            <div class="job-title">Regional Manager, Amazon.com, Inc.</div>
+                        </td>
+                        <td>marishabelin@giftcode-ao.com</td>
+                        <td>
+                            <div>3 weeks ago</div>
+                            <div class="mt-1">
+                                <!-- Empty activity graph for inactive user -->
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Row 4 -->
+                    <tr>
+                        <td>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox">
+                            </div>
+                        </td>
+                        <td>
+                            <div>Zappa, Frank</div>
+                            <div class="job-title">Architect, Meta Platforms, Inc.</div>
+                        </td>
+                        <td>zappa_f@citybank.com</td>
+                        <td>
+                            <div>less than a minute ago</div>
+                            <div class="mt-1">
+                                <span class="activity-bar"></span>
+                                <span class="activity-bar tall"></span>
+                                <span class="activity-bar"></span>
+                                <span class="activity-bar"></span>
+                                <span class="activity-bar tall"></span>
+                                <span class="activity-bar tall"></span>
+                                <span class="activity-bar"></span>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>

@@ -18,7 +18,7 @@ namespace User.Management.Models
         [Required(ErrorMessage = "Password is required.")]
         [MinLength(1, ErrorMessage = "Password must be at least 1 characters long.")]
         public string Password { get; set; }
-        public string Address { get; set; }
+        public string JobTitle { get; set; }
         public Status IsActive { get; set; } = Status.Active;
         public DateTime LastLoginTime { get; set; }= DateTime.Now;
     }

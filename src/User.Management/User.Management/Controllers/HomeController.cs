@@ -40,9 +40,7 @@ namespace User.Management.Controllers
         private static string GetLastSeenText(DateTime? lastLogin)
         {
             if (!lastLogin.HasValue) return "never";
-
-            var span = DateTime.UtcNow - lastLogin.Value.AddHours(6);
-
+            var span = DateTime.UtcNow - lastLogin.Value;
             if (span.TotalMinutes < 1) return "less than a minute ago";
             if (span.TotalMinutes < 60) return $"{(int)span.TotalMinutes} minutes ago";
             if (span.TotalHours < 24) return $"{(int)span.TotalHours} hours ago";

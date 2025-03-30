@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@Html.AntiForgeryToken()
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -24,52 +25,176 @@
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.3/dist/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script>
-    $(document).ready(function() {
-        // Fix for Select All Checkbox
-            $("#selectAll").on("click", function() {
-                $(".user-checkbox").prop("checked", $(this).prop("checked"));
+        $(document).ready(function() {
+            // Attach a keyup event to the filter input
+            $("#filterInput").on("keyup", function () {
+                // Get the value of the input and convert it to lowercase
+                const filterValue = $(this).val().toLowerCase();
+
+                // Loop through all table rows and hide/show based on filter
+                $("table tbody tr").each(function () {
+                    const rowText = $(this).text().toLowerCase(); // Get all text from the row
+                    if (rowText.includes(filterValue)) {
+                        $(this).show(); // Show row if it matches the filter
+                    } else {
+                        $(this).hide(); // Hide row if it doesn't match
+                    }
+                });
             });
 
-            // Update Select All state when individual checkboxes change
-            $(".user-checkbox").on("click", function() {
+            // Fix for Select All Checkbox
+                $("#selectAll").on("click", function() {
+                    $(".user-checkbox").prop("checked", $(this).prop("checked"));
+                });
+
+                // Update Select All state when individual checkboxes change
+                $(".user-checkbox").on("click", function() {
+                    updateSelectAllState();
+                });
+
+
+                // Initial check of Select All state
                 updateSelectAllState();
-            });
 
-            // Initial check of Select All state
-            updateSelectAllState();
+                function updateSelectAllState() {
+                    var totalCheckboxes = $(".user-checkbox").length;
+                    var checkedCount = $(".user-checkbox:checked").length;
 
-            function updateSelectAllState() {
-                var totalCheckboxes = $(".user-checkbox").length;
-                var checkedCount = $(".user-checkbox:checked").length;
-
-                if (checkedCount === totalCheckboxes && totalCheckboxes > 0) {
-                    $("#selectAll").prop("checked", true);
-                    $("#selectAll").prop("indeterminate", false);
-                } else if (checkedCount === 0) {
-                    $("#selectAll").prop("checked", false);
-                    $("#selectAll").prop("indeterminate", false);
-                } else {
-                    $("#selectAll").prop("indeterminate", true);
+                    if (checkedCount === totalCheckboxes && totalCheckboxes > 0) {
+                        $("#selectAll").prop("checked", true);
+                        $("#selectAll").prop("indeterminate", false);
+                    } else if (checkedCount === 0) {
+                        $("#selectAll").prop("checked", false);
+                        $("#selectAll").prop("indeterminate", false);
+                    } else {
+                        $("#selectAll").prop("indeterminate", true);
+                    }
                 }
-            }
 
-                generateActivityBars();
-             function generateActivityBars() {
-                    $(".activity-container").each(function() {
-                        var isActive = $(this).data("active") === true;
-                        if (isActive) {
-                            var barsHtml = '';
+                 generateActivityBars();
+                 function generateActivityBars() {
+                        $(".activity-container").each(function() {
+                            var isActive = $(this).data("active") === true;
+                            if (isActive) {
+                                var barsHtml = '';
 
-                            for (var i = 0; i < 7; i++) {
-                                var isTall = Math.random() < 0.4;
-                                barsHtml += '<span class="activity-bar' + (isTall ? ' tall' : '') + '"></span>';
+                                for (var i = 0; i < 7; i++) {
+                                    var isTall = Math.random() < 0.4;
+                                    barsHtml += '<span class="activity-bar' + (isTall ? ' tall' : '') + '"></span>';
+                                }
+
+                                $(this).html(barsHtml);
                             }
+                        });
+                 }
 
-                            $(this).html(barsHtml);
+            // Button click handlers
+            $(".btn-fun").on("click", function() {
+                const selectedUserEmail = getSelectedUserEmail();
+                if($(this).find("#logout-btn").length > 0){
+                    logoutUser();
+                    return;
+                }
+                if (selectedUserEmail.length === 0) {
+                    alert("Please select at least one user");
+                    return;
+                }
+                // Determine which button was clicked
+                if ($(this).find("#block-btn").length > 0) {
+                    blockUsers(selectedUserEmail);
+                } else if ($(this).find("#unblock-btn").length > 0) {
+                    unblockUsers(selectedUserEmail);
+                } else if ($(this).find("#delete-btn").length > 0) {
+                    deleteUsers(selectedUserEmail);
+                }
+
+                function getSelectedUserEmail() {
+                    const selectedEmail = [];
+                    $(".user-checkbox:checked").each(function() {
+                        selectedEmail.push($(this).data("email"));
+                    });
+                    return selectedEmail;
+                };
+
+                function blockUsers(UserEmails) {
+                    // Call controller action to block users
+                    $.ajax({
+                        url: '@Url.Action("BlockUsers", "Home")',
+                        type: 'POST',
+                        data: {
+                    UserEmails: UserEmails,
+                    __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val() // ADD TOKEN
+                },
+                        traditional: true,
+                        success: function(result) {
+                            if (result.success) {
+                                location.reload();
+                            } else {
+                                alert("Error: " + result.message);
+                            }
+                        }
+                    })
+                };
+
+                function unblockUsers(UserEmails) {
+                    // Call controller action to unblock users
+                    $.ajax({
+                        url: '@Url.Action("UnblockUsers", "Home")',
+                        type: 'POST',
+                        data: {
+                    UserEmails: UserEmails,
+                    __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val() // ADD TOKEN
+                },
+                        traditional: true,
+                        success: function(result) {
+                            if (result.success) {
+                                location.reload();
+                            } else {
+                                alert("Error: " + result.message);
+                            }
+                        }
+                    })
+                };
+
+                function deleteUsers(UserEmails) {
+                    // Call controller action to delete users
+                    $.ajax({
+                        url: '@Url.Action("DeleteUsers", "Home")',
+                        type: 'POST',
+                        data: {
+                    UserEmails: UserEmails,
+                    __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val() // ADD TOKEN
+                },
+                        traditional: true,
+                        success: function(result) {
+                            if (result.success) {
+                                location.reload();
+                            } else {
+                                alert("Error: " + result.message);
+                            }
+                        }
+                    })
+                };
+
+                function logoutUser() {
+                    $.ajax({
+                        url: '@Url.Action("Logout", "Account")',
+                        type: 'POST',
+                        headers: {
+                            'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val() 
+                        },
+                        success: function () {
+                            window.location.href = '@Url.Action("Login", "Account")';
+                        },
+                        error: function (xhr, status, error) {
+                            console.error("Logout failed:", error);
+                            alert("An error occurred while logging out.");
                         }
                     });
                 }
+            });
         });
     </script>
     @await RenderSectionAsync("Scripts", required: false)

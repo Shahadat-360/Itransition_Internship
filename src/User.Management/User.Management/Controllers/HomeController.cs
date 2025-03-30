@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using User.Management.Entities;
 using User.Management.Enum;
 using User.Management.Models;
@@ -40,7 +41,7 @@ namespace User.Management.Controllers
         {
             if (!lastLogin.HasValue) return "never";
 
-            var span = DateTime.Now - lastLogin.Value;
+            var span = DateTime.UtcNow - lastLogin.Value.AddHours(6);
 
             if (span.TotalMinutes < 1) return "less than a minute ago";
             if (span.TotalMinutes < 60) return $"{(int)span.TotalMinutes} minutes ago";
@@ -51,10 +52,83 @@ namespace User.Management.Controllers
             return $"{(int)(span.TotalDays / 30)} months ago";
         }
 
-        public IActionResult Privacy()
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> BlockUsers(string[] UserEmails)
         {
-            return View();
+            try
+            {
+                foreach (var email in UserEmails)
+                {
+                    var user = await _userManager.FindByEmailAsync(email);
+                    if (user != null)
+                    {
+                        user.IsActive = Status.Blocked;
+                        await _userManager.UpdateAsync(user);
+                    }
+                }
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error blocking users");
+                return Json(new { success = false, message = ex.Message });
+            }
         }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> UnblockUsers(string[] UserEmails)
+        {
+            try
+            {
+                foreach (var email in UserEmails)
+                {
+                    var user = await _userManager.FindByEmailAsync(email);
+                    if (user != null)
+                    {
+                        user.IsActive = Status.Active;
+                        await _userManager.UpdateAsync(user);
+                    }
+                }
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error unblocking users");
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> DeleteUsers(string[] UserEmails)
+        {
+            try
+            {
+                // Your logic to delete users
+                foreach (var email in UserEmails)
+                {
+                    var user = await _userManager.FindByEmailAsync(email);
+                    if (user != null)
+                    {
+                        //await _userManager.DeleteAsync(user);
+                        await _userManager.DeleteAsync(user);
+                    }
+                }
+
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting users");
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

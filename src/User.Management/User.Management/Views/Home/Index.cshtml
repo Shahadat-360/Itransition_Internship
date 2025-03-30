@@ -1,28 +1,27 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
-
+﻿@Html.AntiForgeryToken()
 @model IEnumerable<UserViewModel>
 @{
     ViewData["Title"] = "Home Page";
 }
-
 <div class="container-fluid p-3 bg-light">
     <!-- Action buttons and filter row -->
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div>
-            <button class="btn btn-outline-primary me-1">
-                <i class="bi bi-lock-fill"></i> Block
+            <button class="btn btn-outline-primary me-1 btn-fun">
+                <i class="bi bi-lock-fill" id="block-btn"></i> Block
             </button>
-            <button class="btn btn-outline-primary me-1">
-                <i class="bi bi-clipboard"></i>
+            <button class="btn btn-outline-primary me-1 btn-fun">
+                <i class="bi-unlock-fill" id="unblock-btn"></i>
             </button>
-            <button class="btn btn-outline-danger">
-                <i class="bi bi-trash"></i>
+            <button class="btn btn-outline-danger btn-fun">
+                <i class="bi bi-trash" id="delete-btn"></i>
+            </button>
+            <button class="btn btn-outline-danger btn-fun">
+                <i class="bi bi-box-arrow-right" id="logout-btn"></i>
             </button>
         </div>
         <div>
-            <input type="text" class="form-control" placeholder="Filter">
+            <input type="text" class="form-control" id="filterInput" placeholder="Filter">
         </div>
     </div>
     <!-- Table container -->
@@ -47,7 +46,7 @@
                         <tr>
                             <td>
                                 <div class="form-check">
-                                    <input class="form-check-input user-checkbox" type="checkbox" @(user.IsSelected ? "checked" : "")>
+                                    <input class="form-check-input user-checkbox" data-email="@user.Email" type="checkbox" @(user.IsSelected ? "checked" : "")>
                                 </div>
                             </td>
                             <td>

@@ -159,3 +159,168 @@ Microsoft.Extensions.Hosting.HostAbortedException: The host was aborted.
 2025-03-30 12:10:35.697 +06:00 [INF] Application Starting Up...
 2025-03-30 12:13:13.111 +06:00 [INF] Application Starting Up...
 2025-03-30 12:15:03.053 +06:00 [INF] Application Starting Up...
+2025-03-30 13:08:16.208 +06:00 [INF] Application Starting Up...
+2025-03-30 13:36:14.146 +06:00 [INF] Application Starting Up...
+2025-03-30 19:30:06.151 +06:00 [INF] Application Starting Up...
+2025-03-30 19:30:22.126 +06:00 [INF] Attempting login for email: Shahadat2@gmail.com
+2025-03-30 19:30:22.982 +06:00 [INF] User found with ID: 00000000-0000-0000-0000-000000000000
+2025-03-30 19:30:23.118 +06:00 [INF] User logged in successfully: Shahadat2@gmail.com
+2025-03-30 19:51:14.323 +06:00 [INF] Application Starting Up...
+2025-03-30 20:09:19.553 +06:00 [INF] Application Starting Up...
+2025-03-30 20:11:26.484 +06:00 [INF] Attempting to create user with email: Shahadat.ice.pust@gmail.com
+2025-03-30 20:11:26.665 +06:00 [INF] User created successfully: Shahadat.ice.pust@gmail.com
+2025-03-30 20:11:37.259 +06:00 [INF] Attempting login for email: Shahadat.ice.pust@gmail.com
+2025-03-30 20:11:37.264 +06:00 [INF] User found with ID: 00000000-0000-0000-0000-000000000000
+2025-03-30 20:11:37.433 +06:00 [INF] User logged in successfully: Shahadat.ice.pust@gmail.com
+2025-03-30 20:14:11.032 +06:00 [INF] Application Starting Up...
+2025-03-30 20:23:54.736 +06:00 [INF] Application Starting Up...
+2025-03-30 20:24:08.693 +06:00 [INF] Attempting login for email: Shahadat.ice.pust@gmail.com
+2025-03-30 20:24:08.812 +06:00 [INF] User found with ID: 00000000-0000-0000-0000-000000000000
+2025-03-30 20:24:08.812 +06:00 [WRN] Blocked user attempted login: Shahadat.ice.pust@gmail.com
+2025-03-30 20:24:23.407 +06:00 [INF] Attempting to create user with email: Shahadat.ice.pust@gmail.comv
+2025-03-30 20:24:23.787 +06:00 [INF] User created successfully: Shahadat.ice.pust@gmail.comv
+2025-03-30 20:24:59.454 +06:00 [INF] Attempting login for email: Shahadat.ice.pust@gmail.comv
+2025-03-30 20:24:59.478 +06:00 [INF] User found with ID: 00000000-0000-0000-0000-000000000000
+2025-03-30 20:24:59.713 +06:00 [INF] User logged in successfully: Shahadat.ice.pust@gmail.comv
+2025-03-30 20:25:50.882 +06:00 [INF] Application Starting Up...
+2025-03-30 20:41:12.545 +06:00 [INF] Application Starting Up...
+2025-03-30 20:42:01.754 +06:00 [INF] Attempting to create user with email: Shahadat@gmail.com
+2025-03-30 20:42:01.917 +06:00 [INF] User created successfully: Shahadat@gmail.com
+2025-03-30 20:42:25.151 +06:00 [INF] Attempting login for email: Shahadat@gmail.com
+2025-03-30 20:42:25.159 +06:00 [INF] User found with ID: 00000000-0000-0000-0000-000000000000
+2025-03-30 20:42:25.330 +06:00 [INF] User logged in successfully: Shahadat@gmail.com
+2025-03-30 20:45:58.165 +06:00 [INF] Application Starting Up...
+2025-03-30 20:46:33.014 +06:00 [INF] Attempting to create user with email: 1337.shahadat@gmail.com
+2025-03-30 20:46:33.369 +06:00 [INF] User created successfully: 1337.shahadat@gmail.com
+2025-03-30 20:46:46.031 +06:00 [INF] Attempting login for email: 1337.shahadat@gmail.com
+2025-03-30 20:46:46.042 +06:00 [INF] User found with ID: 00000000-0000-0000-0000-000000000000
+2025-03-30 20:46:46.210 +06:00 [INF] User logged in successfully: 1337.shahadat@gmail.com
+2025-03-30 20:59:59.937 +06:00 [INF] Attempting to create user with email: Shahadat.ice.pust@gmail.com
+2025-03-30 21:00:00.093 +06:00 [INF] User created successfully: Shahadat.ice.pust@gmail.com
+2025-03-30 21:00:16.367 +06:00 [INF] Attempting login for email: Shahadat.ice.pust@gmail.com
+2025-03-30 21:00:16.374 +06:00 [INF] User found with ID: 00000000-0000-0000-0000-000000000000
+2025-03-30 21:00:16.497 +06:00 [INF] User logged in successfully: Shahadat.ice.pust@gmail.com
+2025-03-30 21:06:20.862 +06:00 [INF] Attempting login for email: Shahadat.ice.pust@gmail.com
+2025-03-30 21:06:20.916 +06:00 [INF] User found with ID: 00000000-0000-0000-0000-000000000000
+2025-03-30 21:06:21.054 +06:00 [INF] User logged in successfully: Shahadat.ice.pust@gmail.com
+2025-03-30 21:08:36.991 +06:00 [INF] Application Starting Up...
+2025-03-30 21:08:44.648 +06:00 [INF] Attempting login for email: Shahadat.ice.pust@gmail.com
+2025-03-30 21:08:46.070 +06:00 [INF] User found with ID: 00000000-0000-0000-0000-000000000000
+2025-03-30 21:08:46.309 +06:00 [INF] User logged in successfully: Shahadat.ice.pust@gmail.com
+2025-03-30 21:13:12.624 +06:00 [INF] Attempting login for email: Shahadat.ice.pust@gmail.com
+2025-03-30 21:13:12.636 +06:00 [INF] User found with ID: 00000000-0000-0000-0000-000000000000
+2025-03-30 21:13:12.766 +06:00 [INF] User logged in successfully: Shahadat.ice.pust@gmail.com
+2025-03-30 21:13:49.338 +06:00 [INF] Attempting to create user with email: Rabbi@gmail.com
+2025-03-30 21:13:49.492 +06:00 [INF] User created successfully: Rabbi@gmail.com
+2025-03-30 21:15:46.771 +06:00 [INF] Attempting login for email: Rabbi@gmail.com
+2025-03-30 21:15:46.779 +06:00 [INF] User found with ID: 00000000-0000-0000-0000-000000000000
+2025-03-30 21:15:46.883 +06:00 [INF] User logged in successfully: Rabbi@gmail.com
+2025-03-30 21:16:41.408 +06:00 [INF] Application Starting Up...
+2025-03-30 21:18:46.446 +06:00 [INF] Application Starting Up...
+2025-03-30 21:19:00.188 +06:00 [INF] Attempting login for email: Rabbi@gmail.com
+2025-03-30 21:19:01.633 +06:00 [INF] User found with ID: 00000000-0000-0000-0000-000000000000
+2025-03-30 21:19:01.864 +06:00 [INF] User logged in successfully: Rabbi@gmail.com
+2025-03-30 21:19:09.220 +06:00 [INF] Application Starting Up...
+2025-03-30 22:00:27.365 +06:00 [INF] Application Starting Up...
+2025-03-30 22:00:29.393 +06:00 [FTL] Application start-up failed
+Microsoft.Extensions.Hosting.HostAbortedException: The host was aborted.
+   at Microsoft.Extensions.Hosting.HostFactoryResolver.HostingListener.ThrowHostAborted()
+   at Microsoft.Extensions.Hosting.HostFactoryResolver.HostingListener.OnNext(KeyValuePair`2 value)
+   at System.Diagnostics.DiagnosticListener.Write(String name, Object value)
+   at Microsoft.Extensions.Hosting.HostBuilder.ResolveHost(IServiceProvider serviceProvider, DiagnosticListener diagnosticListener)
+   at Microsoft.Extensions.Hosting.HostApplicationBuilder.Build()
+   at Microsoft.AspNetCore.Builder.WebApplicationBuilder.Build()
+   at Program.<Main>$(String[] args) in D:\ITransition\tasks\Itransition_Internship\src\User.Management\User.Management\Program.cs:line 88
+2025-03-30 22:07:49.294 +06:00 [INF] Application Starting Up...
+2025-03-30 22:08:16.538 +06:00 [INF] Attempting login for email: Shahadat.ice.pust@gmail.com
+2025-03-30 22:08:41.322 +06:00 [ERR] An error occurred using the connection to database 'ITransition' on server 'ITransition.mssql.somee.com'.
+2025-03-30 22:08:41.340 +06:00 [ERR] An exception occurred while iterating over the results of a query for context type 'User.Management.Data.ApplicationDbContext'.
+System.InvalidOperationException: An exception has been raised that is likely due to a transient failure. Consider enabling transient error resiliency by adding 'EnableRetryOnFailure' to the 'UseSqlServer' call.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): A network-related or instance-specific error occurred while establishing a connection to SQL Server. The server was not found or was not accessible. Verify that the instance name is correct and that SQL Server is configured to allow remote connections. (provider: Named Pipes Provider, error: 40 - Could not open a connection to SQL Server)
+ ---> System.ComponentModel.Win32Exception (64): The specified network name is no longer available.
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, SqlCommand command, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.Connect(ServerInfo serverInfo, SqlInternalConnectionTds connHandler, TimeoutTimer timeout, SqlConnectionString connectionOptions, Boolean withFailover)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.AttemptOneLogin(ServerInfo serverInfo, String newPassword, SecureString newSecurePassword, TimeoutTimer timeout, Boolean withFailover)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.LoginNoFailover(ServerInfo serverInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString connectionOptions, SqlCredential credential, TimeoutTimer timeout)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.OpenLoginEnlist(TimeoutTimer timeout, SqlConnectionString connectionOptions, SqlCredential credential, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds..ctor(DbConnectionPoolIdentity identity, SqlConnectionString connectionOptions, SqlCredential credential, Object providerInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString userConnectionOptions, SessionData reconnectSessionData, Boolean applyTransientFaultHandling, String accessToken, DbConnectionPool pool, Func`3 accessTokenCallback)
+   at Microsoft.Data.SqlClient.SqlConnectionFactory.CreateConnection(DbConnectionOptions options, DbConnectionPoolKey poolKey, Object poolGroupProviderInfo, DbConnectionPool pool, DbConnection owningConnection, DbConnectionOptions userOptions)
+   at Microsoft.Data.ProviderBase.DbConnectionFactory.CreatePooledConnection(DbConnectionPool pool, DbConnection owningObject, DbConnectionOptions options, DbConnectionPoolKey poolKey, DbConnectionOptions userOptions)
+   at Microsoft.Data.ProviderBase.DbConnectionPool.CreateObject(DbConnection owningObject, DbConnectionOptions userOptions, DbConnectionInternal oldConnection)
+   at Microsoft.Data.ProviderBase.DbConnectionPool.UserCreateRequest(DbConnection owningObject, DbConnectionOptions userOptions, DbConnectionInternal oldConnection)
+   at Microsoft.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at Microsoft.Data.ProviderBase.DbConnectionPool.WaitForPendingOpen()
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenAsync(CancellationToken cancellationToken, Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+ClientConnectionId:00000000-0000-0000-0000-000000000000
+Error Number:64,State:0,Class:20
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+System.InvalidOperationException: An exception has been raised that is likely due to a transient failure. Consider enabling transient error resiliency by adding 'EnableRetryOnFailure' to the 'UseSqlServer' call.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): A network-related or instance-specific error occurred while establishing a connection to SQL Server. The server was not found or was not accessible. Verify that the instance name is correct and that SQL Server is configured to allow remote connections. (provider: Named Pipes Provider, error: 40 - Could not open a connection to SQL Server)
+ ---> System.ComponentModel.Win32Exception (64): The specified network name is no longer available.
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, SqlCommand command, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.Connect(ServerInfo serverInfo, SqlInternalConnectionTds connHandler, TimeoutTimer timeout, SqlConnectionString connectionOptions, Boolean withFailover)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.AttemptOneLogin(ServerInfo serverInfo, String newPassword, SecureString newSecurePassword, TimeoutTimer timeout, Boolean withFailover)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.LoginNoFailover(ServerInfo serverInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString connectionOptions, SqlCredential credential, TimeoutTimer timeout)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.OpenLoginEnlist(TimeoutTimer timeout, SqlConnectionString connectionOptions, SqlCredential credential, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds..ctor(DbConnectionPoolIdentity identity, SqlConnectionString connectionOptions, SqlCredential credential, Object providerInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString userConnectionOptions, SessionData reconnectSessionData, Boolean applyTransientFaultHandling, String accessToken, DbConnectionPool pool, Func`3 accessTokenCallback)
+   at Microsoft.Data.SqlClient.SqlConnectionFactory.CreateConnection(DbConnectionOptions options, DbConnectionPoolKey poolKey, Object poolGroupProviderInfo, DbConnectionPool pool, DbConnection owningConnection, DbConnectionOptions userOptions)
+   at Microsoft.Data.ProviderBase.DbConnectionFactory.CreatePooledConnection(DbConnectionPool pool, DbConnection owningObject, DbConnectionOptions options, DbConnectionPoolKey poolKey, DbConnectionOptions userOptions)
+   at Microsoft.Data.ProviderBase.DbConnectionPool.CreateObject(DbConnection owningObject, DbConnectionOptions userOptions, DbConnectionInternal oldConnection)
+   at Microsoft.Data.ProviderBase.DbConnectionPool.UserCreateRequest(DbConnection owningObject, DbConnectionOptions userOptions, DbConnectionInternal oldConnection)
+   at Microsoft.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at Microsoft.Data.ProviderBase.DbConnectionPool.WaitForPendingOpen()
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenAsync(CancellationToken cancellationToken, Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+ClientConnectionId:00000000-0000-0000-0000-000000000000
+Error Number:64,State:0,Class:20
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+2025-03-30 22:08:41.436 +06:00 [ERR] An error occurred during login attempt
+System.InvalidOperationException: An exception has been raised that is likely due to a transient failure. Consider enabling transient error resiliency by adding 'EnableRetryOnFailure' to the 'UseSqlServer' call.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): A network-related or instance-specific error occurred while establishing a connection to SQL Server. The server was not found or was not accessible. Verify that the instance name is correct and that SQL Server is configured to allow remote connections. (provider: Named Pipes Provider, error: 40 - Could not open a connection to SQL Server)
+ ---> System.ComponentModel.Win32Exception (64): The specified network name is no longer available.
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, SqlCommand command, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.Connect(ServerInfo serverInfo, SqlInternalConnectionTds connHandler, TimeoutTimer timeout, SqlConnectionString connectionOptions, Boolean withFailover)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.AttemptOneLogin(ServerInfo serverInfo, String newPassword, SecureString newSecurePassword, TimeoutTimer timeout, Boolean withFailover)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.LoginNoFailover(ServerInfo serverInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString connectionOptions, SqlCredential credential, TimeoutTimer timeout)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.OpenLoginEnlist(TimeoutTimer timeout, SqlConnectionString connectionOptions, SqlCredential credential, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds..ctor(DbConnectionPoolIdentity identity, SqlConnectionString connectionOptions, SqlCredential credential, Object providerInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString userConnectionOptions, SessionData reconnectSessionData, Boolean applyTransientFaultHandling, String accessToken, DbConnectionPool pool, Func`3 accessTokenCallback)
+   at Microsoft.Data.SqlClient.SqlConnectionFactory.CreateConnection(DbConnectionOptions options, DbConnectionPoolKey poolKey, Object poolGroupProviderInfo, DbConnectionPool pool, DbConnection owningConnection, DbConnectionOptions userOptions)
+   at Microsoft.Data.ProviderBase.DbConnectionFactory.CreatePooledConnection(DbConnectionPool pool, DbConnection owningObject, DbConnectionOptions options, DbConnectionPoolKey poolKey, DbConnectionOptions userOptions)
+   at Microsoft.Data.ProviderBase.DbConnectionPool.CreateObject(DbConnection owningObject, DbConnectionOptions userOptions, DbConnectionInternal oldConnection)
+   at Microsoft.Data.ProviderBase.DbConnectionPool.UserCreateRequest(DbConnection owningObject, DbConnectionOptions userOptions, DbConnectionInternal oldConnection)
+   at Microsoft.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at Microsoft.Data.ProviderBase.DbConnectionPool.WaitForPendingOpen()
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternalAsync(Boolean errorsExpected, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenAsync(CancellationToken cancellationToken, Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+ClientConnectionId:00000000-0000-0000-0000-000000000000
+Error Number:64,State:0,Class:20
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Identity.UserManager`1.FindByEmailAsync(String email)
+   at User.Management.Controllers.AccountController.Login(LoginViewModel model) in D:\ITransition\tasks\Itransition_Internship\src\User.Management\User.Management\Controllers\AccountController.cs:line 56

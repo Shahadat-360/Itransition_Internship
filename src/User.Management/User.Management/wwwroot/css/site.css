@@ -29,3 +29,30 @@ body {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
 }
+
+.activity-bar {
+    display: inline-block;
+    width: 10px;
+    height: 20px;
+    margin-right: 3px;
+    background-color: #87CEEB;
+    border-radius: 1px;
+}
+
+    .activity-bar.tall {
+        height: 16px;
+    }
+
+
+.struck-text {
+    text-decoration: line-through;
+}
+
+.opacity-change {
+    opacity: 0.4;
+}
+
+.job-title {
+    color: #6c757d;
+    font-size: 0.85rem;
+}

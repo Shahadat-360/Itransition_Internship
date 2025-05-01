@@ -16,13 +16,16 @@ namespace FormsApp.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
         
         public AdminController(
             UserManager<ApplicationUser> userManager,
-            RoleManager<IdentityRole> roleManager)
+            RoleManager<IdentityRole> roleManager,
+            SignInManager<ApplicationUser> signInManager)
         {
             _userManager = userManager;
             _roleManager = roleManager;
+            _signInManager = signInManager;
         }
         
         public async Task<IActionResult> Index()
@@ -66,22 +69,26 @@ namespace FormsApp.Controllers
                 // Get the count of admin users to ensure at least one admin remains
                 var admins = await _userManager.GetUsersInRoleAsync("Admin");
                 
-                if (admins.Count > 1 || !isCurrentUser)
+                if (admins.Count > 1)
                 {
+                    // There are at least 2 admins, so it's safe to remove admin rights
                     await _userManager.RemoveFromRoleAsync(user, "Admin");
                     
                     // If admin is removing their own admin rights, sign them out to refresh claims
                     if (isCurrentUser)
                     {
-                        TempData["InfoMessage"] = "Your admin rights have been removed. Please sign in again.";
-                        await HttpContext.SignOutAsync(IdentityConstants.ApplicationScheme);
-                        return RedirectToAction("Login", "Account");
+                        // Force immediate sign out to remove admin access
+                        await _signInManager.SignOutAsync();
+                        TempData["SuccessMessage"] = "Your admin rights have been removed. You've been signed out.";
+                        return RedirectToAction("Index", "Home");
                     }
+                    
+                    TempData["SuccessMessage"] = $"Admin rights removed from {user.UserName}.";
                 }
                 else
                 {
-                    // Cannot remove the last admin or yourself
-                    TempData["ErrorMessage"] = "Cannot remove the last admin.";
+                    // Cannot remove the last admin
+                    TempData["ErrorMessage"] = "Cannot remove the last admin. There must be at least one admin in the system.";
                 }
             }
             else
@@ -93,6 +100,7 @@ namespace FormsApp.Controllers
                 }
                 
                 await _userManager.AddToRoleAsync(user, "Admin");
+                TempData["SuccessMessage"] = $"{user.UserName} is now an admin.";
             }
             
             return RedirectToAction(nameof(Index));
@@ -330,11 +338,19 @@ namespace FormsApp.Controllers
             }
             
             var currentUserId = User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
+            bool currentUserIncluded = selectedUsers.Contains(currentUserId);
             int removedCount = 0;
             
             // Count how many admins we have total
             var admins = await _userManager.GetUsersInRoleAsync("Admin");
             int currentAdminCount = admins.Count;
+            
+            // If current admin is trying to demote themselves, ensure there are at least 2 admins
+            if (currentUserIncluded && currentAdminCount < 2)
+            {
+                TempData["ErrorMessage"] = "You cannot remove your own admin rights when you're the only admin.";
+                return RedirectToAction(nameof(Index));
+            }
             
             // Count how many admins are being removed
             int selectedAdminCount = 0;
@@ -356,18 +372,21 @@ namespace FormsApp.Controllers
             
             foreach (var userId in selectedUsers)
             {
-                // Don't allow removing your own admin rights
-                if (userId == currentUserId)
-                {
-                    continue;
-                }
-                
+                // We'll allow removing the current user's admin rights now, if there are enough admins
                 var user = await _userManager.FindByIdAsync(userId);
                 if (user != null && await _userManager.IsInRoleAsync(user, "Admin"))
                 {
                     await _userManager.RemoveFromRoleAsync(user, "Admin");
                     removedCount++;
                 }
+            }
+            
+            // If the current user removed their own admin rights, sign them out
+            if (currentUserIncluded)
+            {
+                await _signInManager.SignOutAsync();
+                TempData["SuccessMessage"] = "Your admin rights have been removed. You've been signed out.";
+                return RedirectToAction("Index", "Home");
             }
             
             TempData["SuccessMessage"] = $"Successfully removed admin rights from {removedCount} user(s).";

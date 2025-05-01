@@ -1,0 +1,4 @@
+2025-05-02 01:58:13.634 +06:00 [INF] Starting application...
+2025-05-02 01:58:16.501 +06:00 [INF] Checking for role 'Admin'. Exists: true
+2025-05-02 01:58:16.591 +06:00 [INF] Existing admin user 'admin@formsapp.com' already exists.
+2025-05-02 01:58:16.663 +06:00 [INF] Existing admin user 'admin@formsapp.com' already has the 'Admin' role.

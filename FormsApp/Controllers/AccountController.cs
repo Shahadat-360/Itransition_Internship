@@ -13,17 +13,20 @@ namespace FormsApp.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
-        
+        private readonly ILogger<AccountController> _logger;
+
         public AccountController(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
-            RoleManager<IdentityRole> roleManager)
+            RoleManager<IdentityRole> roleManager,
+            ILogger<AccountController>logger)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
+            _logger = logger;
         }
-        
+
         [HttpGet]
         [AllowAnonymous]
         public IActionResult Register(string? returnUrl = null)
@@ -31,7 +34,7 @@ namespace FormsApp.Controllers
             ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
-        
+
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -45,9 +48,7 @@ namespace FormsApp.Controllers
                 
                 if (result.Succeeded)
                 {
-                    // Add email claim
                     await _userManager.AddClaimAsync(user, new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.Email, model.Email));
-                    Console.WriteLine($"New user registered with email: {model.Email}, ID: {user.Id}");
                     
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     TempData["SuccessMessage"] = "Your account has been created successfully.";
@@ -105,10 +106,8 @@ namespace FormsApp.Controllers
                     
                     if (result.Succeeded)
                     {
-                        // Debug logging for email claims
-                        Console.WriteLine($"User {user?.Id} logged in with email: {model.Email}");
+                        _logger.LogInformation("User {Email} logged in successfully.", model.Email);
                         var claims = await _userManager.GetClaimsAsync(user);
-                        Console.WriteLine($"User claims count: {claims.Count}");
                         foreach (var claim in claims)
                         {
                             Console.WriteLine($"Claim: {claim.Type} = {claim.Value}");

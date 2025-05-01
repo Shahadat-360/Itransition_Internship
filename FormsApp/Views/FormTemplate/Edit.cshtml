@@ -1,0 +1,302 @@
+@model FormsApp.ViewModels.FormTemplateViewModel
+
+@{
+    ViewData["Title"] = "Edit Template";
+}
+
+<div class="container">
+    <h1>@ViewData["Title"]</h1>
+    <hr />
+    
+    <form asp-action="Edit" method="post" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="Version" />
+        
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Template Details</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label asp-for="Title" class="form-label">Title</label>
+                            <input asp-for="Title" class="form-control" />
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label">Description</label>
+                            <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label asp-for="TopicId" class="form-label">Topic</label>
+                            <div class="input-group">
+                                <select asp-for="TopicId" asp-items="@((IEnumerable<SelectListItem>)ViewData["Topics"])" class="form-select">
+                                    <option value="">-- Select a Topic --</option>
+                                </select>
+                                <a href="@Url.Action("Create", "Topic")?returnUrl=@Url.Action("Edit", "FormTemplate", new { id = Model.Id }, Context.Request.Scheme)" class="btn btn-outline-secondary">
+                                    <i class="bi bi-plus"></i> New Topic
+                                </a>
+                            </div>
+                            <span asp-validation-for="TopicId" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label asp-for="ImageFile" class="form-label">Cover Image (optional)</label>
+                            <input asp-for="ImageFile" type="file" class="form-control" accept="image/*" id="imageInput" onchange="previewImage(this)" />
+                            <span asp-validation-for="ImageFile" class="text-danger"></span>
+                            <div class="form-text">Upload a new image to replace the current one.</div>
+                            
+                            <div id="imagePreview" class="mt-2" style="display: none;">
+                                <p>New image preview:</p>
+                                <img id="previewImg" src="#" class="img-thumbnail" style="max-height: 150px;" alt="New image preview" />
+                            </div>
+                            
+                            @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                            {
+                                <div class="mt-2">
+                                    <p>Current image:</p>
+                                    <img src="@Model.ImageUrl" class="img-thumbnail" style="max-height: 150px;" alt="Current template image" />
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Settings</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-check mb-3">
+                            <input asp-for="IsPublic" class="form-check-input" />
+                            <label asp-for="IsPublic" class="form-check-label">Make Public</label>
+                            <div class="form-text">Public templates are visible to all users</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label asp-for="Tags" class="form-label">Tags</label>
+                            <input id="tagInput" type="text" class="form-control mb-2" placeholder="Type tags separated by commas (e.g., tag1, tag2, tag3)" />
+                            <button type="button" id="addTagButton" class="btn btn-primary mb-2">Add Tag(s)</button>
+                            <div id="tagContainer" class="d-flex flex-wrap gap-2 mb-2"></div>
+                            <input type="hidden" name="TagsJson" id="tagsInput" value="" />
+                            <div class="form-text">Enter tags to categorize your template. Add multiple tags at once using commas.</div>
+                        </div>
+                        
+                        <div id="allowedUsersSection" class="mb-3" style="display: none;">
+                            <label for="AllowedEmails" class="form-label">Allowed Users</label>
+                            <textarea name="AllowedEmails" id="AllowedEmails" class="form-control" rows="4"
+                                placeholder="Enter email addresses (one per line or separated by commas)"
+                            >@(Model.AllowedUserEmails != null ? string.Join(Environment.NewLine, Model.AllowedUserEmails) : "")</textarea>
+                            <div class="form-text">Add specific users who can access this template. Enter email addresses separated by line breaks or commas.</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Questions</h5>
+                    </div>
+                    <div class="card-body">
+                        <p>Manage template questions in the next step:</p>
+                        <a asp-controller="Question" asp-action="Index" asp-route-id="@Model.Id" class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-list-check me-1"></i> Manage Questions
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-secondary">Cancel</a>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    
+    <script>
+        // Image preview function
+        function previewImage(input) {
+            const preview = document.getElementById('imagePreview');
+            const previewImg = document.getElementById('previewImg');
+            
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    previewImg.src = e.target.result;
+                    preview.style.display = 'block';
+                };
+                
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                preview.style.display = 'none';
+                previewImg.src = '#';
+            }
+        }
+    
+        // Handle tag input
+        const tagInput = document.getElementById('tagInput');
+        const addTagButton = document.getElementById('addTagButton');
+        const tagContainer = document.getElementById('tagContainer');
+        const tagsInput = document.getElementById('tagsInput');
+        let tags = [];
+        
+        // Load existing tags
+        try {
+            // Use Model.Tags since these are the actual tag names
+            const existingTags = @Html.Raw(Model.Tags != null ? Json.Serialize(Model.Tags) : "[]");
+            console.log("Initial tags from server:", existingTags);
+            
+            if (existingTags && existingTags.length) {
+                tags = [...existingTags]; // Set initial tags array directly
+                renderTags(); // Render the tags in the UI
+                updateTags(); // Update the hidden input
+            }
+        } catch (e) {
+            console.error("Error loading tags:", e);
+        }
+        
+        // Add tag when button is clicked
+        addTagButton.addEventListener('click', function() {
+            addTagFromInput();
+        });
+        
+        // Add tag when Enter key is pressed
+        tagInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                addTagFromInput();
+            }
+        });
+        
+        function addTagFromInput() {
+            const tagText = tagInput.value.trim();
+            
+            if (tagText === '') return;
+            
+            // Split by comma and process each tag
+            const tagArray = tagText.split(',');
+            
+            tagArray.forEach(tag => {
+                const trimmedTag = tag.trim();
+                if (trimmedTag && !tags.includes(trimmedTag)) {
+                    addTag(trimmedTag);
+                }
+            });
+            
+            // Clear the input after adding
+            tagInput.value = '';
+        }
+        
+        function addTag(tag) {
+            tags.push(tag);
+            updateTags();
+            
+            const tagElement = document.createElement('span');
+            tagElement.classList.add('badge', 'bg-primary', 'me-1', 'mb-1', 'tag-item');
+            tagElement.innerHTML = `${tag} <i class="bi bi-x" onclick="removeTag('${tag.replace(/'/g, "\\'")}')"></i>`;
+            tagContainer.appendChild(tagElement);
+        }
+        
+        function removeTag(tag) {
+            tags = tags.filter(t => t !== tag);
+            updateTags();
+            renderTags();
+        }
+        
+        function updateTags() {
+            tagsInput.value = JSON.stringify(tags);
+            console.log("Updated tags:", tagsInput.value);
+        }
+        
+        function renderTags() {
+            tagContainer.innerHTML = '';
+            tags.forEach(tag => {
+                const tagElement = document.createElement('span');
+                tagElement.classList.add('badge', 'bg-primary', 'me-1', 'mb-1', 'tag-item');
+                tagElement.innerHTML = `${tag} <i class="bi bi-x" onclick="removeTag('${tag.replace(/'/g, "\\'")}')"></i>`;
+                tagContainer.appendChild(tagElement);
+            });
+        }
+        
+        // Toggle allowed users section based on IsPublic
+        const isPublicCheckbox = document.getElementById('IsPublic');
+        const allowedUsersSection = document.getElementById('allowedUsersSection');
+        
+        // Initial state
+        allowedUsersSection.style.display = isPublicCheckbox.checked ? 'none' : 'block';
+        
+        isPublicCheckbox.addEventListener('change', function() {
+            allowedUsersSection.style.display = this.checked ? 'none' : 'block';
+        });
+        
+        // Refresh topics dropdown when opening a new topic in a new tab
+        document.addEventListener('focus', function() {
+            // Refresh topics when the window regains focus
+            fetch('@Url.Action("GetTopicsForDropdown", "Topic")')
+                .then(response => response.json())
+                .then(data => {
+                    const topicSelect = document.getElementById('TopicId');
+                    const currentValue = topicSelect.value;
+                    
+                    // Clear existing options except the first one
+                    while (topicSelect.options.length > 1) {
+                        topicSelect.remove(1);
+                    }
+                    
+                    // Add new options
+                    data.forEach(topic => {
+                        const option = new Option(topic.name, topic.id);
+                        topicSelect.add(option);
+                    });
+                    
+                    // Try to restore selected value
+                    if (currentValue) {
+                        topicSelect.value = currentValue;
+                    }
+                })
+                .catch(error => console.error('Error refreshing topics:', error));
+        });
+        
+        // Check for newTopicId parameter in URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const newTopicId = urlParams.get('newTopicId');
+        if (newTopicId) {
+            // Refresh topics and set the dropdown to the new topic
+            fetch('@Url.Action("GetTopicsForDropdown", "Topic")')
+                .then(response => response.json())
+                .then(data => {
+                    const topicSelect = document.getElementById('TopicId');
+                    
+                    // Clear existing options except the first one
+                    while (topicSelect.options.length > 1) {
+                        topicSelect.remove(1);
+                    }
+                    
+                    // Add new options
+                    data.forEach(topic => {
+                        const option = new Option(topic.name, topic.id);
+                        topicSelect.add(option);
+                    });
+                    
+                    // Set to new topic ID
+                    topicSelect.value = newTopicId;
+                    
+                    // Remove the parameter from URL to avoid reselecting on page refresh
+                    const newUrl = window.location.href.split('?')[0];
+                    window.history.replaceState({}, document.title, newUrl);
+                })
+                .catch(error => console.error('Error refreshing topics:', error));
+        }
+    </script>
+} 

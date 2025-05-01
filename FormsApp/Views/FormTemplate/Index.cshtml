@@ -1,0 +1,389 @@
+@model IEnumerable<FormsApp.ViewModels.FormTemplateViewModel>
+
+@{
+    ViewData["Title"] = "My Templates";
+}
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>@ViewData["Title"]</h1>
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="bi bi-plus-circle me-1"></i> Create New Template
+        </a>
+    </div>
+    
+    <!-- Notification Area -->
+    <div id="notificationArea">
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i> @TempData["Success"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+        
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["Error"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+            <p class="mb-0">You haven't created any templates yet. <a asp-action="Create">Create your first template</a> to get started!</p>
+        </div>
+    }
+    else
+    {
+        <!-- Toolbar -->
+        <div class="card mb-2 shadow-sm">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-6 d-flex align-items-center">
+                        <input class="form-check-input select-all-templates me-3" type="checkbox" id="select-all-toolbar" style="width: 20px; height: 20px;">
+                        <button type="button" id="delete-selected" class="btn btn-danger" disabled>
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                    <div class="col-md-6 mb-3 mb-md-0">
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-search"></i></span>
+                            <input type="text" id="template-search" class="form-control" placeholder="Search templates..." aria-label="Search templates">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <form id="batch-delete-form" asp-action="BatchDelete" method="post" class="mt-0">
+            <div class="list-group" id="templates-container">
+                @foreach (var template in Model)
+                {
+                    <div class="list-group-item template-item d-flex align-items-center p-3 position-relative" 
+                         data-title="@template.Title.ToLower()" 
+                         data-description="@(template.Description?.ToLower() ?? "")"
+                         data-topic="@(template.Topic?.ToLower() ?? "other")"
+                         data-tags="@(string.Join(" ", template.Tags?.Select(t => t.ToLower()) ?? Enumerable.Empty<string>()))"
+                         data-id="@template.Id">
+
+                        <div class="form-check me-3" onclick="event.stopPropagation();">
+                            <input class="form-check-input template-checkbox" type="checkbox" name="selectedTemplates" value="@template.Id" id="template-@template.Id">
+                            <label class="form-check-label visually-hidden" for="template-@template.Id">
+                                Select @template.Title
+                            </label>
+                        </div>
+                        
+                        <div class="d-flex align-items-center flex-grow-1 template-clickable">
+                            @if (!string.IsNullOrEmpty(template.ImageUrl))
+                            {
+                                <div class="me-3">
+                                    <img src="@template.ImageUrl" alt="@template.Title" class="rounded" style="width: 80px; height: 80px; object-fit: cover;">
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="me-3 bg-light d-flex align-items-center justify-content-center rounded" style="width: 80px; height: 80px;">
+                                    <i class="bi bi-file-earmark-text" style="font-size: 2rem; color: #6c757d;"></i>
+                                </div>
+                            }
+                            
+                            <div class="flex-grow-1">
+                                <h5 class="mb-1">@template.Title</h5>
+                                <p class="mb-1 text-muted">
+                                    <small>
+                                        <i class="bi bi-calendar me-1"></i> Created: @template.CreatedAt.ToShortDateString()
+                                        @if (!string.IsNullOrEmpty(template.Topic?.Trim()) && template.Topic != "Other")
+                                        {
+                                            <span class="mx-2">|</span>
+                                            <i class="bi bi-bookmark me-1"></i> @template.Topic
+                                        }
+                                    </small>
+                                </p>
+                                <p class="mb-1">@(template.Description?.Length > 100 ? template.Description.Substring(0, 100) + "..." : template.Description)</p>
+                                
+                                <div class="d-flex gap-1 mb-0">
+                                    @if (template.IsPublic)
+                                    {
+                                        <span class="badge bg-success">Public</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">Private</span>
+                                    }
+                                    
+                                    <span class="badge bg-info">
+                                        <i class="bi bi-heart-fill me-1"></i> @template.LikesCount
+                                    </span>
+                                    
+                                    <span class="badge bg-primary">
+                                        <i class="bi bi-chat-fill me-1"></i> @template.CommentsCount
+                                    </span>
+                                    
+                                    @if (template.Tags != null)
+                                    {
+                                        foreach(var tag in template.Tags.Take(3))
+                                        {
+                                            <span class="badge bg-secondary">@tag</span>
+                                        }
+                                        @if (template.Tags.Count > 3)
+                                        {
+                                            <span class="badge bg-secondary">+@(template.Tags.Count - 3)</span>
+                                        }
+                                    }
+                                </div>
+                            </div>
+                            
+                            <div class="ms-auto">
+                                <i class="bi bi-chevron-right text-muted" style="font-size: 1.2rem;"></i>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </form>
+        
+        <!-- Confirmation Modal -->
+        <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteConfirmationModalLabel">Confirm Deletion</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to delete the selected templates? This action cannot be undone.</p>
+                        <p id="selected-count-message"></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-danger" id="confirm-delete">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div> 
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get the elements
+            const selectAllCheckbox = document.getElementById('select-all-toolbar');
+            const templateCheckboxes = document.querySelectorAll('.template-checkbox');
+            const deleteSelectedButton = document.getElementById('delete-selected');
+            const searchInput = document.getElementById('template-search');
+            const templatesContainer = document.getElementById('templates-container');
+            const templateItems = document.querySelectorAll('.template-item');
+            const templateClickables = document.querySelectorAll('.template-clickable');
+            const batchDeleteForm = document.getElementById('batch-delete-form');
+            const deleteConfirmationModal = new bootstrap.Modal(document.getElementById('deleteConfirmationModal'));
+            const confirmDeleteButton = document.getElementById('confirm-delete');
+            const selectedCountMessage = document.getElementById('selected-count-message');
+            
+            console.log('Search input element:', searchInput);
+            console.log('Number of template items:', templateItems.length);
+            
+            // Make template items clickable
+            templateClickables.forEach(function(item) {
+                item.addEventListener('click', function() {
+                    const templateId = this.closest('.template-item').dataset.id;
+                    window.location.href = `/FormTemplate/Details/${templateId}`;
+                });
+                
+                // Add hover effect
+                item.addEventListener('mouseenter', function() {
+                    this.classList.add('list-group-item-hover');
+                });
+                
+                item.addEventListener('mouseleave', function() {
+                    this.classList.remove('list-group-item-hover');
+                });
+            });
+            
+            // Function to update the delete button state
+            function updateDeleteButtonState() {
+                const checkedCheckboxes = document.querySelectorAll('.template-checkbox:checked');
+                deleteSelectedButton.disabled = checkedCheckboxes.length === 0;
+                
+                // Update "Select All" checkbox state
+                if (templateCheckboxes.length > 0) {
+                    selectAllCheckbox.checked = checkedCheckboxes.length === templateCheckboxes.length;
+                    selectAllCheckbox.indeterminate = checkedCheckboxes.length > 0 && checkedCheckboxes.length < templateCheckboxes.length;
+                }
+            }
+            
+            // Event listener for checkboxes
+            templateCheckboxes.forEach(function(checkbox) {
+                checkbox.addEventListener('change', updateDeleteButtonState);
+            });
+            
+            // Event listener for "Select All" checkbox
+            selectAllCheckbox.addEventListener('change', function() {
+                templateCheckboxes.forEach(function(checkbox) {
+                    // Only check visible template checkboxes
+                    const templateItem = checkbox.closest('.template-item');
+                    if (!templateItem.classList.contains('d-none')) {
+                        checkbox.checked = selectAllCheckbox.checked;
+                    }
+                });
+                updateDeleteButtonState();
+            });
+            
+            // Event listener for delete button
+            deleteSelectedButton.addEventListener('click', function() {
+                const checkedCheckboxes = document.querySelectorAll('.template-checkbox:checked');
+                selectedCountMessage.textContent = `You are about to delete ${checkedCheckboxes.length} template${checkedCheckboxes.length === 1 ? '' : 's'}.`;
+                deleteConfirmationModal.show();
+            });
+            
+            // Event listener for confirm delete button
+            confirmDeleteButton.addEventListener('click', function() {
+                console.log('Confirm delete button clicked');
+                
+                // Check if any checkboxes are selected
+                const checkedCheckboxes = document.querySelectorAll('.template-checkbox:checked');
+                console.log('Selected templates:', checkedCheckboxes.length);
+                
+                if (checkedCheckboxes.length === 0) {
+                    console.error('No templates selected!');
+                    alert('Please select at least one template to delete.');
+                    return;
+                }
+                
+                // Log form details before submission
+                console.log('Form action:', batchDeleteForm.action);
+                console.log('Form method:', batchDeleteForm.method);
+                
+                // Log selected template IDs
+                const selectedIds = [];
+                checkedCheckboxes.forEach(function(checkbox) {
+                    selectedIds.push(checkbox.value);
+                });
+                console.log('Selected template IDs:', selectedIds);
+                
+                // Submit the form
+                try {
+                    batchDeleteForm.submit();
+                    console.log('Form submitted successfully');
+                } catch (error) {
+                    console.error('Error submitting form:', error);
+                }
+            });
+            
+            // Improved live search functionality
+            if (searchInput) {
+                // First, ensure all templates are visible initially
+                templateItems.forEach(function(item) {
+                    item.classList.remove('d-none');
+                });
+                
+                // Attach both input and keyup events to catch all changes
+                ['input', 'keyup', 'change'].forEach(function(eventType) {
+                    searchInput.addEventListener(eventType, performSearch);
+                });
+                
+                // Also handle clicks on the search icon
+                const searchIcon = document.querySelector('.input-group-text');
+                if (searchIcon) {
+                    searchIcon.addEventListener('click', performSearch);
+                }
+            } else {
+                console.error('Search input element not found!');
+            }
+            
+            function performSearch() {
+                const searchTerm = searchInput.value.toLowerCase().trim();
+                console.log('Searching for:', searchTerm);
+                
+                let visibleCount = 0;
+                let matchDetails = [];
+                
+                templateItems.forEach(function(item) {
+                    const title = (item.dataset.title || '').toLowerCase();
+                    const description = (item.dataset.description || '').toLowerCase();
+                    const topic = (item.dataset.topic || '').toLowerCase();
+                    const tags = (item.dataset.tags || '').toLowerCase();
+                    
+                    // Check if any of the fields match the search term
+                    const matches = {
+                        title: title.includes(searchTerm),
+                        description: description.includes(searchTerm),
+                        topic: topic.includes(searchTerm),
+                        tags: tags.includes(searchTerm)
+                    };
+                    
+                    const isMatch = matches.title || matches.description || matches.topic || matches.tags;
+                    
+                    if (searchTerm === '' || isMatch) {
+                        // Show the item - using CSS classes instead of inline styles
+                        item.classList.remove('d-none');
+                        visibleCount++;
+                        console.log('Showing item:', item.dataset.id, title);
+                    } else {
+                        // Hide the item - using CSS classes instead of inline styles
+                        item.classList.add('d-none');
+                        console.log('Hiding item:', item.dataset.id, title);
+                        
+                        // Uncheck if hidden
+                        const checkbox = item.querySelector('.template-checkbox');
+                        if (checkbox && checkbox.checked) {
+                            checkbox.checked = false;
+                            updateDeleteButtonState();
+                        }
+                    }
+                    
+                    // Log details for debugging
+                    if (searchTerm !== '') {
+                        matchDetails.push({
+                            id: item.dataset.id,
+                            title: title,
+                            matches: matches,
+                            visible: isMatch
+                        });
+                    }
+                });
+                
+                console.log('Search complete. Visible items:', visibleCount);
+                
+                // If all items are filtered out, show a message
+                const noResults = document.getElementById('no-results');
+                if (visibleCount === 0 && searchTerm !== '') {
+                    // If no element with id 'no-results' exists, create one
+                    if (!noResults) {
+                        const noResultsElement = document.createElement('div');
+                        noResultsElement.id = 'no-results';
+                        noResultsElement.className = 'alert alert-info';
+                        noResultsElement.innerHTML = '<p class="mb-0">No templates match your search.</p>';
+                        templatesContainer.appendChild(noResultsElement);
+                    }
+                } else {
+                    // Remove the no results message if it exists
+                    if (noResults) {
+                        noResults.remove();
+                    }
+                }
+                
+                // Update select all checkbox state
+                updateDeleteButtonState();
+            }
+        });
+    </script>
+    
+    <style>
+        .list-group-item-hover {
+            background-color: rgba(0,0,0,.03);
+        }
+        
+        .template-clickable {
+            cursor: pointer;
+        }
+        
+        .template-clickable:active {
+            background-color: rgba(0,0,0,.05);
+        }
+    </style>
+} 

@@ -1,0 +1,311 @@
+@model FormsApp.ViewModels.FormTemplateViewModel
+
+@{
+    ViewData["Title"] = "Create Template";
+}
+
+<div class="container">
+    <h1>@ViewData["Title"]</h1>
+    <hr />
+    
+    <form asp-action="Create" method="post" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Template Details</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label asp-for="Title" class="form-label">Title</label>
+                            <input asp-for="Title" class="form-control" />
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label">Description</label>
+                            <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label asp-for="TopicId" class="form-label">Topic</label>
+                            <div class="input-group">
+                                <select asp-for="TopicId" asp-items="@((IEnumerable<SelectListItem>)ViewData["Topics"])" class="form-select">
+                                    <option value="">-- Select a Topic --</option>
+                                </select>
+                                <a href="@Url.Action("Create", "Topic")?returnUrl=@Url.Action("Create", "FormTemplate", null, Context.Request.Scheme)" class="btn btn-outline-secondary">
+                                    <i class="bi bi-plus"></i> New Topic
+                                </a>
+                            </div>
+                            <span asp-validation-for="TopicId" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label asp-for="ImageFile" class="form-label">Cover Image (optional)</label>
+                            <input asp-for="ImageFile" type="file" class="form-control" accept="image/*" id="imageInput" onchange="previewImage(this)" />
+                            <span asp-validation-for="ImageFile" class="text-danger"></span>
+                            <div class="form-text">Upload an image to make your form stand out.</div>
+                            <div id="imagePreview" class="mt-2" style="display: none;">
+                                <p>Image preview:</p>
+                                <img id="previewImg" src="#" class="img-thumbnail" style="max-height: 150px;" alt="Image preview" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Settings</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-check mb-3">
+                            <input asp-for="IsPublic" class="form-check-input" />
+                            <label asp-for="IsPublic" class="form-check-label">Make Public</label>
+                            <div class="form-text">Public templates are visible to all users</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Tags</label>
+                            <div id="tagContainer" class="d-flex flex-wrap gap-2 mb-2"></div>
+                            
+                            <div class="input-group mb-2">
+                                <input id="tagInput" type="text" class="form-control" placeholder="Type tags separated by commas (e.g., tag1, tag2, tag3)" />
+                                <button type="button" id="addTagButton" class="btn btn-primary">Add Tag(s)</button>
+                            </div>
+                            
+                            <input type="hidden" id="tagsInput" name="TagsJson" />
+                            <div class="form-text">Choose tags to categorize your template. Add multiple tags at once using commas.</div>
+                        </div>
+                        
+                        <div id="allowedUsersSection" class="mb-3" style="display: none;">
+                            <label asp-for="AllowedUserEmails" class="form-label">Allowed Users</label>
+                            <input id="userEmailInput" type="email" class="form-control mb-2" placeholder="Enter email and press Enter" />
+                            <div id="emailContainer" class="d-flex flex-wrap gap-2 mb-2"></div>
+                            <input asp-for="AllowedUserEmails" type="hidden" id="allowedUsersInput" />
+                            <div class="form-text">Add specific users who can access this template</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary">Create Template</button>
+                    <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    
+    <script>
+        // Image preview function
+        function previewImage(input) {
+            const preview = document.getElementById('imagePreview');
+            const previewImg = document.getElementById('previewImg');
+            
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    previewImg.src = e.target.result;
+                    preview.style.display = 'block';
+                };
+                
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                preview.style.display = 'none';
+                previewImg.src = '#';
+            }
+        }
+        
+        // Handle tag input
+        const tagInput = document.getElementById('tagInput');
+        const addTagButton = document.getElementById('addTagButton');
+        const tagContainer = document.getElementById('tagContainer');
+        const tagsInput = document.getElementById('tagsInput');
+        let tags = [];
+        
+        // Initialize tags array
+        updateTags();
+        
+        // Add tag when button is clicked
+        addTagButton.addEventListener('click', function() {
+            addTagFromInput();
+        });
+        
+        // Add tag when Enter key is pressed
+        tagInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                addTagFromInput();
+            }
+        });
+        
+        function addTagFromInput() {
+            const tagText = tagInput.value.trim();
+            
+            if (tagText === '') return;
+            
+            // Split by comma and process each tag
+            const tagArray = tagText.split(',');
+            
+            tagArray.forEach(tag => {
+                const trimmedTag = tag.trim();
+                if (trimmedTag && !tags.includes(trimmedTag)) {
+                    addTag(trimmedTag);
+                }
+            });
+            
+            // Clear the input after adding
+            tagInput.value = '';
+        }
+        
+        function addTag(tagName) {
+            // Add tag to the list
+            tags.push(tagName);
+            updateTags();
+            
+            // Create tag UI element
+            const tagElement = document.createElement('span');
+            tagElement.classList.add('badge', 'bg-primary', 'me-2', 'mb-2');
+            tagElement.innerHTML = `${tagName} <i class="bi bi-x-circle" style="cursor: pointer;" onclick="removeTag('${tagName.replace(/'/g, "\\'")}')"></i>`;
+            tagContainer.appendChild(tagElement);
+        }
+        
+        function removeTag(tagName) {
+            // Remove tag from the list
+            tags = tags.filter(t => t !== tagName);
+            updateTags();
+            
+            // Re-render tags
+            renderTags();
+        }
+        
+        function updateTags() {
+            tagsInput.value = JSON.stringify(tags);
+            console.log("Updated tags:", tagsInput.value);
+        }
+        
+        function renderTags() {
+            tagContainer.innerHTML = '';
+            tags.forEach(tagName => {
+                const tagElement = document.createElement('span');
+                tagElement.classList.add('badge', 'bg-primary', 'me-2', 'mb-2');
+                tagElement.innerHTML = `${tagName} <i class="bi bi-x-circle" style="cursor: pointer;" onclick="removeTag('${tagName.replace(/'/g, "\\'")}')"></i>`;
+                tagContainer.appendChild(tagElement);
+            });
+        }
+        
+        // Handle allowed users
+        const userEmailInput = document.getElementById('userEmailInput');
+        const emailContainer = document.getElementById('emailContainer');
+        const allowedUsersInput = document.getElementById('allowedUsersInput');
+        let emails = [];
+        
+        userEmailInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && this.value.trim() !== '') {
+                e.preventDefault();
+                const email = this.value.trim();
+                if (!emails.includes(email)) {
+                    addEmail(email);
+                }
+                this.value = '';
+            }
+        });
+        
+        function addEmail(email) {
+            emails.push(email);
+            updateEmails();
+            
+            const emailElement = document.createElement('span');
+            emailElement.classList.add('badge', 'bg-info', 'me-1', 'mb-1', 'email-item');
+            emailElement.innerHTML = `${email} <i class="bi bi-x" onclick="removeEmail('${email}')"></i>`;
+            emailContainer.appendChild(emailElement);
+        }
+        
+        function removeEmail(email) {
+            emails = emails.filter(e => e !== email);
+            updateEmails();
+            renderEmails();
+        }
+        
+        function updateEmails() {
+            allowedUsersInput.value = JSON.stringify(emails);
+        }
+        
+        function renderEmails() {
+            emailContainer.innerHTML = '';
+            emails.forEach(email => {
+                const emailElement = document.createElement('span');
+                emailElement.classList.add('badge', 'bg-info', 'me-1', 'mb-1', 'email-item');
+                emailElement.innerHTML = `${email} <i class="bi bi-x" onclick="removeEmail('${email}')"></i>`;
+                emailContainer.appendChild(emailElement);
+            });
+        }
+        
+        // Toggle allowed users section based on IsPublic
+        const isPublicCheckbox = document.getElementById('IsPublic');
+        const allowedUsersSection = document.getElementById('allowedUsersSection');
+        
+        isPublicCheckbox.addEventListener('change', function() {
+            allowedUsersSection.style.display = this.checked ? 'none' : 'block';
+        });
+        
+        // Function to refresh topics dropdown
+        window.refreshTopics = function() {
+            // Refresh topics
+            fetch('@Url.Action("GetTopicsForDropdown", "Topic")')
+                .then(response => response.json())
+                .then(data => {
+                    const topicSelect = document.getElementById('TopicId');
+                    const currentValue = topicSelect.value;
+                    
+                    // Clear existing options except the first one
+                    while (topicSelect.options.length > 1) {
+                        topicSelect.remove(1);
+                    }
+                    
+                    // Add new options
+                    data.forEach(topic => {
+                        const option = new Option(topic.name, topic.id);
+                        topicSelect.add(option);
+                    });
+                    
+                    // Try to restore selected value
+                    if (currentValue) {
+                        topicSelect.value = currentValue;
+                    }
+                })
+                .catch(error => console.error('Error refreshing topics:', error));
+        };
+        
+        // Check if we've returned from the topic creation page
+        if (document.referrer.includes('/Topic/Create')) {
+            refreshTopics();
+        }
+        
+        // Check for newTopicId parameter in URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const newTopicId = urlParams.get('newTopicId');
+        if (newTopicId) {
+            refreshTopics();
+            
+            // Set the dropdown to the new topic after a short delay to ensure the dropdown is populated
+            setTimeout(() => {
+                const topicSelect = document.getElementById('TopicId');
+                topicSelect.value = newTopicId;
+                
+                // Remove the parameter from URL to avoid reselecting on page refresh
+                const newUrl = window.location.href.split('?')[0];
+                window.history.replaceState({}, document.title, newUrl);
+            }, 500);
+        }
+    </script>
+} 

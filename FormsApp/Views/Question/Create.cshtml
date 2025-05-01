@@ -1,0 +1,206 @@
+@model FormsApp.ViewModels.QuestionViewModel
+
+@{
+    ViewData["Title"] = "Create Question";
+}
+
+<div class="container mt-4">
+    <h2>Add New Question</h2>
+    
+    <form asp-action="Create" method="post" id="questionForm">
+        <input type="hidden" asp-for="TemplateId" />
+        <input type="hidden" id="questionType" asp-for="Type" />
+        
+        <div class="form-group">
+            <label asp-for="Text" class="control-label">Question Text</label>
+            <input asp-for="Text" class="form-control" required />
+            <span asp-validation-for="Text" class="text-danger"></span>
+        </div>
+        
+        <div class="form-group">
+            <label asp-for="Description" class="control-label">Description (Optional)</label>
+            <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+        
+        <div class="form-group">
+            <label class="control-label">Question Type</label>
+            <select id="questionTypeSelector" class="form-control">
+                <option value="0">Short Text</option>
+                <option value="1">Long Text</option>
+                <option value="2">Multiple Choice</option>
+                <option value="3">Poll</option>
+                <option value="4">Rating</option>
+            </select>
+        </div>
+        
+        <div id="optionsContainer" style="display:none;">
+            <h4>Options</h4>
+            <div id="optionsList">
+                <!-- Options will be dynamically added here -->
+            </div>
+            <button type="button" id="addOption" class="btn btn-secondary mt-2">Add Option</button>
+        </div>
+        
+        <div class="form-group form-check">
+            <input asp-for="Required" class="form-check-input" />
+            <label asp-for="Required" class="form-check-label">Required</label>
+        </div>
+        
+        <div class="form-group form-check">
+            <input asp-for="ShowInResults" class="form-check-input" />
+            <label asp-for="ShowInResults" class="form-check-label">Show in Results</label>
+        </div>
+        
+        <div class="form-group">
+            <button type="button" id="submitButton" class="btn btn-primary">Create</button>
+            <a asp-action="Index" asp-route-id="@Model.TemplateId" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+    
+    <div id="errorMessages" class="alert alert-danger" style="display:none;">
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function() {
+            var optionIndex = 0;
+            
+            // Add the first option by default for MC/Poll
+            function addInitialOption() {
+                var newOption = `
+                    <div class="form-group option-item">
+                        <input type="text" name="Options[${optionIndex}].Text" class="form-control option-text" placeholder="Option text" />
+                        <button type="button" class="btn btn-sm btn-danger remove-option">Remove</button>
+                    </div>
+                `;
+                $("#optionsList").append(newOption);
+                optionIndex++;
+            }
+            
+            // Show/hide options based on question type
+            $("#questionTypeSelector").change(function() {
+                var type = $(this).val();
+                $("#questionType").val(type); // Update hidden input
+                updateOptionRequirements();
+            });
+            
+            // Initial setup
+            updateOptionRequirements();
+            
+            function updateOptionRequirements() {
+                var type = $("#questionTypeSelector").val();
+                $("#optionsList").empty();
+                optionIndex = 0;
+                
+                if (type == "2" || type == "3") { // Multiple Choice or Poll
+                    $("#optionsContainer").show();
+                    // Add at least one option for MC/Poll
+                    addInitialOption();
+                    $(".option-text").first().prop("required", true);
+                } else {
+                    $("#optionsContainer").hide();
+                }
+            }
+            
+            // Add new option
+            $("#addOption").click(function() {
+                var newOption = `
+                    <div class="form-group option-item">
+                        <input type="text" name="Options[${optionIndex}].Text" class="form-control option-text" placeholder="Option text" />
+                        <button type="button" class="btn btn-sm btn-danger remove-option">Remove</button>
+                    </div>
+                `;
+                $("#optionsList").append(newOption);
+                optionIndex++;
+            });
+            
+            // Remove option
+            $(document).on("click", ".remove-option", function() {
+                $(this).closest(".option-item").remove();
+                // Reindex the remaining options
+                $(".option-item").each(function(index) {
+                    $(this).find(".option-text").attr("name", `Options[${index}].Text`);
+                });
+                optionIndex = $(".option-item").length;
+                
+                // If we removed all options, add one back for MC/Poll questions
+                if ($(".option-item").length == 0 && ($("#questionTypeSelector").val() == "2" || $("#questionTypeSelector").val() == "3")) {
+                    addInitialOption();
+                }
+            });
+            
+            // Handle form submission with custom logic
+            $("#submitButton").click(function() {
+                var type = $("#questionTypeSelector").val();
+                // Validate required text field
+                if (!$("#Text").val().trim()) {
+                    $("#errorMessages").text("Question Text is required").show();
+                    return;
+                }
+                
+                // Different submission handling based on question type
+                if (type == "2" || type == "3") { // Multiple Choice or Poll
+                    // Check that at least one option has text
+                    var hasValidOption = false;
+                    $(".option-text").each(function() {
+                        if ($(this).val().trim()) {
+                            hasValidOption = true;
+                            return false; // break the each loop
+                        }
+                    });
+                    
+                    if (!hasValidOption) {
+                        $("#errorMessages").text("At least one option must have text").show();
+                        return;
+                    }
+                    
+                    // Submit the form with options included
+                    $("#questionForm").submit();
+                } else {
+                    // For non-option types (0, 1, 4), submit form data programmatically without options
+                    var formData = new FormData();
+                    formData.append("TemplateId", $("#TemplateId").val());
+                    formData.append("Text", $("#Text").val());
+                    formData.append("Description", $("#Description").val());
+                    formData.append("Type", type);
+                    formData.append("Required", $("#Required").prop("checked"));
+                    formData.append("ShowInResults", $("#ShowInResults").prop("checked"));
+                    
+                    $.ajax({
+                        url: $("#questionForm").attr("action"),
+                        type: "POST",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function(response) {
+                            // Redirect to the same URL the form would have redirected to
+                            window.location.href = window.location.pathname.replace("/Create", "/Index") + "?id=" + $("#TemplateId").val();
+                        },
+                        error: function(xhr) {
+                            if (xhr.responseText) {
+                                try {
+                                    var errorResponse = JSON.parse(xhr.responseText);
+                                    var errorMessage = "Validation failed: ";
+                                    for (var key in errorResponse) {
+                                        errorMessage += errorResponse[key].join(", ");
+                                    }
+                                    $("#errorMessages").text(errorMessage).show();
+                                } catch (e) {
+                                    $("#errorMessages").text("An error occurred while creating the question.").show();
+                                }
+                            } else {
+                                $("#errorMessages").text("An error occurred while creating the question.").show();
+                            }
+                        }
+                    });
+                }
+            });
+            
+            // Set initial values from the model
+            $("#questionTypeSelector").val($("#questionType").val()).change();
+        });
+    </script>
+} 

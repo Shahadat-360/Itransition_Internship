@@ -1,0 +1,120 @@
+@model FormsApp.ViewModels.SearchResultViewModel
+
+@{
+    ViewData["Title"] = "Search Results";
+}
+
+<div class="container">
+    <div class="mb-4">
+        <h1>Search Results</h1>
+        <p class="lead">Results for: "@Model.SearchTerm"</p>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <!-- Search Form -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <form asp-controller="Home" asp-action="Search" method="get" class="d-flex">
+                        <input type="text" name="query" class="form-control me-2" 
+                               placeholder="Search for forms..." value="@Model.SearchTerm" aria-label="Search">
+                        <button class="btn btn-primary" type="submit">
+                            <i class="bi bi-search me-1"></i> Search
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Results -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Found @Model.Templates.Count() results</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.Templates != null && Model.Templates.Any())
+                    {
+                        <div class="list-group">
+                            @foreach (var template in Model.Templates)
+                            {
+                                <a asp-controller="FormTemplate" asp-action="Details" asp-route-id="@template.Id" 
+                                   class="list-group-item list-group-item-action">
+                                    <div class="row">
+                                        <div class="col-md-2">
+                                            @if (!string.IsNullOrEmpty(template.ImageUrl))
+                                            {
+                                                <img src="@template.ImageUrl" class="img-fluid rounded" alt="@template.Title" style="height: 80px; object-fit: cover;">
+                                            }
+                                            else
+                                            {
+                                                <div class="bg-light d-flex align-items-center justify-content-center rounded" style="height: 80px; width: 100%;">
+                                                    <i class="bi bi-file-earmark-text" style="font-size: 2rem; color: #6c757d;"></i>
+                                                </div>
+                                            }
+                                        </div>
+                                        <div class="col-md-10">
+                                            <div class="d-flex w-100 justify-content-between">
+                                                <h5 class="mb-1">@template.Title</h5>
+                                                <small>@template.CreatedAt.ToShortDateString()</small>
+                                            </div>
+                                            <p class="mb-1">@(template.Description?.Length > 150 ? template.Description.Substring(0, 150) + "..." : template.Description)</p>
+                                            <small class="text-muted">
+                                                <i class="bi bi-person me-1"></i> @template.CreatorName
+                                                <span class="mx-2">|</span>
+                                                <i class="bi bi-heart-fill text-danger me-1"></i> @template.LikesCount
+                                                <span class="mx-2">|</span>
+                                                <i class="bi bi-chat-fill me-1"></i> @template.CommentsCount
+                                            </small>
+                                        </div>
+                                    </div>
+                                </a>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info">
+                            <p class="mb-0">No templates found matching your search. Try different keywords or browse <a asp-controller="Home" asp-action="Index">all templates</a>.</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <!-- Search Tips -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Search Tips</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2"><i class="bi bi-info-circle me-2"></i> Use specific keywords for better results</li>
+                        <li class="mb-2"><i class="bi bi-info-circle me-2"></i> Search for topics (e.g., "feedback", "survey")</li>
+                        <li class="mb-2"><i class="bi bi-info-circle me-2"></i> Try searching by creator name</li>
+                        <li><i class="bi bi-info-circle me-2"></i> Browse tags to find related forms</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-primary">
+                            <i class="bi bi-house-door me-1"></i> Back to Home
+                        </a>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <a asp-controller="FormTemplate" asp-action="Create" class="btn btn-primary">
+                                <i class="bi bi-plus-circle me-1"></i> Create New Form
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

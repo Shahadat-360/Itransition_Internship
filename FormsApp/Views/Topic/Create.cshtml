@@ -1,0 +1,173 @@
+@model FormsApp.Models.Topic
+
+@{
+    ViewData["Title"] = "Create Topic";
+    // If this is a popup, use a minimal layout
+    Layout = Context.Request.Query.ContainsKey("popup") ? "_PopupLayout" : "_Layout";
+    
+    // Check if user came from a template page
+    var referrer = string.IsNullOrEmpty(ViewData["PreservedReferrer"]?.ToString()) ? 
+        Context.Request.Headers["Referer"].ToString() : 
+        ViewData["PreservedReferrer"].ToString();
+    
+    var cameFromTemplate = !string.IsNullOrEmpty(referrer) && referrer.Contains("/FormTemplate/");
+    
+    // Check if a topic was just created
+    var topicCreated = ViewData["TopicCreated"] as bool? ?? false;
+    var createdTopic = ViewData["CreatedTopic"] as dynamic;
+}
+
+<div class="container">
+    <h1>@ViewData["Title"]</h1>
+    
+    <!-- Removed custom notification to avoid duplicates with the global notification -->
+    
+    <div class="row">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <form asp-action="Create" id="topicForm">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        
+                        <!-- Hidden input to store the referrer URL -->
+                        <input type="hidden" name="ReturnUrl" id="returnUrlField" value="@referrer" />
+                        
+                        <div class="mb-3">
+                            <label asp-for="Name" class="form-label">Topic Name</label>
+                            <input asp-for="Name" class="form-control" id="Name" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label">Description</label>
+                            <textarea asp-for="Description" class="form-control" rows="3" id="Description"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                            <div class="form-text">Optional description of what this topic covers</div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <button type="submit" class="btn btn-primary">Create</button>
+                            
+                            <div class="d-flex gap-2">
+                                @if (Context.Request.Query.ContainsKey("popup"))
+                                {
+                                    <button type="button" class="btn btn-outline-secondary" onclick="window.close()">Close</button>
+                                }
+                                else
+                                {
+                                    <a asp-action="Index" class="btn btn-outline-secondary">Topic List</a>
+                                    
+                                    @if (cameFromTemplate)
+                                    {
+                                        <a href="@referrer" class="btn btn-outline-primary">Back to Template</a>
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="card-title mb-0">Topic Tips</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Use clear, descriptive names for your topics</li>
+                        <li class="list-group-item">Keep topic names concise and specific</li>
+                        <li class="list-group-item">Create topics that match your organization's structure</li>
+                        <li class="list-group-item">Avoid duplicate topics with slight variations in spelling</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    
+    <script>
+        // Add event listener when document is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            @if (topicCreated)
+            {
+                // If a topic was just created, focus on the name field for easy input of a new topic
+                <text>
+                document.getElementById('Name').focus();
+                
+                // Make sure the "Back to Template" button is enabled if we came from a template
+                var cameFromTemplate = @(cameFromTemplate ? "true" : "false");
+                if (cameFromTemplate) {
+                    var backButtons = document.querySelectorAll('.btn-outline-primary');
+                    backButtons.forEach(function(btn) {
+                        if (btn.textContent.trim() === 'Back to Template') {
+                            btn.disabled = false;
+                            btn.href = '@Html.Raw(referrer)';
+                        }
+                    });
+                }
+                </text>
+            }
+        });
+    </script>
+    
+    @if (Context.Request.Query.ContainsKey("popup"))
+    {
+        <script>
+            // Handle form submission in popup mode
+            document.querySelector('form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(this);
+                
+                fetch('@Url.Action("Create", "Topic")', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                    }
+                })
+                .then(response => response.json())
+                .catch(error => {
+                    console.error('Error:', error);
+                    return { success: false, message: 'An error occurred' };
+                })
+                .then(data => {
+                    if (data.success) {
+                        // Update opener window
+                        if (window.opener && !window.opener.closed) {
+                            if (typeof window.opener.refreshTopics === 'function') {
+                                window.opener.refreshTopics();
+                            }
+                        }
+                        // Clear the form for another entry or close
+                        document.getElementById('topicForm').reset();
+                        
+                        // Show success message
+                        const alertDiv = document.createElement('div');
+                        alertDiv.className = 'alert alert-success alert-dismissible fade show mb-3';
+                        alertDiv.role = 'alert';
+                        alertDiv.innerHTML = `
+                            <i class="bi bi-check-circle-fill me-2"></i> Topic "${data.topicName}" created successfully!
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        `;
+                        
+                        document.querySelector('.container').insertBefore(alertDiv, document.querySelector('.row'));
+                        
+                        // Auto-close popup after delay
+                        setTimeout(function() {
+                            window.close();
+                        }, 1500);
+                    } else {
+                        alert(data.message || 'Failed to create topic. Please try again.');
+                    }
+                });
+            });
+        </script>
+    }
+} 

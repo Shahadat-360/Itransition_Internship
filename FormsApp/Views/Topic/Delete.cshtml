@@ -1,0 +1,158 @@
+@model FormsApp.Models.Topic
+@using FormsApp.Models
+
+@{
+    ViewData["Title"] = "Delete Topic";
+    var templatesUsingTopic = ViewData["TemplatesUsingTopic"] as IEnumerable<dynamic>;
+    var templateCount = (int)ViewData["TemplateCount"];
+    var availableTopics = ViewData["AvailableTopics"] as IEnumerable<Topic>;
+}
+
+<div class="container">
+    <h1>@ViewData["Title"]</h1>
+    
+    <!-- Notification Area -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    
+    @if (TempData["WarningMessage"] != null)
+    {
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-circle-fill me-2"></i> @TempData["WarningMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-danger text-white">
+            <h5 class="mb-0">Warning: Delete Confirmation</h5>
+        </div>
+        <div class="card-body">
+            <p>Are you sure you want to delete the topic <strong>@Model.Name</strong>?</p>
+            
+            <div class="row">
+                <div class="col-md-8">
+                    <dl class="row">
+                        <dt class="col-sm-3">Name</dt>
+                        <dd class="col-sm-9">@Model.Name</dd>
+                        
+                        <dt class="col-sm-3">Description</dt>
+                        <dd class="col-sm-9">@Model.Description</dd>
+                        
+                        <dt class="col-sm-3">Created</dt>
+                        <dd class="col-sm-9">@Model.CreatedAt.ToString("MMM dd, yyyy")</dd>
+                    </dl>
+                    
+                    @if (templateCount == 0)
+                    {
+                        <form asp-action="Delete" method="post">
+                            <input type="hidden" asp-for="Id" />
+                            <div class="d-flex mt-3">
+                                <button type="submit" class="btn btn-danger me-2">Delete</button>
+                                <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+                            </div>
+                        </form>
+                    }
+                    else
+                    {
+                        <div class="alert alert-warning">
+                            <i class="bi bi-exclamation-triangle me-2"></i>
+                            This topic is being used by <strong>@templateCount template@(templateCount != 1 ? "s" : "")</strong>.
+                            You need to reassign these templates before deleting this topic.
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    @if (templateCount > 0)
+    {
+        <div class="card shadow-sm mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Templates Using This Topic</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Title</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var template in templatesUsingTopic)
+                        {
+                            <tr>
+                                <td>@template.Id</td>
+                                <td>@template.Title</td>
+                                <td>
+                                    <a href="/FormTemplate/Details/@template.Id" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-eye"></i> View
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                
+                @if (availableTopics.Any())
+                {
+                    <div class="mt-4">
+                        <h5>Reassign Templates</h5>
+                        <form asp-action="ReassignTemplates" method="post">
+                            <input type="hidden" name="sourceTopicId" value="@Model.Id" />
+                            <div class="row g-3 align-items-end">
+                                <div class="col-md-6">
+                                    <label class="form-label">Target Topic</label>
+                                    <select name="targetTopicId" class="form-select" required>
+                                        <option value="">-- Select Target Topic --</option>
+                                        @foreach (var topic in availableTopics)
+                                        {
+                                            <option value="@topic.Id">@topic.Name</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="bi bi-arrow-right-circle me-1"></i> Reassign Templates
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="form-text mt-2">
+                                This will move all @templateCount template@(templateCount != 1 ? "s" : "") to the selected topic.
+                            </div>
+                        </form>
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-info mt-3">
+                        <i class="bi bi-info-circle me-2"></i>
+                        There are no other topics available for reassignment. Please <a asp-action="Create">create a new topic</a> first.
+                    </div>
+                }
+            </div>
+        </div>
+    }
+    
+    <div class="mt-3">
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i> Back to Topics
+        </a>
+    </div>
+</div> 

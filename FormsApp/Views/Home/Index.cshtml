@@ -1,0 +1,201 @@
+﻿@model FormsApp.ViewModels.HomeViewModel
+
+@{
+    ViewData["Title"] = "Home";
+}
+
+<div class="container">
+    <!-- Hero Section -->
+    <div class="px-4 py-5 my-5 text-center">
+        <h1 class="display-5 fw-bold">FormsApp</h1>
+        <div class="col-lg-6 mx-auto">
+            <p class="lead mb-4">Create, share, and analyze forms with our intuitive platform.</p>
+            <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <a asp-controller="FormTemplate" asp-action="Create" class="btn btn-primary btn-lg px-4 gap-3">
+                        <i class="bi bi-plus-circle me-1"></i> Create Form
+                    </a>
+                    <a asp-controller="Dashboard" asp-action="Index" class="btn btn-outline-secondary btn-lg px-4">
+                        <i class="bi bi-speedometer2 me-1"></i> Dashboard
+                    </a>
+                }
+                else
+                {
+                    <a asp-controller="Account" asp-action="Register" class="btn btn-primary btn-lg px-4 gap-3">Sign Up</a>
+                    <a asp-controller="Account" asp-action="Login" class="btn btn-outline-secondary btn-lg px-4">Log In</a>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Search Section -->
+    <div class="row justify-content-center mb-5">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-body">
+                    <form asp-controller="Home" asp-action="Search" method="get" class="d-flex">
+                        <input type="text" name="query" class="form-control form-control-lg me-2" 
+                               placeholder="Search for forms..." aria-label="Search">
+                        <button class="btn btn-primary" type="submit">
+                            <i class="bi bi-search me-1"></i> Search
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <!-- Public Templates -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Public Forms</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.PublicTemplates != null && Model.PublicTemplates.Any())
+                    {
+                        <div class="row row-cols-1 row-cols-md-2 g-4">
+                            @foreach (var template in Model.PublicTemplates)
+                            {
+                                <div class="col">
+                                    <div class="card h-100">
+                                        @if (!string.IsNullOrEmpty(template.ImageUrl))
+                                        {
+                                            <img src="@template.ImageUrl" class="card-img-top" alt="@template.Title" style="height: 120px; object-fit: cover;">
+                                        }
+                                        else
+                                        {
+                                            <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 120px;">
+                                                <i class="bi bi-file-earmark-text" style="font-size: 3rem; color: #6c757d;"></i>
+                                            </div>
+                                        }
+                                        <div class="card-body">
+                                            <h5 class="card-title">@template.Title</h5>
+                                            <p class="card-text small">@(template.Description?.Length > 60 ? template.Description.Substring(0, 60) + "..." : template.Description)</p>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <small class="text-muted">By @template.CreatorName</small>
+                                                <div>
+                                                    <span class="badge bg-info me-1"><i class="bi bi-heart-fill"></i> @template.LikesCount</span>
+                                                    <span class="badge bg-secondary"><i class="bi bi-chat-fill"></i> @template.CommentsCount</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card-footer bg-transparent">
+                                            <a asp-controller="FormTemplate" asp-action="Details" asp-route-id="@template.Id" class="btn btn-sm btn-outline-primary w-100">View Form</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info">
+                            <p class="mb-0">No forms available yet.</p>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Popular Templates -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Popular Forms</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.PopularTemplates != null && Model.PopularTemplates.Any())
+                    {
+                        <div class="row row-cols-1 row-cols-md-2 g-4">
+                            @foreach (var template in Model.PopularTemplates)
+                            {
+                                <div class="col">
+                                    <div class="card h-100">
+                                        @if (!string.IsNullOrEmpty(template.ImageUrl))
+                                        {
+                                            <img src="@template.ImageUrl" class="card-img-top" alt="@template.Title" style="height: 120px; object-fit: cover;">
+                                        }
+                                        else
+                                        {
+                                            <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 120px;">
+                                                <i class="bi bi-file-earmark-text" style="font-size: 3rem; color: #6c757d;"></i>
+                                            </div>
+                                        }
+                                        <div class="card-body">
+                                            <h5 class="card-title">@template.Title</h5>
+                                            <p class="card-text small">@(template.Description?.Length > 60 ? template.Description.Substring(0, 60) + "..." : template.Description)</p>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <small class="text-muted">By @template.CreatorName</small>
+                                                <div>
+                                                    <span class="badge bg-info me-1"><i class="bi bi-heart-fill"></i> @template.LikesCount</span>
+                                                    <span class="badge bg-secondary"><i class="bi bi-chat-fill"></i> @template.CommentsCount</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card-footer bg-transparent">
+                                            <a asp-controller="FormTemplate" asp-action="Details" asp-route-id="@template.Id" class="btn btn-sm btn-outline-primary w-100">View Form</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info">
+                            <p class="mb-0">No forms available yet.</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <!-- Popular Tags -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Popular Tags</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.TopTags != null && Model.TopTags.Any())
+                    {
+                        <div class="d-flex flex-wrap gap-2">
+                            @foreach (var tag in Model.TopTags)
+                            {
+                                <a asp-controller="Home" asp-action="SearchByTag" 
+                                   asp-route-tagId="@tag.Id" 
+                                   asp-route-tagName="@tag.Name"
+                                   title="Tag ID: @tag.Id"
+                                   class="badge bg-primary text-decoration-none">
+                                    @tag.Name <span class="badge bg-light text-dark">@tag.UsageCount</span>
+                                </a>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted">No tags available yet.</p>
+                    }
+                </div>
+            </div>
+
+            <!-- About -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">About FormsApp</h5>
+                </div>
+                <div class="card-body">
+                    <p>FormsApp is a powerful platform that allows you to create and share forms with others. Use it for surveys, questionnaires, data collection, and more.</p>
+                    <p>Features:</p>
+                    <ul>
+                        <li>Create custom forms with various question types</li>
+                        <li>Share forms with specific users or make them public</li>
+                        <li>Collect and analyze responses</li>
+                        <li>View detailed statistics and charts</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

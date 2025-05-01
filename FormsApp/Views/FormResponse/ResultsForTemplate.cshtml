@@ -1,0 +1,378 @@
+@model FormsApp.ViewModels.FormAggregationViewModel
+
+@{
+    ViewData["Title"] = "Form Results";
+}
+
+<div class="container">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="FormTemplate" asp-action="Index">My Templates</a></li>
+            <li class="breadcrumb-item"><a asp-controller="FormTemplate" asp-action="Details" asp-route-id="@Model.TemplateId">@Model.TemplateTitle</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Results</li>
+        </ol>
+    </nav>
+
+    <div class="mb-4">
+        <h1>Results: @Model.TemplateTitle</h1>
+        <p class="text-muted">Total Responses: @Model.TotalResponses</p>
+    </div>
+
+    @if (Model.TotalResponses == 0)
+    {
+        <div class="alert alert-info">
+            <p class="mb-0">No responses have been submitted for this form yet.</p>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-md-8">
+                <!-- Display multiple choice and poll question results -->
+                @foreach (var question in Model.Questions.Where(q => q.Type == FormsApp.Models.QuestionType.MultipleChoice || q.Type == FormsApp.Models.QuestionType.Poll))
+                {
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">@question.Text</h5>
+                        </div>
+                        <div class="card-body">
+                            @if (question.QuestionResults != null && question.QuestionResults.Any())
+                            {
+                                <div class="chart-container" style="position: relative; height: 250px;">
+                                    <canvas id="chart-@question.Id"></canvas>
+                                    @if (question.QuestionResults.All(r => r.Value == 0))
+                                    {
+                                        <div class="text-center mt-3 text-muted">
+                                            <i>No responses have been recorded for this question yet.</i>
+                                        </div>
+                                    }
+                                </div>
+                                
+                                <!-- Debug information (hidden by default) -->
+                                <div class="mt-3">
+                                    <button class="btn btn-sm btn-outline-secondary" type="button" 
+                                            onclick="document.getElementById('debug-@question.Id').classList.toggle('d-none')">
+                                        Toggle Debug Info
+                                    </button>
+                                    <div id="debug-@question.Id" class="d-none mt-2 p-2 bg-light border rounded">
+                                        <h6>Debug Information:</h6>
+                                        <p><strong>Question ID:</strong> @question.Id</p>
+                                        <p><strong>Options:</strong></p>
+                                        <ul>
+                                            @foreach (var option in question.Options.OrderBy(o => o.Order))
+                                            {
+                                                <li>ID: @option.Id, Text: "@option.Text", Order: @option.Order</li>
+                                            }
+                                        </ul>
+                                        <p><strong>Results Data:</strong></p>
+                                        <ul>
+                                            @foreach (var result in question.QuestionResults)
+                                            {
+                                                <li>@result.Key: @result.Value</li>
+                                            }
+                                        </ul>
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <p class="text-muted">No responses for this question yet.</p>
+                            }
+                        </div>
+                    </div>
+                }
+
+                @if (Model.TextQuestions != null && Model.TextQuestions.Any())
+                {
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">Text Responses by User</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="accordion" id="userResponsesAccordion">
+                                @{
+                                    // Group responses by user
+                                    var responsesGroupedByUser = Model.ResponsesList
+                                        .OrderByDescending(r => r.SubmittedAt)
+                                        .GroupBy(r => r.RespondentEmail)
+                                        .ToList();
+                                }
+                                
+                                @foreach (var userGroup in responsesGroupedByUser)
+                                {
+                                    var firstResponse = userGroup.First();
+                                    var userId = "user-" + (string.IsNullOrEmpty(firstResponse.RespondentEmail) ? 
+                                        Guid.NewGuid().ToString() : 
+                                        firstResponse.RespondentEmail.Replace("@", "-at-").Replace(".", "-dot-"));
+                                        
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="heading-@userId">
+                                            <button class="accordion-button collapsed fw-bold" type="button" 
+                                                    data-bs-toggle="collapse" data-bs-target="#collapse-@userId" 
+                                                    aria-expanded="false" aria-controls="collapse-@userId">
+                                                <div class="d-flex align-items-center">
+                                                    <i class="bi bi-person-circle me-2"></i>
+                                                    @firstResponse.RespondentName
+                                                    <span class="text-muted ms-2 fw-normal small">(@firstResponse.RespondentEmail)</span>
+                                                    <span class="badge bg-secondary ms-3">@userGroup.Count() response(s)</span>
+                                                </div>
+                                            </button>
+                                        </h2>
+                                        <div id="collapse-@userId" class="accordion-collapse collapse" 
+                                             aria-labelledby="heading-@userId" data-bs-parent="#userResponsesAccordion">
+                                            <div class="accordion-body p-0">
+                                                <!-- Nested accordion for this user's responses -->
+                                                <div class="accordion" id="responses-@userId">
+                                                    @{
+                                                        var userResponses = userGroup.ToList();
+                                                        for (int i = 0; i < userResponses.Count; i++)
+                                                        {
+                                                            var response = userResponses[i];
+                                                            var responseNumber = userResponses.Count - i; // Descending order
+                                                            var responseId = $"response-{response.Id}";
+                                                            
+                                                            <div class="accordion-item">
+                                                                <h3 class="accordion-header" id="heading-@responseId">
+                                                                    <button class="accordion-button collapsed ps-4" type="button" 
+                                                                            data-bs-toggle="collapse" data-bs-target="#collapse-@responseId" 
+                                                                            aria-expanded="false" aria-controls="collapse-@responseId">
+                                                                        <div class="d-flex justify-content-between align-items-center w-100">
+                                                                            <span>Response @responseNumber</span>
+                                                                            <small class="text-muted">Submitted: @response.SubmittedAt.ToString("g")</small>
+                                                                        </div>
+                                                                    </button>
+                                                                </h3>
+                                                                <div id="collapse-@responseId" class="accordion-collapse collapse" 
+                                                                     aria-labelledby="heading-@responseId" data-bs-parent="#responses-@userId">
+                                                                    <div class="accordion-body">
+                                                                        <div class="list-group">
+                                                                            @foreach (var question in Model.TextQuestions)
+                                                                            {
+                                                                                var answerForQuestion = question.TextAnswers
+                                                                                    .FirstOrDefault(a => a.ResponseId == response.Id);
+                                                                                    
+                                                                                if (answerForQuestion != null)
+                                                                                {
+                                                                                    <div class="list-group-item">
+                                                                                        <h6 class="mb-2">@question.QuestionTitle</h6>
+                                                                                        <p class="ms-3 mb-0 p-2 bg-light rounded">@answerForQuestion.Text</p>
+                                                                                    </div>
+                                                                                }
+                                                                            }
+                                                                        </div>
+                                                                        <div class="d-flex justify-content-end mt-3">
+                                                                            <a asp-controller="FormResponse" asp-action="Details" asp-route-id="@response.Id" 
+                                                                               class="btn btn-sm btn-outline-primary">
+                                                                                <i class="bi bi-eye me-1"></i> View Full Response
+                                                                            </a>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        }
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                @if (Model.NumericQuestions != null && Model.NumericQuestions.Any())
+                {
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">Numeric Results</h5>
+                        </div>
+                        <div class="card-body">
+                            @foreach (var question in Model.NumericQuestions)
+                            {
+                                <div class="mb-4">
+                                    <h5>@question.QuestionTitle</h5>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="card bg-light">
+                                                <div class="card-body text-center">
+                                                    <h6 class="card-title">Average</h6>
+                                                    <p class="card-text display-6">@question.Average.ToString("F1")</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="card bg-light">
+                                                <div class="card-body text-center">
+                                                    <h6 class="card-title">Minimum</h6>
+                                                    <p class="card-text display-6">@question.Min</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="card bg-light">
+                                                <div class="card-body text-center">
+                                                    <h6 class="card-title">Maximum</h6>
+                                                    <p class="card-text display-6">@question.Max</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+
+                @if (Model.BooleanQuestions != null && Model.BooleanQuestions.Any())
+                {
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">Yes/No Questions</h5>
+                        </div>
+                        <div class="card-body">
+                            @foreach (var question in Model.BooleanQuestions)
+                            {
+                                <div class="mb-4">
+                                    <h5>@question.QuestionTitle</h5>
+                                    <div class="progress" style="height: 30px;">
+                                        @{
+                                            var yesPercentage = question.Total > 0 ? (question.YesCount * 100 / question.Total) : 0;
+                                            var noPercentage = 100 - yesPercentage;
+                                        }
+                                        <div class="progress-bar bg-success" role="progressbar" 
+                                             style="width: @yesPercentage%;" aria-valuenow="@yesPercentage" 
+                                             aria-valuemin="0" aria-valuemax="100">
+                                            Yes: @question.YesCount (@yesPercentage%)
+                                        </div>
+                                        <div class="progress-bar bg-danger" role="progressbar" 
+                                             style="width: @noPercentage%;" aria-valuenow="@noPercentage" 
+                                             aria-valuemin="0" aria-valuemax="100">
+                                            No: @(question.Total - question.YesCount) (@noPercentage%)
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Actions</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-grid gap-2">
+                            <a asp-controller="FormTemplate" asp-action="Details" asp-route-id="@Model.TemplateId" class="btn btn-primary">
+                                <i class="bi bi-arrow-left me-1"></i> Back to Template
+                            </a>
+                            @if (Model.TotalResponses > 0)
+                            {
+                                <a href="#" class="btn btn-outline-primary">
+                                    <i class="bi bi-download me-1"></i> Export Results (CSV)
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Multiple Choice/Poll Charts
+            @foreach (var question in Model.Questions.Where(q => q.Type == FormsApp.Models.QuestionType.MultipleChoice || q.Type == FormsApp.Models.QuestionType.Poll))
+            {
+                if (question.QuestionResults != null && question.QuestionResults.Any())
+                {
+                    <text>
+                    const ctx@(question.Id) = document.getElementById('chart-@question.Id').getContext('2d');
+                    
+                    // Extract data
+                    const questionData@(question.Id) = @Html.Raw(Json.Serialize(question.QuestionResults));
+                    
+                    // Debug: Log the question data to console
+                    console.log('Question ID: @question.Id, Data:', questionData@(question.Id));
+                    
+                    // Get labels and data - making sure we're using the proper labels from options
+                    const labels@(question.Id) = Object.keys(questionData@(question.Id));
+                    const data@(question.Id) = Object.values(questionData@(question.Id));
+                    
+                    console.log('Labels:', labels@(question.Id));
+                    console.log('Values:', data@(question.Id));
+                    
+                    // Map options by text for proper display
+                    const optionLabels@(question.Id) = [];
+                    const optionData@(question.Id) = [];
+                    
+                    // Add option text display for tooltip
+                    const tooltips@(question.Id) = [];
+                    @foreach (var option in question.Options.OrderBy(o => o.Order))
+                    {
+                        <text>
+                        tooltips@(question.Id).push("@option.Text");
+                        // Find the value for this option
+                        const value@(option.Id) = questionData@(question.Id)["@option.Text"] || 0;
+                        optionLabels@(question.Id).push("@option.Text");
+                        optionData@(question.Id).push(value@(option.Id));
+                        </text>
+                    }
+                    
+                    console.log('Option Labels:', optionLabels@(question.Id));
+                    console.log('Option Data:', optionData@(question.Id));
+                    
+                    // Generate different colors
+                    const backgroundColors@(question.Id) = optionLabels@(question.Id).map((_, index) => {
+                        const hue = (index * 137) % 360; // Use golden ratio for better color distribution
+                        return `hsla(${hue}, 70%, 60%, 0.7)`;
+                    });
+                    
+                    const chart@(question.Id) = new Chart(ctx@(question.Id), {
+                        type: 'pie',
+                        data: {
+                            labels: optionLabels@(question.Id),
+                            datasets: [{
+                                data: optionData@(question.Id),
+                                backgroundColor: backgroundColors@(question.Id),
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'right',
+                                    labels: {
+                                        font: {
+                                            size: 12
+                                        },
+                                        usePointStyle: true,
+                                        padding: 15
+                                    }
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            const value = context.raw;
+                                            const total = context.dataset.data.reduce((acc, val) => acc + val, 0);
+                                            const percentage = Math.round((value / total) * 100);
+                                            return `${context.label}: ${value} (${percentage}%)`;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                    </text>
+                }
+            }
+        });
+    </script>
+} 

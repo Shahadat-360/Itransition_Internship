@@ -1,0 +1,238 @@
+@model IEnumerable<FormsApp.Models.Topic>
+
+@{
+    ViewData["Title"] = "Topics";
+}
+
+<style>
+    .cursor-pointer {
+        cursor: pointer;
+    }
+    
+    .topic-row:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+    }
+</style>
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1>@ViewData["Title"]</h1>
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="bi bi-plus-circle me-1"></i> Create New Topic
+        </a>
+    </div>
+    
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-light">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">All Topics</h5>
+                <div class="d-flex gap-2">
+                    <div class="input-group">
+                        <input type="text" id="topic-search" class="form-control" placeholder="Search topics..." aria-label="Search topics">
+                        <button class="btn btn-outline-secondary" type="button" id="search-button">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </div>
+                    <button type="button" id="delete-selected" class="btn btn-sm btn-danger" disabled>
+                        <i class="bi bi-trash me-1"></i> Delete Selected
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <form id="batch-delete-form" asp-action="BatchDelete" method="post">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th width="40">
+                                    <input class="form-check-input" type="checkbox" id="select-all" aria-label="Select all topics">
+                                </th>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th>Templates</th>
+                                <th>Created</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                var templateCount = ViewData[$"TemplateCount_{item.Id}"] ?? 0;
+                                
+                                <tr class="topic-row" data-id="@item.Id" data-name="@item.Name.ToLower()" data-description="@(item.Description?.ToLower() ?? "")" role="button">
+                                    <td onclick="event.stopPropagation();">
+                                        <input class="form-check-input topic-checkbox" type="checkbox" 
+                                               name="selectedTopics" value="@item.Id" 
+                                               @(Convert.ToInt32(templateCount) > 0 ? "disabled" : "")
+                                               aria-label="Select topic @item.Name">
+                                    </td>
+                                    <td>@item.Name</td>
+                                    <td>@(item.Description?.Length > 50 ? item.Description.Substring(0, 47) + "..." : item.Description)</td>
+                                    <td>
+                                        @if (Convert.ToInt32(templateCount) > 0)
+                                        {
+                                            <span class="badge bg-info">@templateCount</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">0</span>
+                                        }
+                                    </td>
+                                    <td>@item.CreatedAt.ToString("MMM dd, yyyy")</td>
+                                </tr>
+                            }
+                            
+                            @if (!Model.Any())
+                            {
+                                <tr>
+                                    <td colspan="5" class="text-center py-3">
+                                        <em>No topics found. Click "Create New Topic" to add one.</em>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Confirmation Modal -->
+    <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteConfirmationModalLabel">Confirm Deletion</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete the selected topics? This action cannot be undone.</p>
+                    <p id="selected-count-message"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirm-delete">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="mt-4">
+        <h5>About Topics</h5>
+        <p>Topics help organize your form templates by category. Create topics that are relevant to your organization or personal needs.</p>
+        <p>Templates with the same topic will be grouped together, making it easier for users to find related content.</p>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const selectAllCheckbox = document.getElementById('select-all');
+            const topicCheckboxes = document.querySelectorAll('.topic-checkbox:not([disabled])');
+            const deleteSelectedButton = document.getElementById('delete-selected');
+            const batchDeleteForm = document.getElementById('batch-delete-form');
+            const deleteConfirmationModal = new bootstrap.Modal(document.getElementById('deleteConfirmationModal'));
+            const confirmDeleteButton = document.getElementById('confirm-delete');
+            const selectedCountMessage = document.getElementById('selected-count-message');
+            const searchInput = document.getElementById('topic-search');
+            const searchButton = document.getElementById('search-button');
+            const topicRows = document.querySelectorAll('.topic-row');
+            
+            // Make rows clickable
+            topicRows.forEach(row => {
+                row.addEventListener('click', function(e) {
+                    // Don't navigate if user is selecting text or clicking a checkbox
+                    if (window.getSelection().toString() !== '' || 
+                        e.target.tagName === 'INPUT' ||
+                        e.target.closest('input') !== null) {
+                        return;
+                    }
+                    
+                    const topicId = this.dataset.id;
+                    // Navigate in same tab
+                    window.location.href = `/Topic/Edit/${topicId}`;
+                });
+                
+                // Add hover effect
+                row.classList.add('cursor-pointer');
+            });
+            
+            // Function to update the delete button state
+            function updateDeleteButtonState() {
+                const checkedCheckboxes = document.querySelectorAll('.topic-checkbox:checked');
+                deleteSelectedButton.disabled = checkedCheckboxes.length === 0;
+                
+                // Update "Select All" checkbox state
+                if (topicCheckboxes.length > 0) {
+                    selectAllCheckbox.checked = checkedCheckboxes.length === topicCheckboxes.length;
+                    selectAllCheckbox.indeterminate = checkedCheckboxes.length > 0 && checkedCheckboxes.length < topicCheckboxes.length;
+                }
+            }
+            
+            // Event listener for checkboxes
+            topicCheckboxes.forEach(function(checkbox) {
+                checkbox.addEventListener('change', updateDeleteButtonState);
+            });
+            
+            // Event listener for "Select All" checkbox
+            selectAllCheckbox.addEventListener('change', function() {
+                topicCheckboxes.forEach(function(checkbox) {
+                    checkbox.checked = selectAllCheckbox.checked;
+                });
+                updateDeleteButtonState();
+            });
+            
+            // Event listener for delete button
+            deleteSelectedButton.addEventListener('click', function() {
+                const checkedCheckboxes = document.querySelectorAll('.topic-checkbox:checked');
+                selectedCountMessage.textContent = `You are about to delete ${checkedCheckboxes.length} topic${checkedCheckboxes.length === 1 ? '' : 's'}.`;
+                deleteConfirmationModal.show();
+            });
+            
+            // Event listener for confirm delete button
+            confirmDeleteButton.addEventListener('click', function() {
+                batchDeleteForm.submit();
+            });
+            
+            // Search functionality
+            function performSearch() {
+                const searchTerm = searchInput.value.toLowerCase().trim();
+                let visibleCount = 0;
+                
+                topicRows.forEach(row => {
+                    const name = row.dataset.name;
+                    const description = row.dataset.description;
+                    
+                    if (searchTerm === '' || 
+                        name.includes(searchTerm) || 
+                        description.includes(searchTerm)) {
+                        row.style.display = '';
+                        visibleCount++;
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+                
+                // If no results, show a message
+                const noResultsRow = document.getElementById('no-results-row');
+                if (visibleCount === 0 && searchTerm !== '') {
+                    if (!noResultsRow) {
+                        const tbody = document.querySelector('tbody');
+                        const newRow = document.createElement('tr');
+                        newRow.id = 'no-results-row';
+                        newRow.innerHTML = `<td colspan="5" class="text-center py-3"><em>No topics match your search.</em></td>`;
+                        tbody.appendChild(newRow);
+                    }
+                } else if (noResultsRow) {
+                    noResultsRow.remove();
+                }
+            }
+            
+            // Search on key input
+            searchInput.addEventListener('input', performSearch);
+            
+            // Search on button click
+            searchButton.addEventListener('click', performSearch);
+        });
+    </script>
+} 

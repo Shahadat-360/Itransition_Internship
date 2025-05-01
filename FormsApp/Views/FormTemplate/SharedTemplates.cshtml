@@ -1,0 +1,63 @@
+@model List<FormsApp.ViewModels.FormTemplateViewModel>
+
+@{
+    ViewData["Title"] = "Shared Templates";
+}
+
+<div class="container">
+    <h1 class="mb-4">Shared Templates</h1>
+    <p class="lead">Forms shared with you by other users.</p>
+
+    <div class="mb-4">
+        <a asp-action="Index" class="btn btn-outline-primary">
+            <i class="bi bi-arrow-left me-1"></i> My Templates
+        </a>
+    </div>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            @foreach (var template in Model)
+            {
+                <div class="col">
+                    <div class="card h-100 shadow-sm">
+                        @if (!string.IsNullOrEmpty(template.ImageUrl))
+                        {
+                            <img src="@template.ImageUrl" class="card-img-top" alt="@template.Title" style="height: 150px; object-fit: cover;">
+                        }
+                        else
+                        {
+                            <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 150px;">
+                                <i class="bi bi-file-earmark-text" style="font-size: 3rem; color: #6c757d;"></i>
+                            </div>
+                        }
+                        <div class="card-body">
+                            <h5 class="card-title">@template.Title</h5>
+                            <p class="card-text">@(template.Description?.Length > 100 ? template.Description.Substring(0, 100) + "..." : template.Description)</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">By @template.CreatorName</small>
+                                <div>
+                                    <span class="badge bg-info me-1"><i class="bi bi-heart-fill"></i> @template.LikesCount</span>
+                                    <span class="badge bg-secondary"><i class="bi bi-chat-fill"></i> @template.CommentsCount</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="d-grid">
+                                <a asp-action="Details" asp-route-id="@template.Id" class="btn btn-primary">
+                                    <i class="bi bi-eye me-1"></i> View Form
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">
+            <p class="mb-0">No templates have been shared with you yet.</p>
+        </div>
+    }
+</div> 

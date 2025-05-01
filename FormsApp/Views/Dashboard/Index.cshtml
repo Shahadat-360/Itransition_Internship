@@ -1,0 +1,133 @@
+@model FormsApp.ViewModels.DashboardViewModel
+
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="container">
+    <div class="mb-4">
+        <h1>Dashboard</h1>
+        <p class="lead">Welcome to your FormsApp dashboard</p>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <!-- Recent Templates -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">My Recent Templates</h5>
+                    <a asp-controller="FormTemplate" asp-action="Index" class="btn btn-sm btn-outline-primary">View All</a>
+                </div>
+                <div class="card-body">
+                    @if (Model.UserTemplates != null && Model.UserTemplates.Any())
+                    {
+                        <div class="list-group">
+                            @foreach (var template in Model.UserTemplates)
+                            {
+                                <a asp-controller="FormTemplate" asp-action="Details" asp-route-id="@template.Id" 
+                                   class="list-group-item list-group-item-action">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h5 class="mb-1">@template.Title</h5>
+                                        <small>@template.CreatedAt.ToShortDateString()</small>
+                                    </div>
+                                    <p class="mb-1">@(template.Description?.Length > 100 ? template.Description.Substring(0, 100) + "..." : template.Description)</p>
+                                    <small>
+                                        @if (template.IsPublic)
+                                        {
+                                            <span class="badge bg-success">Public</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">Private</span>
+                                        }
+                                        <span class="badge bg-info"><i class="bi bi-heart-fill"></i> @template.LikesCount</span>
+                                    </small>
+                                </a>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info">
+                            <p class="mb-0">You haven't created any form templates yet. <a asp-controller="FormTemplate" asp-action="Create">Create your first form</a>!</p>
+                        </div>
+                    }
+                </div>
+            </div>
+            
+            <!-- Recent Responses -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">My Recent Responses</h5>
+                    <a asp-controller="FormResponse" asp-action="Index" class="btn btn-sm btn-outline-primary">View All</a>
+                </div>
+                <div class="card-body">
+                    @if (Model.UserResponses != null && Model.UserResponses.Any())
+                    {
+                        <div class="list-group">
+                            @foreach (var response in Model.UserResponses)
+                            {
+                                <a asp-controller="FormResponse" asp-action="Details" asp-route-id="@response.Id" 
+                                   class="list-group-item list-group-item-action">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h5 class="mb-1">@response.TemplateName</h5>
+                                        <small>@response.SubmittedAt.ToShortDateString()</small>
+                                    </div>
+                                    <p class="mb-1">Created by: @response.CreatorName</p>
+                                </a>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info">
+                            <p class="mb-0">You haven't submitted any form responses yet.</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <!-- Quick Actions -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a asp-controller="FormTemplate" asp-action="Create" class="btn btn-primary">
+                            <i class="bi bi-plus-circle me-1"></i> Create New Form
+                        </a>
+                        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-primary">
+                            <i class="bi bi-search me-1"></i> Browse Public Forms
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Activity Summary -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Activity Summary</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Forms Created
+                            <span class="badge bg-primary rounded-pill">@(Model.UserTemplates?.Count() ?? 0)</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Responses Submitted
+                            <span class="badge bg-primary rounded-pill">@(Model.UserResponses?.Count() ?? 0)</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Total Likes Received
+                            <span class="badge bg-primary rounded-pill">@(Model.UserTemplates?.Sum(t => t.LikesCount) ?? 0)</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

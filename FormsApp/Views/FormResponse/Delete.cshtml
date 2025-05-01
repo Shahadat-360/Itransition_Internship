@@ -1,0 +1,51 @@
+@model FormsApp.ViewModels.FormResponseViewModel
+
+@{
+    ViewData["Title"] = "Delete Response";
+}
+
+<div class="container">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+            <li class="breadcrumb-item"><a asp-controller="FormResponse" asp-action="Index">My Responses</a></li>
+            <li class="breadcrumb-item"><a asp-controller="FormResponse" asp-action="Details" asp-route-id="@Model.Id">Response Details</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Delete Response</li>
+        </ol>
+    </nav>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-danger text-white">
+            <h3 class="card-title mb-0">Are you sure you want to delete this response?</h3>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-warning">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                This action <strong>cannot be undone</strong>. All answers and data associated with this response will be permanently deleted.
+            </div>
+
+            <dl class="row mt-4">
+                <dt class="col-sm-3">Form Template</dt>
+                <dd class="col-sm-9">@Model.TemplateTitle</dd>
+
+                <dt class="col-sm-3">Submitted</dt>
+                <dd class="col-sm-9">@Model.CreatedAt.ToLocalTime().ToString("g")</dd>
+
+                <dt class="col-sm-3">Last Modified</dt>
+                <dd class="col-sm-9">@Model.LastModifiedAt.ToLocalTime().ToString("g")</dd>
+            </dl>
+
+            <div class="d-flex justify-content-between mt-4">
+                <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-1"></i> Back to Response
+                </a>
+                <form asp-action="Delete" method="post">
+                    <input type="hidden" name="id" value="@Model.Id" />
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash me-1"></i> Delete Response
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div> 

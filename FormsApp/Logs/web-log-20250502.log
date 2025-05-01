@@ -32,3 +32,10 @@
 2025-05-02 02:49:23.533 +06:00 [INF] Existing admin user 'admin@formsapp.com' already exists.
 2025-05-02 02:49:23.577 +06:00 [INF] Existing admin user 'admin@formsapp.com' already has the 'Admin' role.
 2025-05-02 02:49:38.051 +06:00 [INF] User admin@formsapp.com logged in successfully.
+2025-05-02 03:17:16.149 +06:00 [INF] Starting application...
+2025-05-02 03:17:18.075 +06:00 [INF] Checking for role 'Admin'. Exists: true
+2025-05-02 03:17:18.160 +06:00 [INF] Existing admin user 'admin@formsapp.com' already exists.
+2025-05-02 03:17:18.200 +06:00 [INF] Existing admin user 'admin@formsapp.com' already has the 'Admin' role.
+2025-05-02 03:17:48.775 +06:00 [INF] User shahadat3@gmail.com logged in successfully.
+2025-05-02 03:19:01.563 +06:00 [INF] User cc5cacfb-c98f-4c6c-af40-d462b4d39492 changed their password successfully.
+2025-05-02 03:19:19.579 +06:00 [INF] User shahadat3@gmail.com logged in successfully.

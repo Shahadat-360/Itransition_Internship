@@ -83,6 +83,10 @@
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="accountDropdown">
                                     <li>
+                                        <a class="dropdown-item" asp-controller="Account" asp-action="ChangePassword">Change Password</a>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
                                         <form asp-area="" asp-controller="Account" asp-action="Logout" method="post">
                                             <button type="submit" class="dropdown-item">Logout</button>
                                         </form>

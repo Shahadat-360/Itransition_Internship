@@ -151,6 +151,49 @@ namespace FormsApp.Controllers
             return View();
         }
         
+        [HttpGet]
+        [Authorize]
+        public IActionResult ChangePassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+            
+            if (result.Succeeded)
+            {
+                // Refresh the sign-in cookie
+                await _signInManager.RefreshSignInAsync(user);
+                
+                _logger.LogInformation("User {UserId} changed their password successfully.", user.Id);
+                TempData["SuccessMessage"] = "Your password has been changed successfully.";
+                return RedirectToAction("Index", "Home");
+            }
+            
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
+            }
+            
+            return View(model);
+        }
+
         private IActionResult RedirectToLocal(string? returnUrl)
         {
             return Url.IsLocalUrl(returnUrl) ? Redirect(returnUrl) : RedirectToAction(nameof(HomeController.Index), "Home");

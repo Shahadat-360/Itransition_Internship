@@ -1115,6 +1115,13 @@ namespace FormsApp.Controllers
                         if (!tagsToUpdate.ContainsKey(tag.Id))
                         {
                             tagsToUpdate.Add(tag.Id, tag);
+                            // Initialize with current usage count
+                            tag.UsageCount = tag.UsageCount;
+                        }
+                        else
+                        {
+                            // For each appearance of the tag, we need to decrement later
+                            // We don't modify the actual tag count yet, just track it
                         }
                     }
                     
@@ -1160,7 +1167,13 @@ namespace FormsApp.Controllers
             // Update tag usage counts
             foreach (var tag in tagsToUpdate.Values)
             {
-                tag.UsageCount = Math.Max(0, tag.UsageCount - 1);
+                // Get count of template tags being deleted with this tag
+                var tagUsageInDeletedTemplates = selectedTemplates
+                    .SelectMany(id => _context.TemplateTags
+                        .Where(tt => tt.TemplateId == id && tt.TagId == tag.Id))
+                    .Count();
+                    
+                tag.UsageCount = Math.Max(0, tag.UsageCount - tagUsageInDeletedTemplates);
                 
                 if (tag.UsageCount == 0)
                 {

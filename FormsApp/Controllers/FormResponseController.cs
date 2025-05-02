@@ -1,6 +1,7 @@
 using FormsApp.Data;
 using FormsApp.Models;
 using FormsApp.ViewModels;
+using FormsApp.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -9,15 +10,35 @@ using System.Security.Claims;
 namespace FormsApp.Controllers
 {
     [Authorize]
-    public class FormResponseController : Controller
+    public class FormResponseController(ApplicationDbContext context, FormResponseService responseService) : Controller
     {
-        private readonly ApplicationDbContext _context;
-        
-        public FormResponseController(ApplicationDbContext context)
+        private readonly ApplicationDbContext _context = context;
+        private readonly FormResponseService _responseService = responseService;
+
+        // Helper method to check if a user has permission to access a form template
+        private async Task<bool> HasAccessToTemplate(FormTemplate template, string userId, string userEmail, bool isAdmin)
         {
-            _context = context;
+            if (template.IsPublic)
+                return true;
+                
+            if (isAdmin || template.CreatorId == userId)
+                return true;
+                
+            var isAllowedById = await _context.AllowedUsers
+                .AnyAsync(au => au.TemplateId == template.Id && au.UserId == userId);
+                
+            var isAllowedByEmail = !string.IsNullOrEmpty(userEmail) && await _context.AllowedUsers
+                .AnyAsync(au => au.TemplateId == template.Id && au.Email == userEmail);
+                
+            return isAllowedById || isAllowedByEmail;
         }
         
+        // Helper method to check if a user has permission to access a response
+        private bool HasAccessToResponse(FormResponse response, string userId, bool isAdmin)
+        {
+            return isAdmin || response.RespondentId == userId || response.Template.CreatorId == userId;
+        }
+
         // GET: /FormResponse
         public async Task<IActionResult> Index()
         {
@@ -58,23 +79,10 @@ namespace FormsApp.Controllers
             }
             
             // Check if the user is allowed to fill out this form
-            if (!template.IsPublic)
+            if (!await HasAccessToTemplate(template, User.FindFirstValue(ClaimTypes.NameIdentifier), User.FindFirstValue(ClaimTypes.Email), User.IsInRole("Admin")))
             {
-                var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                var userEmail = User.FindFirstValue(ClaimTypes.Email);
-                var isAdmin = User.IsInRole("Admin");
-                
-                var isAllowedById = await _context.AllowedUsers
-                    .AnyAsync(au => au.TemplateId == id && au.UserId == currentUserId);
-                    
-                var isAllowedByEmail = !string.IsNullOrEmpty(userEmail) && await _context.AllowedUsers
-                    .AnyAsync(au => au.TemplateId == id && au.Email == userEmail);
-                    
-                if (!isAdmin && template.CreatorId != currentUserId && !isAllowedById && !isAllowedByEmail)
-                {
-                    TempData["ErrorMessage"] = "You don't have permission to fill out this form.";
-                    return RedirectToAction("Index", "FormTemplate");
-                }
+                TempData["ErrorMessage"] = "You don't have permission to fill out this form.";
+                return RedirectToAction("Index", "FormTemplate");
             }
             
             // Set up ViewData for the view
@@ -103,103 +111,31 @@ namespace FormsApp.Controllers
             }
             
             // Check if the user is allowed to fill out this form
-            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var userEmail = User.FindFirstValue(ClaimTypes.Email);
-            var isAdmin = User.IsInRole("Admin");
-            
-            if (!template.IsPublic)
+            if (!await HasAccessToTemplate(template, User.FindFirstValue(ClaimTypes.NameIdentifier), User.FindFirstValue(ClaimTypes.Email), User.IsInRole("Admin")))
             {
-                var isAllowedById = await _context.AllowedUsers
-                    .AnyAsync(au => au.TemplateId == templateId && au.UserId == currentUserId);
-                    
-                var isAllowedByEmail = !string.IsNullOrEmpty(userEmail) && await _context.AllowedUsers
-                    .AnyAsync(au => au.TemplateId == templateId && au.Email == userEmail);
-                    
-                if (!isAdmin && template.CreatorId != currentUserId && !isAllowedById && !isAllowedByEmail)
-                {
-                    TempData["ErrorMessage"] = "You don't have permission to fill out this form.";
-                    return RedirectToAction("Index", "FormTemplate");
-                }
+                TempData["ErrorMessage"] = "You don't have permission to fill out this form.";
+                return RedirectToAction("Index", "FormTemplate");
             }
             
             // Create a new form response
             var response = new FormResponse
             {
                 TemplateId = templateId,
-                RespondentId = currentUserId,
+                RespondentId = User.FindFirstValue(ClaimTypes.NameIdentifier),
                 CreatedAt = DateTime.UtcNow,
                 SubmittedAt = DateTime.UtcNow,
                 LastModifiedAt = DateTime.UtcNow,
                 Answers = new List<Answer>()
             };
             
-            // Process the form data
-            foreach (var question in template.Questions)
+            // Process form data using the service
+            var validationErrors = new List<string>();
+            var answers = _responseService.ProcessFormData(template, formData, validationErrors);
+            
+            // Add validation errors to ModelState
+            foreach (var error in validationErrors)
             {
-                var questionKey = $"question_{question.Id}";
-                string answerText = string.Empty;
-                
-                // Handle different question types
-                switch (question.Type)
-                {
-                    case QuestionType.SingleLineText:
-                    case QuestionType.MultiLineText:
-                        if (formData.TryGetValue(questionKey, out var textValue))
-                        {
-                            answerText = textValue;
-                        }
-                        break;
-                        
-                    case QuestionType.MultipleChoice:
-                    case QuestionType.Poll:
-                        if (formData.TryGetValue(questionKey, out var optionId))
-                        {
-                            // Check if the value is an ID or text
-                            if (int.TryParse(optionId, out int parsedOptionId))
-                            {
-                                // Find the option by ID and use the ID as answerText
-                                answerText = optionId;
-                            }
-                            else
-                            {
-                                // Use the text value directly
-                                answerText = optionId;
-                            }
-                        }
-                        break;
-                        
-                    case QuestionType.Integer:
-                        if (formData.TryGetValue(questionKey, out var intValue))
-                        {
-                            answerText = intValue;
-                        }
-                        break;
-                        
-                    default:
-                        // Skip unsupported question types
-                        continue;
-                }
-                
-                // Check if the question is required
-                if (question.Required && string.IsNullOrWhiteSpace(answerText))
-                {
-                    ModelState.AddModelError(string.Empty, $"Question '{question.Text}' is required.");
-                    continue;
-                }
-                
-                // Add the answer
-                if (!string.IsNullOrWhiteSpace(answerText))
-                {
-                    var answer = new Answer
-                    {
-                        QuestionId = question.Id,
-                        Text = answerText,
-                        CreatedAt = DateTime.UtcNow
-                        // Let EF Core handle ResponseId via navigation property
-                    };
-                    
-                    response.Answers.Add(answer);
-                }
+                ModelState.AddModelError(string.Empty, error);
             }
             
             // Validate
@@ -228,8 +164,13 @@ namespace FormsApp.Controllers
                 return View(model);
             }
             
-            // Save the response and its related answers in one go.
-            // EF Core should handle setting the Answer.ResponseId automatically.
+            // Add answers to the response
+            foreach (var answer in answers)
+            {
+                response.Answers.Add(answer);
+            }
+            
+            // Save the response and its related answers
             _context.FormResponses.Add(response);
             await _context.SaveChangesAsync(); 
             
@@ -259,14 +200,8 @@ namespace FormsApp.Controllers
                 return RedirectToAction("Index");
             }
             
-            // For debugging - log answer count
-            Console.WriteLine($"Response {id} fetched. Found {response.Answers?.Count ?? 0} answers.");
-            
             // Check if the user is allowed to view this response
-            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var isAdmin = User.IsInRole("Admin");
-            
-            if (!isAdmin && response.RespondentId != currentUserId && response.Template.CreatorId != currentUserId)
+            if (!HasAccessToResponse(response, User.FindFirstValue(ClaimTypes.NameIdentifier), User.IsInRole("Admin")))
             {
                 TempData["ErrorMessage"] = "You don't have permission to view this response.";
                 return RedirectToAction("Index");
@@ -340,10 +275,7 @@ namespace FormsApp.Controllers
             }
             
             // Check if the user is allowed to edit this response
-            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var isAdmin = User.IsInRole("Admin");
-            
-            if (!isAdmin && response.RespondentId != currentUserId)
+            if (!HasAccessToResponse(response, User.FindFirstValue(ClaimTypes.NameIdentifier), User.IsInRole("Admin")))
             {
                 TempData["ErrorMessage"] = "You don't have permission to edit this response.";
                 return RedirectToAction("Index");
@@ -383,10 +315,7 @@ namespace FormsApp.Controllers
             }
             
             // Check if the user is allowed to edit this response
-            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var isAdmin = User.IsInRole("Admin");
-            
-            if (!isAdmin && response.RespondentId != currentUserId)
+            if (!HasAccessToResponse(response, User.FindFirstValue(ClaimTypes.NameIdentifier), User.IsInRole("Admin")))
             {
                 TempData["ErrorMessage"] = "You don't have permission to edit this response.";
                 return RedirectToAction("Index");
@@ -399,96 +328,14 @@ namespace FormsApp.Controllers
                 TempData["WarningMessage"] = "The response was updated by someone else. Your changes were still saved, but please review the response.";
             }
             
-            // Update the answers
-            foreach (var question in response.Template.Questions)
+            // Process form data using the service
+            var validationErrors = new List<string>();
+            await _responseService.UpdateResponseAnswers(response, formData, validationErrors);
+            
+            // Add validation errors to ModelState
+            foreach (var error in validationErrors)
             {
-                var questionKey = $"question_{question.Id}";
-                string answerText = string.Empty;
-                
-                // Handle different question types
-                switch (question.Type)
-                {
-                    case QuestionType.SingleLineText:
-                    case QuestionType.MultiLineText:
-                        if (formData.TryGetValue(questionKey, out var textValue))
-                        {
-                            answerText = textValue;
-                        }
-                        break;
-                        
-                    case QuestionType.MultipleChoice:
-                    case QuestionType.Poll:
-                        if (formData.TryGetValue(questionKey, out var optionId))
-                        {
-                            // Check if the value is an ID or text
-                            if (int.TryParse(optionId, out int parsedOptionId))
-                            {
-                                // Find the option by ID and use the ID as answerText
-                                answerText = optionId;
-                            }
-                            else
-                            {
-                                // Use the text value directly
-                                answerText = optionId;
-                            }
-                        }
-                        break;
-                        
-                    case QuestionType.Integer:
-                        if (formData.TryGetValue(questionKey, out var intValue))
-                        {
-                            answerText = intValue;
-                        }
-                        break;
-                        
-                    default:
-                        // Skip unsupported question types
-                        continue;
-                }
-                
-                // Check if the question is required
-                if (question.Required && string.IsNullOrWhiteSpace(answerText))
-                {
-                    ModelState.AddModelError(string.Empty, $"Question '{question.Text}' is required.");
-                    continue;
-                }
-                
-                // Find or create the answer
-                var answer = response.Answers.FirstOrDefault(a => a.QuestionId == question.Id);
-                
-                if (answer == null)
-                {
-                    // Create a new answer if it doesn't exist
-                    if (!string.IsNullOrWhiteSpace(answerText))
-                    {
-                        answer = new Answer
-                        {
-                            QuestionId = question.Id,
-                            ResponseId = response.Id,
-                            Text = answerText,
-                            CreatedAt = DateTime.UtcNow
-                        };
-                        
-                        response.Answers.Add(answer);
-                        _context.Answers.Add(answer);
-                    }
-                }
-                else
-                {
-                    // Update the existing answer
-                    if (string.IsNullOrWhiteSpace(answerText))
-                    {
-                        // Remove the answer if it's empty
-                        response.Answers.Remove(answer);
-                        _context.Answers.Remove(answer);
-                    }
-                    else
-                    {
-                        // Update the answer text
-                        answer.Text = answerText;
-                        _context.Answers.Update(answer);
-                    }
-                }
+                ModelState.AddModelError(string.Empty, error);
             }
             
             // Validate
@@ -530,12 +377,6 @@ namespace FormsApp.Controllers
                 return View(model);
             }
             
-            // Update the response
-            response.LastModifiedAt = DateTime.UtcNow;
-            
-            // Save
-            await _context.SaveChangesAsync();
-            
             TempData["SuccessMessage"] = "Your response has been updated successfully.";
             return RedirectToAction(nameof(Details), new { id = response.Id });
         }
@@ -557,10 +398,7 @@ namespace FormsApp.Controllers
             }
             
             // Check if the user is allowed to delete this response
-            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var isAdmin = User.IsInRole("Admin");
-            
-            if (!isAdmin && response.RespondentId != currentUserId)
+            if (!HasAccessToResponse(response, User.FindFirstValue(ClaimTypes.NameIdentifier), User.IsInRole("Admin")))
             {
                 TempData["ErrorMessage"] = "You don't have permission to delete this response.";
                 return RedirectToAction("Index");
@@ -596,10 +434,7 @@ namespace FormsApp.Controllers
             }
             
             // Check if the user is allowed to delete this response
-            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var isAdmin = User.IsInRole("Admin");
-            
-            if (!isAdmin && response.RespondentId != currentUserId)
+            if (!HasAccessToResponse(response, User.FindFirstValue(ClaimTypes.NameIdentifier), User.IsInRole("Admin")))
             {
                 TempData["ErrorMessage"] = "You don't have permission to delete this response.";
                 return RedirectToAction("Index");
@@ -611,6 +446,52 @@ namespace FormsApp.Controllers
             await _context.SaveChangesAsync();
             
             TempData["SuccessMessage"] = "Your response has been deleted successfully.";
+            return RedirectToAction("Index");
+        }
+        
+        // POST: /FormResponse/DeleteSelected
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteSelected(List<int> selectedResponses)
+        {
+            if (selectedResponses == null || !selectedResponses.Any())
+            {
+                TempData["ErrorMessage"] = "No responses selected for deletion.";
+                return RedirectToAction("Index");
+            }
+            
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var isAdmin = User.IsInRole("Admin");
+            int deletedCount = 0;
+            
+            foreach (var responseId in selectedResponses)
+            {
+                // Find the response
+                var response = await _context.FormResponses
+                    .Include(r => r.Answers)
+                    .FirstOrDefaultAsync(r => r.Id == responseId);
+                    
+                if (response == null) continue;
+                
+                // Check if the user is allowed to delete this response
+                if (!HasAccessToResponse(response, currentUserId, isAdmin)) continue;
+                
+                // Delete
+                _context.Answers.RemoveRange(response.Answers);
+                _context.FormResponses.Remove(response);
+                deletedCount++;
+            }
+            
+            if (deletedCount > 0)
+            {
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = $"Successfully deleted {deletedCount} response(s).";
+            }
+            else
+            {
+                TempData["WarningMessage"] = "No responses were deleted. You may not have permission to delete the selected responses.";
+            }
+            
             return RedirectToAction("Index");
         }
         
@@ -632,10 +513,7 @@ namespace FormsApp.Controllers
             }
             
             // Check if the user is allowed to view results
-            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var isAdmin = User.IsInRole("Admin");
-            
-            if (!isAdmin && template.CreatorId != currentUserId)
+            if (!await HasAccessToTemplate(template, User.FindFirstValue(ClaimTypes.NameIdentifier), User.FindFirstValue(ClaimTypes.Email), User.IsInRole("Admin")))
             {
                 TempData["ErrorMessage"] = "You don't have permission to view results for this template.";
                 return RedirectToAction("Index", "FormTemplate");
@@ -648,26 +526,10 @@ namespace FormsApp.Controllers
                 .Where(r => r.TemplateId == id)
                 .ToListAsync();
             
-            Console.WriteLine($"Found {responses.Count} total responses for template {id}");
-            Console.WriteLine($"Total answers: {responses.SelectMany(r => r.Answers).Count()}");
-            
             // Get all answers for this template for efficient querying
             var allAnswers = await _context.Answers
                 .Where(a => a.Response.TemplateId == id)
                 .ToListAsync();
-                
-            Console.WriteLine($"Total answers from direct query: {allAnswers.Count}");
-            
-            // For each question, log how many answers exist
-            foreach (var question in template.Questions)
-            {
-                var answersForQuestion = allAnswers.Where(a => a.QuestionId == question.Id).ToList();
-                Console.WriteLine($"Question {question.Id} ({question.Text}) has {answersForQuestion.Count} answers");
-                foreach (var answer in answersForQuestion.Take(5))
-                {
-                    Console.WriteLine($"  - Answer: {answer.Text}");
-                }
-            }
             
             // Create the view model
             var model = new FormAggregationViewModel
@@ -683,7 +545,7 @@ namespace FormsApp.Controllers
                         Text = q.Text,
                         Type = q.Type,
                         Order = q.Order,
-                        QuestionResults = CalculateQuestionResults(q, responses),
+                        QuestionResults = _responseService.CalculateQuestionResults(q, responses),
                         Options = q.Options.Select(o => new OptionViewModel
                         {
                             Id = o.Id,
@@ -774,265 +636,34 @@ namespace FormsApp.Controllers
             return View(model);
         }
 
-        // Helper method to calculate question results
-        private Dictionary<string, int> CalculateQuestionResults(Question question, List<FormResponse> responses)
-        {
-            var results = new Dictionary<string, int>();
-            
-            // Get all answers for this question
-            var answers = responses
-                .SelectMany(r => r.Answers)
-                .Where(a => a.QuestionId == question.Id)
-                .ToList();
-                
-            // For Multiple Choice and Poll questions
-            if (question.Type == QuestionType.MultipleChoice || question.Type == QuestionType.Poll)
-            {
-                // Create mapping of option text to option ID for debugging
-                Console.WriteLine($"Processing question {question.Id} with {question.Options.Count} options and {answers.Count} answers");
-                foreach (var option in question.Options.OrderBy(o => o.Order))
-                {
-                    Console.WriteLine($"Option ID: {option.Id}, Text: '{option.Text}'");
-                    // Initialize counts to zero
-                    results[option.Text] = 0;
-                }
-                
-                // Debug the answers
-                foreach (var answer in answers)
-                {
-                    Console.WriteLine($"Answer for question {question.Id}: '{answer.Text}'");
-                }
-                
-                // Update counts based on answers
-                foreach (var answer in answers)
-                {
-                    if (int.TryParse(answer.Text, out int optionId))
-                    {
-                        var option = question.Options.FirstOrDefault(o => o.Id == optionId);
-                        if (option != null)
-                        {
-                            Console.WriteLine($"Found match for option ID {optionId} (text: {option.Text})");
-                            results[option.Text]++;
-                        }
-                        else
-                        {
-                            Console.WriteLine($"Warning: No option found with ID {optionId} for question {question.Id}");
-                        }
-                    }
-                    else
-                    {
-                        // Check if answer.Text directly matches any option.Text (for older data)
-                        var option = question.Options.FirstOrDefault(o => o.Text == answer.Text);
-                        if (option != null)
-                        {
-                            Console.WriteLine($"Found text match for '{answer.Text}'");
-                            results[option.Text]++;
-                        }
-                        else
-                        {
-                            Console.WriteLine($"Warning: Answer '{answer.Text}' doesn't match any option ID or text");
-                        }
-                    }
-                }
-                
-                // Log the final counts
-                foreach (var result in results)
-                {
-                    Console.WriteLine($"Final count for '{result.Key}': {result.Value}");
-                }
-            }
-            // For text questions
-            else if (question.Type == QuestionType.SingleLineText || question.Type == QuestionType.MultiLineText)
-            {
-                // Group by unique answers
-                var answerGroups = answers
-                    .GroupBy(a => a.Text)
-                    .Select(g => new { Text = g.Key, Count = g.Count() })
-                    .OrderByDescending(g => g.Count)
-                    .Take(10); // Take top 10 most common answers
-                    
-                foreach (var group in answerGroups)
-                {
-                    results.Add(group.Text, group.Count);
-                }
-            }
-            
-            return results;
-        }
-
-        // Temporary fix action to diagnose and fix response issues
-        [HttpGet]
-        [Authorize]
-        public async Task<IActionResult> FixResponse(int id)
-        {
-            // Find the response
-            var response = await _context.FormResponses
-                .Include(r => r.Template)
-                    .ThenInclude(t => t.Questions)
-                .Include(r => r.Answers)
-                .FirstOrDefaultAsync(r => r.Id == id);
-                
-            if (response == null)
-            {
-                TempData["ErrorMessage"] = "Response not found.";
-                return RedirectToAction("Index");
-            }
-            
-            // Check if we have answers
-            if (response.Answers == null || !response.Answers.Any())
-            {
-                TempData["WarningMessage"] = "This response has no answers. Checking for disconnected answers...";
-                
-                // Look for any disconnected answers
-                var disconnectedAnswers = await _context.Answers
-                    .Where(a => a.ResponseId == id)
-                    .ToListAsync();
-                    
-                if (disconnectedAnswers.Any())
-                {
-                    TempData["SuccessMessage"] = $"Found {disconnectedAnswers.Count} disconnected answers and reconnected them.";
-                    
-                    // Add them to the response
-                    foreach (var answer in disconnectedAnswers)
-                    {
-                        if (response.Answers.All(a => a.Id != answer.Id))
-                        {
-                            response.Answers.Add(answer);
-                        }
-                    }
-                    
-                    await _context.SaveChangesAsync();
-                }
-                else
-                {
-                    // If no disconnected answers, show the questions from the template
-                    var questions = response.Template.Questions;
-                    TempData["InfoMessage"] = $"No disconnected answers found. Template has {questions.Count()} questions.";
-                }
-            }
-            else
-            {
-                TempData["InfoMessage"] = $"Response already has {response.Answers.Count} answers.";
-            }
-            
-            return RedirectToAction("Details", new { id });
-        }
-
         // GET: /FormResponse/GetPollResults/{questionId}
         [HttpGet]
-        public async Task<IActionResult> GetPollResults(int questionId)
+        public async Task<IActionResult> GetPollResults(int questionId, int templateId)
         {
             try
             {
-                // Log the request for debugging
-                Console.WriteLine($"GetPollResults: Fetching poll results for questionId={questionId}");
-                
-                if (questionId < 0)
-                {
-                    Console.WriteLine($"GetPollResults: Invalid questionId {questionId}");
-                    return Json(new { 
-                        success = false, 
-                        message = "Invalid question ID",
-                        errorDetails = $"Question ID must be positive, received: {questionId}" 
-                    });
-                }
-                
-                // Get the question with eager loading
-                var question = await _context.Questions
-                    .Include(q => q.Options)
-                    .FirstOrDefaultAsync(q => q.Id == questionId);
-
-                if (question == null)
-                {
-                    Console.WriteLine($"GetPollResults: Question with ID {questionId} not found");
-                    
-                    // As a fallback, check if the question exists without options
-                    var questionExists = await _context.Questions.AnyAsync(q => q.Id == questionId);
-                    
-                    if (questionExists)
-                    {
-                        Console.WriteLine($"GetPollResults: Question exists but has no options");
-                        return Json(new { 
-                            success = false, 
-                            message = "Question has no options",
-                            errorDetails = "The question was found but has no associated options"
-                        });
-                    }
-                    
-                    return Json(new { 
-                        success = false, 
-                        message = "Question not found",
-                        errorDetails = $"No question with ID {questionId} exists in the database" 
-                    });
-                }
-                
-                // Check if question has options
-                if (question.Options == null || !question.Options.Any())
-                {
-                    Console.WriteLine($"GetPollResults: Question {questionId} has no options");
-                    return Json(new { 
-                        success = false, 
-                        message = "This poll has no options",
-                        errorDetails = "The poll question has no options configured" 
-                    });
-                }
-                
-                // Get all answers for this question
-                var answers = await _context.Answers
-                    .Where(a => a.QuestionId == questionId)
-                    .ToListAsync();
-                    
-                Console.WriteLine($"GetPollResults: Found {answers.Count} answers for question {questionId}");
-                
-                // Initialize results dictionary
-                var resultsList = new List<object>();
-                int totalVotes = answers.Count;
-                
-                // Calculate vote counts for each option
-                foreach (var option in question.Options.OrderBy(o => o.Order))
-                {
-                    // Count how many times this option was selected
-                    int votes = answers.Count(a => a.Text == option.Id.ToString());
-                    
-                    resultsList.Add(new 
-                    { 
-                        optionId = option.Id.ToString(),
-                        optionText = option.Text,
-                        votes = votes,
-                        percentage = totalVotes > 0 ? Math.Round((double)votes / totalVotes * 100) : 0
-                    });
-                }
-                
-                // If no responses yet, still return all options with 0 votes
-                if (totalVotes == 0 && question.Options.Any())
-                {
-                    // Return 0 votes for every option to initialize the UI
-                    totalVotes = 1; // Just to avoid division by zero when calculating percentages
-                }
-                
-                // Create a dictionary with option IDs as keys for easy lookup
-                var resultsDict = resultsList.ToDictionary(
-                    r => ((dynamic)r).optionId,
-                    r => r
-                );
-                
-                Console.WriteLine($"GetPollResults: Successfully processed results for question {questionId}");
-                
-                return Json(new 
-                { 
-                    success = true,
-                    questionId = questionId,
-                    totalVotes = totalVotes,
-                    results = resultsDict
+                // Use the service to get poll results
+                var results = await _responseService.GetPollResults(questionId);
+                return Json(results);
+            }
+            catch (ArgumentException ex)
+            {
+                return Json(new { 
+                    success = false, 
+                    message = "Question not found",
+                    errorDetails = ex.Message 
+                });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Json(new { 
+                    success = false, 
+                    message = "Invalid poll configuration",
+                    errorDetails = ex.Message 
                 });
             }
             catch (Exception ex)
             {
-                // Log the error with more details
-                Console.WriteLine($"Error in GetPollResults for questionId={questionId}: {ex.Message}");
-                Console.WriteLine($"Stack trace: {ex.StackTrace}");
-                
-                // Return a more detailed error message for debugging
                 return Json(new { 
                     success = false, 
                     message = "An error occurred while retrieving poll results", 

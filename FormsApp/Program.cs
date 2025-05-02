@@ -7,6 +7,7 @@ using Serilog;
 
 // Add AutoMapper namespace
 using FormsApp.Helpers;
+using FormsApp.Services;
 
 var configuration = new ConfigurationBuilder()
     .SetBasePath(Directory.GetCurrentDirectory())
@@ -61,6 +62,9 @@ try
 
     // Register AutoMapper
     builder.Services.AddAutoMapper(typeof(MappingProfiles));
+
+    // Add service registrations
+    builder.Services.AddScoped<FormResponseService>();
 
     var app = builder.Build();
 

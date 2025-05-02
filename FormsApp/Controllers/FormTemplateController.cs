@@ -666,6 +666,12 @@ namespace FormsApp.Controllers
                 // Store tags for cleanup
                 var tagsToUpdate = formTemplate.TemplateTags.Select(tt => tt.Tag).ToList();
                 
+                // Delete template image if exists
+                if (!string.IsNullOrEmpty(formTemplate.ImageUrl))
+                {
+                    DeleteTemplateImageFile(formTemplate.ImageUrl);
+                }
+                
                 // Delete all related entities
                 // First, delete answers from responses
                 foreach (var response in formTemplate.Responses)
@@ -1102,13 +1108,20 @@ namespace FormsApp.Controllers
                 
                 try
                 {
-                    // Store tags for cleanup
-                    foreach (var templateTag in template.TemplateTags)
+                    // Store tags from this template for cleanup
+                    foreach (var tt in template.TemplateTags)
                     {
-                        if (!tagsToUpdate.ContainsKey(templateTag.TagId))
+                        var tag = tt.Tag;
+                        if (!tagsToUpdate.ContainsKey(tag.Id))
                         {
-                            tagsToUpdate[templateTag.TagId] = templateTag.Tag;
+                            tagsToUpdate.Add(tag.Id, tag);
                         }
+                    }
+                    
+                    // Delete template image if exists
+                    if (!string.IsNullOrEmpty(template.ImageUrl))
+                    {
+                        DeleteTemplateImageFile(template.ImageUrl);
                     }
                     
                     // Delete all related entities
@@ -1140,7 +1153,7 @@ namespace FormsApp.Controllers
                 }
                 catch (Exception ex)
                 {
-                    errors.Add($"Error deleting template '{template.Title}': {ex.Message}");
+                    errors.Add($"Error deleting template: {template.Title}. Reason: {ex.Message}");
                 }
             }
             
@@ -1332,6 +1345,69 @@ namespace FormsApp.Controllers
                 .ToListAsync();
                 
             return View(sharedTemplates);
+        }
+
+        private void DeleteTemplateImageFile(string imageUrl)
+        {
+            // Construct the full file path
+            string filePath = Path.Combine(_webHostEnvironment.WebRootPath, imageUrl.TrimStart('/'));
+
+            // Check if the file exists
+            if (System.IO.File.Exists(filePath))
+            {
+                // Delete the file
+                System.IO.File.Delete(filePath);
+            }
+        }
+
+        // GET: /FormTemplate/DeleteImage/5
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> DeleteImage(int id)
+        {
+            var formTemplate = await _context.FormTemplates.FindAsync(id);
+                
+            if (formTemplate == null)
+            {
+                TempData["ErrorMessage"] = "Form template not found.";
+                return RedirectToAction(nameof(Index));
+            }
+            
+            // Check if the current user is the creator or an admin
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var isAdmin = User.IsInRole("Admin");
+            
+            if (!isAdmin && formTemplate.CreatorId != currentUserId)
+            {
+                TempData["ErrorMessage"] = "You don't have permission to edit this template.";
+                return RedirectToAction(nameof(Details), new { id });
+            }
+            
+            if (string.IsNullOrEmpty(formTemplate.ImageUrl))
+            {
+                TempData["InfoMessage"] = "No image to delete.";
+                return RedirectToAction(nameof(Edit), new { id });
+            }
+            
+            try
+            {
+                // Delete the image file
+                DeleteTemplateImageFile(formTemplate.ImageUrl);
+                
+                // Remove the image URL from the template
+                formTemplate.ImageUrl = null;
+                
+                // Save the changes
+                await _context.SaveChangesAsync();
+                
+                TempData["SuccessMessage"] = "Image deleted successfully.";
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error deleting image: {ex.Message}";
+            }
+            
+            return RedirectToAction(nameof(Edit), new { id });
         }
     }
 } 

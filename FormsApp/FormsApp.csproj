@@ -18,4 +18,8 @@
     <PackageReference Include="Serilog.Sinks.MSSqlServer" Version="8.2.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\images\templates\" />
+  </ItemGroup>
+
 </Project>

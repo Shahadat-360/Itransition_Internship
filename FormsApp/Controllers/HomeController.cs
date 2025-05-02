@@ -52,14 +52,14 @@ namespace FormsApp.Controllers
                     })
                     .ToListAsync(),
                     
-                // Get 5 most popular templates (by number of likes and comments)
+                // Get 5 most popular templates (by number of form responses)
                 PopularTemplates = await _context.FormTemplates
                     .Where(t => t.IsPublic)
                     .Include(t => t.Responses)
                     .Include(t => t.Creator)
                     .Include(t => t.Likes)
                     .Include(t => t.Comments)
-                    .OrderByDescending(t => t.LikesCount + t.Comments.Count)
+                    .OrderByDescending(t => t.Responses.Count)
                     .Take(5)
                     .Select(t => new FormTemplateViewModel
                     {
@@ -70,7 +70,8 @@ namespace FormsApp.Controllers
                         CreatorName = t.Creator.UserName,
                         CreatedAt = t.CreatedAt,
                         LikesCount = t.LikesCount,
-                        CommentsCount = t.Comments.Count
+                        CommentsCount = t.Comments.Count,
+                        ResponsesCount = t.Responses.Count
                     })
                     .ToListAsync(),
                     

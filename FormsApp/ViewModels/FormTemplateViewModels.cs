@@ -38,6 +38,9 @@ namespace FormsApp.ViewModels
         
         public bool CurrentUserLiked { get; set; }
         
+        // Add property for response count
+        public int ResponsesCount { get; set; }
+        
         // Navigation properties converted to view model properties
         public List<int> TagIds { get; set; } = new List<int>();
         public List<string> Tags { get; set; } = new List<string>();

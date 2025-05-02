@@ -60,7 +60,13 @@
                             {
                                 <div class="mt-2">
                                     <p>Current image:</p>
-                                    <img src="@Model.ImageUrl" class="img-thumbnail" style="max-height: 150px;" alt="Current template image" />
+                                    <div class="d-flex align-items-center">
+                                        <img src="@Model.ImageUrl" class="img-thumbnail" style="max-height: 150px;" alt="Current template image" />
+                                        <a asp-action="DeleteImage" asp-route-id="@Model.Id" class="btn btn-sm btn-danger ms-2" 
+                                           onclick="return confirm('Are you sure you want to delete this image?');">
+                                            <i class="bi bi-trash"></i> Delete Image
+                                        </a>
+                                    </div>
                                 </div>
                             }
                         </div>

@@ -24,17 +24,20 @@ namespace FormsApp.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ISearchService _searchService;
         private readonly IWebHostEnvironment _webHostEnvironment;
-        
+        private readonly ILogger<FormTemplateController> _logger;
+
         public FormTemplateController(
             ApplicationDbContext context,
             UserManager<ApplicationUser> userManager,
             ISearchService searchService,
-            IWebHostEnvironment webHostEnvironment)
+            IWebHostEnvironment webHostEnvironment,
+            ILogger<FormTemplateController> logger)
         {
             _context = context;
             _userManager = userManager;
             _searchService = searchService;
             _webHostEnvironment = webHostEnvironment;
+            _logger = logger;
         }
         
         // GET: /FormTemplate
@@ -42,27 +45,36 @@ namespace FormsApp.Controllers
         public async Task<IActionResult> Index()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            
-            var templates = await _context.FormTemplates
-                .Include(t => t.TopicNavigation)
-                .Where(t => t.CreatorId == userId)
-                .OrderByDescending(t => t.LastModifiedAt)
-                .Select(t => new FormTemplateViewModel
-                {
-                    Id = t.Id,
-                    Title = t.Title,
-                    Description = t.Description,
-                    TopicId = t.TopicId,
-                    Topic = t.TopicNavigation != null ? t.TopicNavigation.Name : "Other",
-                    ImageUrl = t.ImageUrl,
-                    IsPublic = t.IsPublic,
-                    CreatedAt = t.CreatedAt,
-                    LikesCount = t.LikesCount,
-                    CommentsCount = _context.Comments.Count(c => c.TemplateId == t.Id)
-                })
-                .ToListAsync();
-                
-            return View(templates);
+            try
+            {
+                var templates = await _context.FormTemplates
+                    .AsNoTracking()
+                    .Include(t => t.TopicNavigation)
+                    .Where(t => t.CreatorId == userId)
+                    .OrderByDescending(t => t.LastModifiedAt)
+                    .Select(t => new FormTemplateViewModel
+                    {
+                        Id = t.Id,
+                        Title = t.Title,
+                        Description = t.Description,
+                        TopicId = t.TopicId,
+                        Topic = t.TopicNavigation != null ? t.TopicNavigation.Name : "Other",
+                        ImageUrl = t.ImageUrl,
+                        IsPublic = t.IsPublic,
+                        CreatedAt = t.CreatedAt,
+                        LikesCount = t.LikesCount,
+                        CommentsCount = _context.Comments.Count(c => c.TemplateId == t.Id)
+                    })
+                    .ToListAsync();
+                    return View(templates);
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching form templates for user {UserId}", userId);
+                TempData["ErrorMessage"] = "An error occurred while fetching your templates. Please try again.";
+                return RedirectToAction("Index", "Home");
+            }
+
         }
         
         // GET: /FormTemplate/Details/5
@@ -636,33 +648,35 @@ namespace FormsApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var formTemplate = await _context.FormTemplates
-                .Include(f => f.Questions)
-                    .ThenInclude(q => q.Options)
-                .Include(f => f.Responses)
-                    .ThenInclude(r => r.Answers)
-                .Include(f => f.TemplateTags)
-                    .ThenInclude(tt => tt.Tag)
-                .FirstOrDefaultAsync(m => m.Id == id);
-                
-            if (formTemplate == null)
-            {
-                TempData["ErrorMessage"] = "Form template not found.";
-                return RedirectToAction(nameof(Index));
-            }
-            
-            // Check if the current user is the creator or an admin
-            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var isAdmin = User.IsInRole("Admin");
-            
-            if (!isAdmin && formTemplate.CreatorId != currentUserId)
-            {
-                TempData["ErrorMessage"] = "You don't have permission to delete this template.";
-                return RedirectToAction(nameof(Details), new { id });
-            }
+            using var transaction = await _context.Database.BeginTransactionAsync();
             
             try
             {
+                var formTemplate = await _context.FormTemplates
+                    .Include(f => f.Questions)
+                        .ThenInclude(q => q.Options)
+                    .Include(f => f.Responses)
+                        .ThenInclude(r => r.Answers)
+                    .Include(f => f.TemplateTags)
+                        .ThenInclude(tt => tt.Tag)
+                    .FirstOrDefaultAsync(m => m.Id == id);
+                    
+                if (formTemplate == null)
+                {
+                    TempData["ErrorMessage"] = "Form template not found.";
+                    return RedirectToAction(nameof(Index));
+                }
+                
+                // Check if the current user is the creator or an admin
+                var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var isAdmin = User.IsInRole("Admin");
+                
+                if (!isAdmin && formTemplate.CreatorId != currentUserId)
+                {
+                    TempData["ErrorMessage"] = "You don't have permission to delete this template.";
+                    return RedirectToAction(nameof(Details), new { id });
+                }
+                
                 // Store tags for cleanup
                 var tagsToUpdate = formTemplate.TemplateTags.Select(tt => tt.Tag).ToList();
                 
@@ -691,6 +705,10 @@ namespace FormsApp.Controllers
                 // Delete questions
                 _context.Questions.RemoveRange(formTemplate.Questions);
                 
+                // Also delete comments if any
+                var comments = await _context.Comments.Where(c => c.TemplateId == id).ToListAsync();
+                _context.Comments.RemoveRange(comments);
+                
                 // Remove template tags
                 _context.TemplateTags.RemoveRange(formTemplate.TemplateTags);
                 
@@ -714,157 +732,18 @@ namespace FormsApp.Controllers
                 }
                 
                 await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
                 
                 TempData["SuccessMessage"] = "Form template deleted successfully.";
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
             {
+                await transaction.RollbackAsync();
+                _logger.LogError(ex, "Error deleting form template {TemplateId}", id);
                 TempData["ErrorMessage"] = $"An error occurred while deleting the template: {ex.Message}";
                 return RedirectToAction(nameof(Delete), new { id });
             }
-        }
-        
-        // POST: /FormTemplate/Duplicate/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Duplicate(int? id)
-        {
-            if (id == null)
-            {
-                TempData["ErrorMessage"] = "Form template ID is required.";
-                return RedirectToAction(nameof(Index));
-            }
-
-            var formTemplate = await _context.FormTemplates
-                .Include(f => f.TemplateTags)
-                    .ThenInclude(tt => tt.Tag)
-                .Include(f => f.Questions.OrderBy(q => q.Order))
-                    .ThenInclude(q => q.Options.OrderBy(o => o.Order))
-                .FirstOrDefaultAsync(m => m.Id == id);
-                
-            if (formTemplate == null)
-            {
-                TempData["ErrorMessage"] = "Form template not found.";
-                return RedirectToAction(nameof(Index));
-            }
-            
-            // Check if the current user is the creator, an admin, or the template is public
-            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var isAdmin = User.IsInRole("Admin");
-            
-            if (!isAdmin && formTemplate.CreatorId != currentUserId && !formTemplate.IsPublic)
-            {
-                TempData["ErrorMessage"] = "You don't have permission to duplicate this template.";
-                return RedirectToAction(nameof(Details), new { id });
-            }
-            
-            try
-            {
-                // Create a new template with copied properties
-                var duplicateTemplate = new FormTemplate
-                {
-                    Title = $"Copy of {formTemplate.Title}",
-                    Description = formTemplate.Description,
-                    TopicId = formTemplate.TopicId,
-                    ImageUrl = formTemplate.ImageUrl,
-                    IsPublic = formTemplate.IsPublic,
-                    CreatorId = currentUserId,
-                    CreatedAt = DateTime.UtcNow,
-                    LastModifiedAt = DateTime.UtcNow
-                };
-                
-                // Save the new template to get an ID
-                _context.FormTemplates.Add(duplicateTemplate);
-                await _context.SaveChangesAsync();
-                
-                // Copy tags
-                foreach (var templateTag in formTemplate.TemplateTags)
-                {
-                    var newTemplateTag = new TemplateTag
-                    {
-                        TagId = templateTag.TagId,
-                        TemplateId = duplicateTemplate.Id
-                    };
-                    _context.TemplateTags.Add(newTemplateTag);
-                    
-                    // Update tag usage count
-                    var tag = await _context.Tags.FindAsync(templateTag.TagId);
-                    if (tag != null)
-                    {
-                        tag.UsageCount++;
-                        _context.Tags.Update(tag);
-                    }
-                }
-                
-                // Copy questions and their options
-                foreach (var question in formTemplate.Questions.OrderBy(q => q.Order))
-                {
-                    var newQuestion = new Question
-                    {
-                        Text = question.Text,
-                        Description = question.Description,
-                        Type = question.Type,
-                        Order = question.Order,
-                        Required = question.Required,
-                        ShowInResults = question.ShowInResults,
-                        TemplateId = duplicateTemplate.Id
-                    };
-                    
-                    _context.Questions.Add(newQuestion);
-                    await _context.SaveChangesAsync();
-                    
-                    // Copy options for this question
-                    foreach (var option in question.Options.OrderBy(o => o.Order))
-                    {
-                        var newOption = new QuestionOption
-                        {
-                            Text = option.Text,
-                            Order = option.Order,
-                            QuestionId = newQuestion.Id
-                        };
-                        
-                        _context.QuestionOptions.Add(newOption);
-                    }
-                }
-                
-                await _context.SaveChangesAsync();
-                
-                TempData["SuccessMessage"] = "Form template duplicated successfully.";
-                return RedirectToAction(nameof(Edit), new { id = duplicateTemplate.Id });
-            }
-            catch (Exception ex)
-            {
-                TempData["ErrorMessage"] = $"An error occurred while duplicating the template: {ex.Message}";
-                return RedirectToAction(nameof(Details), new { id });
-            }
-        }
-        
-        // GET: /FormTemplate/GetTagSuggestions
-        [HttpGet]
-        public async Task<IActionResult> GetTagSuggestions(string prefix)
-        {
-            var tags = await _searchService.GetTagsStartingWithAsync(prefix);
-            return Json(tags.Select(t => t.Name));
-        }
-        
-        // GET: /FormTemplate/GetUserSuggestions
-        [HttpGet]
-        [Authorize]
-        public async Task<IActionResult> GetUserSuggestions(string prefix)
-        {
-            if (string.IsNullOrWhiteSpace(prefix))
-            {
-                return Json(new object[0]);
-            }
-            
-            var users = await _userManager.Users
-                .Where(u => u.Email.StartsWith(prefix) || u.UserName.StartsWith(prefix))
-                .Take(10)
-                .Select(u => new { u.Email, u.UserName })
-                .ToListAsync();
-                
-            return Json(users);
         }
         
         // GET: /FormTemplate/AllTemplates
@@ -1076,127 +955,144 @@ namespace FormsApp.Controllers
                 return string.IsNullOrEmpty(returnUrl) ? RedirectToAction(nameof(Index)) : Redirect(returnUrl);
             }
             
-            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var isAdmin = User.IsInRole("Admin");
+            using var transaction = await _context.Database.BeginTransactionAsync();
             
-            int deletedCount = 0;
-            List<string> errors = new List<string>();
-            Dictionary<int, Tag> tagsToUpdate = new Dictionary<int, Tag>();
-            
-            foreach (var templateId in selectedTemplates)
+            try
             {
-                var template = await _context.FormTemplates
-                    .Include(f => f.Questions)
-                        .ThenInclude(q => q.Options)
-                    .Include(f => f.Responses)
-                        .ThenInclude(r => r.Answers)
-                    .Include(f => f.TemplateTags)
-                        .ThenInclude(tt => tt.Tag)
-                    .FirstOrDefaultAsync(t => t.Id == templateId);
-                    
-                if (template == null)
-                {
-                    continue; // Skip if template doesn't exist
-                }
+                var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var isAdmin = User.IsInRole("Admin");
                 
-                // Check if the current user is the creator or an admin
-                if (!isAdmin && template.CreatorId != currentUserId)
-                {
-                    errors.Add($"You don't have permission to delete template: {template.Title}");
-                    continue;
-                }
+                int deletedCount = 0;
+                List<string> errors = new List<string>();
+                Dictionary<int, Tag> tagsToUpdate = new Dictionary<int, Tag>();
                 
-                try
+                foreach (var templateId in selectedTemplates)
                 {
-                    // Store tags from this template for cleanup
-                    foreach (var tt in template.TemplateTags)
+                    var template = await _context.FormTemplates
+                        .Include(f => f.Questions)
+                            .ThenInclude(q => q.Options)
+                        .Include(f => f.Responses)
+                            .ThenInclude(r => r.Answers)
+                        .Include(f => f.TemplateTags)
+                            .ThenInclude(tt => tt.Tag)
+                        .FirstOrDefaultAsync(t => t.Id == templateId);
+                        
+                    if (template == null)
                     {
-                        var tag = tt.Tag;
-                        if (!tagsToUpdate.ContainsKey(tag.Id))
+                        continue; // Skip if template doesn't exist
+                    }
+                    
+                    // Check if the current user is the creator or an admin
+                    if (!isAdmin && template.CreatorId != currentUserId)
+                    {
+                        errors.Add($"You don't have permission to delete template: {template.Title}");
+                        continue;
+                    }
+                    
+                    try
+                    {
+                        // Store tags from this template for cleanup
+                        foreach (var tt in template.TemplateTags)
                         {
-                            tagsToUpdate.Add(tag.Id, tag);
-                            // Initialize with current usage count
-                            tag.UsageCount = tag.UsageCount;
+                            var tag = tt.Tag;
+                            if (!tagsToUpdate.ContainsKey(tag.Id))
+                            {
+                                tagsToUpdate.Add(tag.Id, tag);
+                                // Initialize with current usage count
+                                tag.UsageCount = tag.UsageCount;
+                            }
+                            else
+                            {
+                                // For each appearance of the tag, we need to decrement later
+                                // We don't modify the actual tag count yet, just track it
+                            }
                         }
-                        else
+                        
+                        // Delete template image if exists
+                        if (!string.IsNullOrEmpty(template.ImageUrl))
                         {
-                            // For each appearance of the tag, we need to decrement later
-                            // We don't modify the actual tag count yet, just track it
+                            DeleteTemplateImageFile(template.ImageUrl);
                         }
+                        
+                        // Delete all related entities
+                        // First, delete answers from responses
+                        foreach (var response in template.Responses)
+                        {
+                            _context.Answers.RemoveRange(response.Answers);
+                        }
+                        
+                        // Then delete responses
+                        _context.FormResponses.RemoveRange(template.Responses);
+                        
+                        // Delete options from questions
+                        foreach (var question in template.Questions)
+                        {
+                            _context.QuestionOptions.RemoveRange(question.Options);
+                        }
+                        
+                        // Delete questions
+                        _context.Questions.RemoveRange(template.Questions);
+                        
+                        // Also delete comments if any
+                        var comments = await _context.Comments.Where(c => c.TemplateId == templateId).ToListAsync();
+                        _context.Comments.RemoveRange(comments);
+                        
+                        // Remove template tags
+                        _context.TemplateTags.RemoveRange(template.TemplateTags);
+                        
+                        // Finally, delete the template
+                        _context.FormTemplates.Remove(template);
+                        
+                        deletedCount++;
                     }
-                    
-                    // Delete template image if exists
-                    if (!string.IsNullOrEmpty(template.ImageUrl))
+                    catch (Exception ex)
                     {
-                        DeleteTemplateImageFile(template.ImageUrl);
+                        Console.WriteLine($"Error deleting template {templateId}: {ex.Message}");
+                        errors.Add($"Error deleting template: {template.Title}. Reason: {ex.Message}");
                     }
-                    
-                    // Delete all related entities
-                    // First, delete answers from responses
-                    foreach (var response in template.Responses)
-                    {
-                        _context.Answers.RemoveRange(response.Answers);
-                    }
-                    
-                    // Then delete responses
-                    _context.FormResponses.RemoveRange(template.Responses);
-                    
-                    // Delete options from questions
-                    foreach (var question in template.Questions)
-                    {
-                        _context.QuestionOptions.RemoveRange(question.Options);
-                    }
-                    
-                    // Delete questions
-                    _context.Questions.RemoveRange(template.Questions);
-                    
-                    // Remove template tags
-                    _context.TemplateTags.RemoveRange(template.TemplateTags);
-                    
-                    // Finally, delete the template
-                    _context.FormTemplates.Remove(template);
-                    
-                    deletedCount++;
                 }
-                catch (Exception ex)
-                {
-                    errors.Add($"Error deleting template: {template.Title}. Reason: {ex.Message}");
-                }
-            }
-            
-            // Update tag usage counts
-            foreach (var tag in tagsToUpdate.Values)
-            {
-                // Get count of template tags being deleted with this tag
-                var tagUsageInDeletedTemplates = selectedTemplates
-                    .SelectMany(id => _context.TemplateTags
-                        .Where(tt => tt.TemplateId == id && tt.TagId == tag.Id))
-                    .Count();
-                    
-                tag.UsageCount = Math.Max(0, tag.UsageCount - tagUsageInDeletedTemplates);
                 
-                if (tag.UsageCount == 0)
+                // Update tag usage counts
+                foreach (var tag in tagsToUpdate.Values)
                 {
-                    // If tag is no longer used, remove it
-                    _context.Tags.Remove(tag);
+                    // Get count of template tags being deleted with this tag
+                    var tagUsageInDeletedTemplates = selectedTemplates
+                        .SelectMany(id => _context.TemplateTags
+                            .Where(tt => tt.TemplateId == id && tt.TagId == tag.Id))
+                        .Count();
+                        
+                    tag.UsageCount = Math.Max(0, tag.UsageCount - tagUsageInDeletedTemplates);
+                    
+                    if (tag.UsageCount == 0)
+                    {
+                        // If tag is no longer used, remove it
+                        _context.Tags.Remove(tag);
+                    }
+                    else
+                    {
+                        _context.Tags.Update(tag);
+                    }
                 }
-                else
+                
+                // Save all changes at once
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+                
+                if (deletedCount > 0)
                 {
-                    _context.Tags.Update(tag);
+                    TempData["Success"] = $"Successfully deleted {deletedCount} template{(deletedCount != 1 ? "s" : "")}.";
+                }
+                
+                if (errors.Any())
+                {
+                    TempData["Error"] = string.Join("<br>", errors);
                 }
             }
-            
-            // Save all changes at once
-            await _context.SaveChangesAsync();
-            
-            if (deletedCount > 0)
+            catch (Exception ex)
             {
-                TempData["Success"] = $"Successfully deleted {deletedCount} template{(deletedCount != 1 ? "s" : "")}.";
-            }
-            
-            if (errors.Any())
-            {
-                TempData["Error"] = string.Join("<br>", errors);
+                await transaction.RollbackAsync();
+                Console.WriteLine($"General error in batch delete: {ex.Message}");
+                TempData["Error"] = $"An error occurred: {ex.Message}";
             }
             
             return string.IsNullOrEmpty(returnUrl) ? RedirectToAction(nameof(Index)) : Redirect(returnUrl);

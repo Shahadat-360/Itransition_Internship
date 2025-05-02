@@ -26,6 +26,7 @@ namespace FormsApp.Controllers
         private readonly IMapper _mapper;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly ApplicationDbContext _dbcontext;
+        private readonly ILogger<AdminController> _logger;
         
         public AdminController(
             UserManager<ApplicationUser> userManager,
@@ -33,7 +34,8 @@ namespace FormsApp.Controllers
             SignInManager<ApplicationUser> signInManager,
             IMapper mapper,
             IWebHostEnvironment webHostEnvironment,
-            ApplicationDbContext dbContext)
+            ApplicationDbContext dbContext,
+            ILogger<AdminController> logger)
         {
             _userManager = userManager;
             _roleManager = roleManager;
@@ -41,6 +43,7 @@ namespace FormsApp.Controllers
             _mapper = mapper;
             _webHostEnvironment = webHostEnvironment;
             _dbcontext = dbContext;
+            _logger = logger;
         }
         
         public async Task<IActionResult> Index()
@@ -180,6 +183,8 @@ namespace FormsApp.Controllers
                 var user = await _userManager.FindByIdAsync(userId);
                 if (user == null)
                 {
+                    TempData["ErrorMessage"] = $"User with ID {userId} not found.";
+                    _logger.LogWarning($"User with ID {userId} not found for deletion.");
                     continue;
                 }
                 

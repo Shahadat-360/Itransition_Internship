@@ -416,20 +416,60 @@ namespace FormsApp.Controllers
             // Debug incoming tag data
             Console.WriteLine($"Received TagsJson data for template {id}: {viewModel.TagsJson}");
             
+            // Get the existing template to access its tags
+            var existingTemplate = await _context.FormTemplates
+                .Include(f => f.TemplateTags)
+                .ThenInclude(tt => tt.Tag)
+                .Include(f => f.AllowedUsers)
+                .FirstOrDefaultAsync(m => m.Id == id);
+                
+            if (existingTemplate == null)
+            {
+                TempData["ErrorMessage"] = "Form template not found.";
+                return RedirectToAction(nameof(Index));
+            }
+            
+            // Get existing tag names for comparison
+            var existingTagNames = existingTemplate.TemplateTags.Select(tt => tt.Tag.Name).ToList();
+            Console.WriteLine($"Existing tags in DB: {string.Join(", ", existingTagNames)}");
+            
             // Process tags from the TagsJson field
             List<string> tagNames = new List<string>();
+            bool shouldUpdateTags = false;
             
-            if (!string.IsNullOrEmpty(viewModel.TagsJson))
+            if (!string.IsNullOrEmpty(viewModel.TagsJson) && viewModel.TagsJson != "[]")
             {
                 try
                 {
                     tagNames = JsonSerializer.Deserialize<List<string>>(viewModel.TagsJson) ?? new List<string>();
                     Console.WriteLine($"Deserialized tags from JSON: {string.Join(", ", tagNames)}");
+                    
+                    // Only update tags if they're actually different from what's in the database
+                    // This avoids unnecessary tag deletions and insertions
+                    if (!tagNames.OrderBy(t => t).SequenceEqual(existingTagNames.OrderBy(t => t)))
+                    {
+                        shouldUpdateTags = true;
+                        Console.WriteLine("Tags have changed, will update");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Tags unchanged, will preserve existing");
+                    }
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine($"Error deserializing JSON tags: {ex.Message}");
+                    // If there's an error parsing the JSON, use existing tags
+                    tagNames = existingTagNames;
+                    shouldUpdateTags = false;
                 }
+            }
+            else
+            {
+                // If TagsJson is empty or null or "[]", preserve the existing tags
+                Console.WriteLine("Empty tags received, preserving existing tags");
+                tagNames = existingTagNames;
+                shouldUpdateTags = false;
             }
             
             // Process allowed emails string to list
@@ -453,17 +493,8 @@ namespace FormsApp.Controllers
             {
                 try
                 {
-                    var formTemplate = await _context.FormTemplates
-                        .Include(f => f.TemplateTags)
-                        .ThenInclude(tt => tt.Tag)
-                        .Include(f => f.AllowedUsers)
-                        .FirstOrDefaultAsync(m => m.Id == id);
-                        
-                    if (formTemplate == null)
-                    {
-                        TempData["ErrorMessage"] = "Form template not found.";
-                        return RedirectToAction(nameof(Index));
-                    }
+                    // Use the template we already loaded
+                    var formTemplate = existingTemplate;
                     
                     // Check if the current user is the creator or an admin
                     var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -517,24 +548,34 @@ namespace FormsApp.Controllers
                     formTemplate.IsPublic = viewModel.IsPublic;
                     formTemplate.LastModifiedAt = DateTime.UtcNow;
                     
-                    // Remove all existing tags first
-                    foreach (var templateTag in formTemplate.TemplateTags.ToList())
+                    // Only update tags if they've actually changed
+                    if (shouldUpdateTags)
                     {
-                        _context.TemplateTags.Remove(templateTag);
+                        Console.WriteLine("Updating tags to: " + string.Join(", ", tagNames));
                         
-                        // Update tag usage count
-                        var tag = await _context.Tags.FindAsync(templateTag.TagId);
-                        if (tag != null && tag.UsageCount > 0)
+                        // Remove all existing tags first
+                        foreach (var templateTag in formTemplate.TemplateTags.ToList())
                         {
-                            tag.UsageCount--;
-                            _context.Tags.Update(tag);
+                            _context.TemplateTags.Remove(templateTag);
+                            
+                            // Update tag usage count
+                            var tag = await _context.Tags.FindAsync(templateTag.TagId);
+                            if (tag != null && tag.UsageCount > 0)
+                            {
+                                tag.UsageCount--;
+                                _context.Tags.Update(tag);
+                            }
+                        }
+                        
+                        // Add all tags from the names list
+                        foreach (var tagName in tagNames.Where(t => !string.IsNullOrWhiteSpace(t)))
+                        {
+                            await AddTagToTemplate(tagName, formTemplate.Id);
                         }
                     }
-                    
-                    // Add all tags from the names list
-                    foreach (var tagName in tagNames.Where(t => !string.IsNullOrWhiteSpace(t)))
+                    else
                     {
-                        await AddTagToTemplate(tagName, formTemplate.Id);
+                        Console.WriteLine("Preserving existing tags: " + string.Join(", ", existingTagNames));
                     }
                     
                     // Process allowed users
@@ -553,16 +594,17 @@ namespace FormsApp.Controllers
                     _context.Update(formTemplate);
                     await _context.SaveChangesAsync();
                     
-                    // Load the updated tags for display in the next view
+                    // Load the updated tags for display in the next view (for debugging)
                     var updatedTags = await _context.TemplateTags
                         .Where(tt => tt.TemplateId == formTemplate.Id)
                         .Include(tt => tt.Tag)
                         .Select(tt => tt.Tag.Name)
                         .ToListAsync();
                     
-                    Console.WriteLine($"Updated tags: {JsonSerializer.Serialize(updatedTags)}");
+                    Console.WriteLine($"Final tags after save: {JsonSerializer.Serialize(updatedTags)}");
                     
                     TempData["SuccessMessage"] = "Form template updated successfully.";
+                    return RedirectToAction(nameof(Edit), new { id = viewModel.Id });
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -576,7 +618,21 @@ namespace FormsApp.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Edit), new { id = viewModel.Id });
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error updating template: {ex.Message}");
+                    TempData["ErrorMessage"] = $"An error occurred: {ex.Message}";
+                    ModelState.AddModelError("", ex.Message);
+                    
+                    // Reload topics for dropdown
+                    ViewData["Topics"] = await _context.Topics
+                        .OrderBy(t => t.Name)
+                        .Select(t => new SelectListItem { Value = t.Id.ToString(), Text = t.Name })
+                        .ToListAsync();
+                        
+                    ViewData["AllTags"] = _context.Tags.ToList();
+                    return View(viewModel);
+                }
             }
             
             // If we get here, something failed, redisplay form

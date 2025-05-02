@@ -221,8 +221,14 @@
         }
         
         function updateTags() {
-            tagsInput.value = JSON.stringify(tags);
-            console.log("Updated tags:", tagsInput.value);
+            // Always make sure tagsInput exists
+            const tagsInputField = document.getElementById('tagsInput');
+            if (tagsInputField) {
+                tagsInputField.value = JSON.stringify(tags);
+                console.log("Updated tags:", tagsInputField.value);
+            } else {
+                console.error("Could not find tagsInput element");
+            }
         }
         
         function renderTags() {
@@ -304,5 +310,37 @@
                 })
                 .catch(error => console.error('Error refreshing topics:', error));
         }
+
+        // Add this function to ensure tags are properly submitted
+        document.addEventListener('DOMContentLoaded', function() {
+            // Find the form
+            const form = document.querySelector('form[asp-action="Edit"]');
+            
+            // Add a submit event listener to ensure tags are included
+            form.addEventListener('submit', function(e) {
+                // Make sure tags are updated in the hidden field
+                updateTags();
+                
+                // Log what we're sending for debugging
+                console.log("Submitting form with tags:", tags);
+                console.log("TagsJson value:", document.getElementById('tagsInput').value);
+            });
+            
+            // Add the following code to ensure tagsInput is populated immediately
+            // Load existing tags
+            try {
+                // Use Model.Tags since these are the actual tag names
+                const existingTags = @Html.Raw(Model.Tags != null ? Json.Serialize(Model.Tags) : "[]");
+                console.log("Initial tags from server:", existingTags);
+                
+                if (existingTags && existingTags.length) {
+                    tags = [...existingTags]; // Set initial tags array directly
+                    renderTags(); // Render the tags in the UI
+                    updateTags(); // Update the hidden input
+                }
+            } catch (e) {
+                console.error("Error loading tags:", e);
+            }
+        });
     </script>
 } 

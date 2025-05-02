@@ -416,60 +416,50 @@ namespace FormsApp.Controllers
             // Debug incoming tag data
             Console.WriteLine($"Received TagsJson data for template {id}: {viewModel.TagsJson}");
             
-            // Get the existing template to access its tags
-            var existingTemplate = await _context.FormTemplates
+            // Load the existing template with its tags
+            var formTemplate = await _context.FormTemplates
                 .Include(f => f.TemplateTags)
-                .ThenInclude(tt => tt.Tag)
+                    .ThenInclude(tt => tt.Tag)
                 .Include(f => f.AllowedUsers)
                 .FirstOrDefaultAsync(m => m.Id == id);
                 
-            if (existingTemplate == null)
+            if (formTemplate == null)
             {
                 TempData["ErrorMessage"] = "Form template not found.";
                 return RedirectToAction(nameof(Index));
             }
             
-            // Get existing tag names for comparison
-            var existingTagNames = existingTemplate.TemplateTags.Select(tt => tt.Tag.Name).ToList();
+            // Get existing tag names for logging
+            var existingTagNames = formTemplate.TemplateTags.Select(tt => tt.Tag.Name).ToList();
             Console.WriteLine($"Existing tags in DB: {string.Join(", ", existingTagNames)}");
             
             // Process tags from the TagsJson field
-            List<string> tagNames = new List<string>();
-            bool shouldUpdateTags = false;
+            List<string> newTagNames = new List<string>();
             
-            if (!string.IsNullOrEmpty(viewModel.TagsJson) && viewModel.TagsJson != "[]")
+            if (!string.IsNullOrEmpty(viewModel.TagsJson))
             {
                 try
                 {
-                    tagNames = JsonSerializer.Deserialize<List<string>>(viewModel.TagsJson) ?? new List<string>();
-                    Console.WriteLine($"Deserialized tags from JSON: {string.Join(", ", tagNames)}");
-                    
-                    // Only update tags if they're actually different from what's in the database
-                    // This avoids unnecessary tag deletions and insertions
-                    if (!tagNames.OrderBy(t => t).SequenceEqual(existingTagNames.OrderBy(t => t)))
-                    {
-                        shouldUpdateTags = true;
-                        Console.WriteLine("Tags have changed, will update");
-                    }
-                    else
-                    {
-                        Console.WriteLine("Tags unchanged, will preserve existing");
-                    }
+                    // Deserialize and filter out empty/whitespace tags
+                    newTagNames = JsonSerializer.Deserialize<List<string>>(viewModel.TagsJson)
+                        ?.Where(t => !string.IsNullOrWhiteSpace(t))
+                        ?.Select(t => t.Trim())
+                        ?.ToList() ?? new List<string>();
+                        
+                    Console.WriteLine($"Deserialized tags from JSON: {string.Join(", ", newTagNames)}");
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine($"Error deserializing JSON tags: {ex.Message}");
-                    // If there's an error parsing the JSON, use existing tags
-                    tagNames = existingTagNames;
-                    shouldUpdateTags = false;
+                    // If error, use existing tags
+                    newTagNames = existingTagNames;
                 }
             }
             else
             {
-                // If TagsJson is empty or null or "[]", preserve the existing tags
-                Console.WriteLine("Empty tags received, preserving existing tags");
-                tagNames = existingTagNames;
-                shouldUpdateTags = false;
+                // If no tags provided, use existing tags
+                newTagNames = existingTagNames;
+                Console.WriteLine("No TagsJson provided, keeping existing tags");
             }
             
             // Process allowed emails string to list
@@ -493,9 +483,6 @@ namespace FormsApp.Controllers
             {
                 try
                 {
-                    // Use the template we already loaded
-                    var formTemplate = existingTemplate;
-                    
                     // Check if the current user is the creator or an admin
                     var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                     var isAdmin = User.IsInRole("Admin");
@@ -541,41 +528,77 @@ namespace FormsApp.Controllers
                         formTemplate.ImageUrl = "/images/templates/" + uniqueFileName;
                     }
                     
-                    // Update properties
+                    // Update basic properties
                     formTemplate.Title = viewModel.Title;
                     formTemplate.Description = viewModel.Description;
                     formTemplate.TopicId = viewModel.TopicId;
                     formTemplate.IsPublic = viewModel.IsPublic;
                     formTemplate.LastModifiedAt = DateTime.UtcNow;
+
+                    // Compare existing tags with new tags to determine what to add/remove
+                    var existingTagSet = new HashSet<string>(existingTagNames.Select(t => t.ToLower()));
+                    var newTagSet = new HashSet<string>(newTagNames.Select(t => t.ToLower()));
                     
-                    // Only update tags if they've actually changed
-                    if (shouldUpdateTags)
+                    // Get tags that need to be added
+                    var tagsToAdd = newTagSet.Except(existingTagSet).ToList();
+                    // Get tags that need to be removed
+                    var tagsToRemove = existingTagSet.Except(newTagSet).ToList();
+                    
+                    // Log tag changes
+                    if (tagsToAdd.Any())
+                        Console.WriteLine($"Tags to add: {string.Join(", ", tagsToAdd)}");
+                    if (tagsToRemove.Any())
+                        Console.WriteLine($"Tags to remove: {string.Join(", ", tagsToRemove)}");
+                    
+                    // Only process tags if there are changes to make
+                    if (tagsToAdd.Any() || tagsToRemove.Any())
                     {
-                        Console.WriteLine("Updating tags to: " + string.Join(", ", tagNames));
+                        Console.WriteLine("Updating tags to: " + string.Join(", ", newTagNames));
                         
-                        // Remove all existing tags first
+                        // Remove tags that are no longer needed
                         foreach (var templateTag in formTemplate.TemplateTags.ToList())
                         {
-                            _context.TemplateTags.Remove(templateTag);
-                            
-                            // Update tag usage count
-                            var tag = await _context.Tags.FindAsync(templateTag.TagId);
-                            if (tag != null && tag.UsageCount > 0)
+                            if (tagsToRemove.Contains(templateTag.Tag.Name.ToLower()))
                             {
-                                tag.UsageCount--;
-                                _context.Tags.Update(tag);
+                                _context.TemplateTags.Remove(templateTag);
+                                
+                                // Update tag usage count
+                                var tag = await _context.Tags.FindAsync(templateTag.TagId);
+                                if (tag != null && tag.UsageCount > 0)
+                                {
+                                    tag.UsageCount--;
+                                    Console.WriteLine($"Decremented tag '{tag.Name}' usage count to {tag.UsageCount}");
+                                    
+                                    if (tag.UsageCount == 0)
+                                    {
+                                        // If tag is no longer used, remove it
+                                        _context.Tags.Remove(tag);
+                                        Console.WriteLine($"Removed tag '{tag.Name}' because usage count is 0");
+                                    }
+                                    else
+                                    {
+                                        _context.Tags.Update(tag);
+                                    }
+                                }
                             }
                         }
                         
-                        // Add all tags from the names list
-                        foreach (var tagName in tagNames.Where(t => !string.IsNullOrWhiteSpace(t)))
+                        // Add new tags
+                        foreach (var tagName in newTagNames)
                         {
-                            await AddTagToTemplate(tagName, formTemplate.Id);
+                            // Check if this tag is already linked to the template (case insensitive)
+                            bool exists = formTemplate.TemplateTags.Any(tt => 
+                                tt.Tag.Name.Equals(tagName, StringComparison.OrdinalIgnoreCase));
+                                
+                            if (!exists)
+                            {
+                                await AddTagToTemplate(tagName, formTemplate.Id);
+                            }
                         }
                     }
                     else
                     {
-                        Console.WriteLine("Preserving existing tags: " + string.Join(", ", existingTagNames));
+                        Console.WriteLine("No tag changes detected, keeping existing tags");
                     }
                     
                     // Process allowed users
@@ -594,7 +617,7 @@ namespace FormsApp.Controllers
                     _context.Update(formTemplate);
                     await _context.SaveChangesAsync();
                     
-                    // Load the updated tags for display in the next view (for debugging)
+                    // Load the updated tags for display in the next view
                     var updatedTags = await _context.TemplateTags
                         .Where(tt => tt.TemplateId == formTemplate.Id)
                         .Include(tt => tt.Tag)
@@ -617,21 +640,6 @@ namespace FormsApp.Controllers
                     {
                         throw;
                     }
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Error updating template: {ex.Message}");
-                    TempData["ErrorMessage"] = $"An error occurred: {ex.Message}";
-                    ModelState.AddModelError("", ex.Message);
-                    
-                    // Reload topics for dropdown
-                    ViewData["Topics"] = await _context.Topics
-                        .OrderBy(t => t.Name)
-                        .Select(t => new SelectListItem { Value = t.Id.ToString(), Text = t.Name })
-                        .ToListAsync();
-                        
-                    ViewData["AllTags"] = _context.Tags.ToList();
-                    return View(viewModel);
                 }
             }
             
@@ -774,12 +782,15 @@ namespace FormsApp.Controllers
                 // Update tag usage counts
                 foreach (var tag in tagsToUpdate)
                 {
+                    // Decrement usage count
                     tag.UsageCount = Math.Max(0, tag.UsageCount - 1);
+                    Console.WriteLine($"Decremented tag '{tag.Name}' usage count to {tag.UsageCount}");
                     
                     if (tag.UsageCount == 0)
                     {
                         // If tag is no longer used, remove it
                         _context.Tags.Remove(tag);
+                        Console.WriteLine($"Tag '{tag.Name}' removed because usage count is zero");
                     }
                     else
                     {
@@ -1109,24 +1120,40 @@ namespace FormsApp.Controllers
                 }
                 
                 // Update tag usage counts
-                foreach (var tag in tagsToUpdate.Values)
+                foreach (var tagEntry in tagsToUpdate)
                 {
-                    // Get count of template tags being deleted with this tag
-                    var tagUsageInDeletedTemplates = selectedTemplates
-                        .SelectMany(id => _context.TemplateTags
-                            .Where(tt => tt.TemplateId == id && tt.TagId == tag.Id))
-                        .Count();
-                        
-                    tag.UsageCount = Math.Max(0, tag.UsageCount - tagUsageInDeletedTemplates);
+                    var tag = tagEntry.Value;
+                    // Get the actual count of template tags being deleted with this tag
+                    int tagDeletedCount = 0;
                     
-                    if (tag.UsageCount == 0)
+                    foreach (var templateId in selectedTemplates)
                     {
-                        // If tag is no longer used, remove it
-                        _context.Tags.Remove(tag);
+                        // Check if this template had this tag
+                        var hasTag = await _context.TemplateTags
+                            .AnyAsync(tt => tt.TemplateId == templateId && tt.TagId == tag.Id);
+                            
+                        if (hasTag)
+                        {
+                            tagDeletedCount++;
+                        }
                     }
-                    else
+                    
+                    if (tagDeletedCount > 0)
                     {
-                        _context.Tags.Update(tag);
+                        // Decrement tag usage count by the number of templates with this tag
+                        tag.UsageCount = Math.Max(0, tag.UsageCount - tagDeletedCount);
+                        Console.WriteLine($"Decremented tag '{tag.Name}' usage count by {tagDeletedCount} to {tag.UsageCount}");
+                        
+                        if (tag.UsageCount == 0)
+                        {
+                            // If tag is no longer used, remove it
+                            _context.Tags.Remove(tag);
+                            Console.WriteLine($"Tag '{tag.Name}' removed because usage count is zero");
+                        }
+                        else
+                        {
+                            _context.Tags.Update(tag);
+                        }
                     }
                 }
                 
@@ -1163,49 +1190,58 @@ namespace FormsApp.Controllers
                 return;
             }
             
-            // Normalize tag name by trimming and converting to lowercase
+            // Normalize tag name by trimming
             tagName = tagName.Trim();
             Console.WriteLine($"Adding tag '{tagName}' to template {templateId}");
             
-            // Check if tag already exists
-            var tag = await _context.Tags.FirstOrDefaultAsync(t => t.Name.ToLower() == tagName.ToLower());
-            
-            // Create tag if it doesn't exist
-            if (tag == null)
+            try
             {
-                Console.WriteLine($"Creating new tag '{tagName}'");
-                tag = new Tag { Name = tagName, UsageCount = 1 };
-                _context.Tags.Add(tag);
-                await _context.SaveChangesAsync();
-                Console.WriteLine($"Created tag with ID {tag.Id}");
-            }
-            else
-            {
-                Console.WriteLine($"Using existing tag '{tagName}' with ID {tag.Id}");
-                // Increment usage count if tag exists
-                tag.UsageCount++;
-                _context.Tags.Update(tag);
-            }
-            
-            // Check if this tag is already linked to the template
-            var existingTemplateTag = await _context.TemplateTags
-                .FirstOrDefaultAsync(tt => tt.TagId == tag.Id && tt.TemplateId == templateId);
+                // Check if tag already exists (case insensitive)
+                var tag = await _context.Tags
+                    .FirstOrDefaultAsync(t => t.Name.ToLower() == tagName.ToLower());
                 
-            if (existingTemplateTag == null)
-            {
-                Console.WriteLine($"Creating new template-tag link between template {templateId} and tag {tag.Id}");
-                // Create link between template and tag
-                var templateTag = new TemplateTag
+                // Create tag if it doesn't exist
+                if (tag == null)
                 {
-                    TagId = tag.Id,
-                    TemplateId = templateId
-                };
+                    Console.WriteLine($"Creating new tag '{tagName}'");
+                    tag = new Tag { Name = tagName, UsageCount = 1 };
+                    _context.Tags.Add(tag);
+                    await _context.SaveChangesAsync();
+                    Console.WriteLine($"Created tag with ID {tag.Id}");
+                }
+                else
+                {
+                    Console.WriteLine($"Using existing tag '{tagName}' with ID {tag.Id}");
+                    // Increment usage count if tag exists
+                    tag.UsageCount++;
+                    _context.Tags.Update(tag);
+                }
                 
-                _context.TemplateTags.Add(templateTag);
+                // Check if this tag is already linked to the template (case insensitive)
+                var existingTemplateTag = await _context.TemplateTags
+                    .FirstOrDefaultAsync(tt => tt.TagId == tag.Id && tt.TemplateId == templateId);
+                    
+                if (existingTemplateTag == null)
+                {
+                    Console.WriteLine($"Creating new template-tag link between template {templateId} and tag {tag.Id}");
+                    // Create link between template and tag
+                    var templateTag = new TemplateTag
+                    {
+                        TagId = tag.Id,
+                        TemplateId = templateId
+                    };
+                    
+                    _context.TemplateTags.Add(templateTag);
+                }
+                else
+                {
+                    Console.WriteLine($"Template {templateId} already has tag {tag.Id}");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                Console.WriteLine($"Template {templateId} already has tag {tag.Id}");
+                Console.WriteLine($"Error adding tag '{tagName}' to template {templateId}: {ex.Message}");
+                // Don't throw - we'll handle failures gracefully and continue with other tags
             }
         }
         

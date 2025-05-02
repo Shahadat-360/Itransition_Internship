@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
+// Add AutoMapper namespace
+using FormsApp.Helpers;
 
 var configuration = new ConfigurationBuilder()
     .SetBasePath(Directory.GetCurrentDirectory())
@@ -56,6 +58,9 @@ try
 
     // Add full-text search service
     builder.Services.AddScoped<FormsApp.Services.ISearchService, FormsApp.Services.SearchService>();
+
+    // Register AutoMapper
+    builder.Services.AddAutoMapper(typeof(MappingProfiles));
 
     var app = builder.Build();
 

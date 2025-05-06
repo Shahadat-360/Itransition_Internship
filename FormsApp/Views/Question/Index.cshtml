@@ -211,7 +211,7 @@
                         <div id="editOptionsList">
                             <!-- Options will be added here dynamically -->
                         </div>
-                        <button type="button" id="editAddOption" class="btn btn-sm btn-outline-secondary mt-2" disabled>
+                        <button type="button" id="editAddOption" class="btn btn-sm btn-outline-secondary mt-2" hidden>
                             <i class="bi bi-plus"></i> Add Option
                         </button>
                     </div>
@@ -378,7 +378,7 @@
                 
             newOption.innerHTML = `
                 <input type="text" name="Options[${editOptionIndex}].Text" class="form-control" placeholder="Option text" value="${escapedText}" readonly>
-                <button type="button" class="btn btn-outline-danger edit-remove-option" disabled>
+                <button type="button" class="btn btn-outline-danger edit-remove-option" hidden>
                     <i class="bi bi-trash"></i>
                 </button>
             `;

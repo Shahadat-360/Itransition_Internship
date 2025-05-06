@@ -394,3 +394,18 @@ Error Number:515,State:2,Class:16
 2025-05-06 16:21:11.309 +06:00 [INF] Checking for role 'Admin'. Exists: true
 2025-05-06 16:21:11.358 +06:00 [INF] Existing admin user 'admin@formsapp.com' already exists.
 2025-05-06 16:21:11.397 +06:00 [INF] Existing admin user 'admin@formsapp.com' already has the 'Admin' role.
+2025-05-06 16:24:55.282 +06:00 [INF] Starting application...
+2025-05-06 16:24:56.842 +06:00 [INF] Checking for role 'Admin'. Exists: true
+2025-05-06 16:24:56.925 +06:00 [INF] Existing admin user 'admin@formsapp.com' already exists.
+2025-05-06 16:24:56.967 +06:00 [INF] Existing admin user 'admin@formsapp.com' already has the 'Admin' role.
+2025-05-06 16:25:06.071 +06:00 [WRN] Compiling a query which loads related collections for more than one collection navigation, either via 'Include' or through projection, but no 'QuerySplittingBehavior' has been configured. By default, Entity Framework will use 'QuerySplittingBehavior.SingleQuery', which can potentially result in slow query performance. See https://go.microsoft.com/fwlink/?linkid=2134277 for more information. To identify the query that's triggering this warning call 'ConfigureWarnings(w => w.Throw(RelationalEventId.MultipleCollectionIncludeWarning))'.
+2025-05-06 16:25:27.456 +06:00 [INF] User admin@formsapp.com logged in successfully.
+2025-05-06 16:30:24.297 +06:00 [INF] Starting application...
+2025-05-06 16:30:25.783 +06:00 [INF] Checking for role 'Admin'. Exists: true
+2025-05-06 16:30:25.834 +06:00 [INF] Existing admin user 'admin@formsapp.com' already exists.
+2025-05-06 16:30:25.874 +06:00 [INF] Existing admin user 'admin@formsapp.com' already has the 'Admin' role.
+2025-05-06 16:30:31.056 +06:00 [WRN] Compiling a query which loads related collections for more than one collection navigation, either via 'Include' or through projection, but no 'QuerySplittingBehavior' has been configured. By default, Entity Framework will use 'QuerySplittingBehavior.SingleQuery', which can potentially result in slow query performance. See https://go.microsoft.com/fwlink/?linkid=2134277 for more information. To identify the query that's triggering this warning call 'ConfigureWarnings(w => w.Throw(RelationalEventId.MultipleCollectionIncludeWarning))'.
+2025-05-06 16:32:10.700 +06:00 [INF] Starting application...
+2025-05-06 16:32:12.288 +06:00 [INF] Checking for role 'Admin'. Exists: true
+2025-05-06 16:32:12.369 +06:00 [INF] Existing admin user 'admin@formsapp.com' already exists.
+2025-05-06 16:32:12.409 +06:00 [INF] Existing admin user 'admin@formsapp.com' already has the 'Admin' role.

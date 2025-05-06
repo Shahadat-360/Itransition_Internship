@@ -202,62 +202,11 @@
                 tagContainer.appendChild(tagElement);
             });
         }
-        
-        // Handle allowed users
-        const userEmailInput = document.getElementById('userEmailInput');
-        const emailContainer = document.getElementById('emailContainer');
-        const allowedUsersInput = document.getElementById('allowedUsersInput');
-        let emails = [];
-        
-        userEmailInput.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter' && this.value.trim() !== '') {
-                e.preventDefault();
-                const email = this.value.trim();
-                if (!emails.includes(email)) {
-                    addEmail(email);
-                }
-                this.value = '';
-            }
-        });
-        
-        function addEmail(email) {
-            emails.push(email);
-            updateEmails();
-            
-            const emailElement = document.createElement('span');
-            emailElement.classList.add('badge', 'bg-info', 'me-1', 'mb-1', 'email-item');
-            emailElement.innerHTML = `${email} <i class="bi bi-x" onclick="removeEmail('${email}')"></i>`;
-            emailContainer.appendChild(emailElement);
-        }
-        
-        function removeEmail(email) {
-            emails = emails.filter(e => e !== email);
-            updateEmails();
-            renderEmails();
-        }
-        
-        function updateEmails() {
-            allowedUsersInput.value = JSON.stringify(emails);
-        }
-        
-        function renderEmails() {
-            emailContainer.innerHTML = '';
-            emails.forEach(email => {
-                const emailElement = document.createElement('span');
-                emailElement.classList.add('badge', 'bg-info', 'me-1', 'mb-1', 'email-item');
-                emailElement.innerHTML = `${email} <i class="bi bi-x" onclick="removeEmail('${email}')"></i>`;
-                emailContainer.appendChild(emailElement);
-            });
-        }
-        
-        // Toggle allowed users section based on IsPublic
-        const isPublicCheckbox = document.getElementById('IsPublic');
-        const allowedUsersSection = document.getElementById('allowedUsersSection');
-        
-        isPublicCheckbox.addEventListener('change', function() {
-            allowedUsersSection.style.display = this.checked ? 'none' : 'block';
-        });
-        
+    </script>
+    
+    @await Html.PartialAsync("_EmailAutocompletePartial", Model)
+    
+    <script>
         // Function to refresh topics dropdown
         window.refreshTopics = function() {
             // Refresh topics

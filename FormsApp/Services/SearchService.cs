@@ -1,5 +1,6 @@
 using FormsApp.Data;
 using FormsApp.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace FormsApp.Services
@@ -7,10 +8,12 @@ namespace FormsApp.Services
     public class SearchService : ISearchService
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
         
-        public SearchService(ApplicationDbContext context)
+        public SearchService(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
         
         public async Task<IEnumerable<FormTemplate>> SearchTemplatesAsync(string searchTerm)
@@ -47,6 +50,21 @@ namespace FormsApp.Services
             return await _context.Tags
                 .Where(t => t.Name.StartsWith(prefix))
                 .OrderByDescending(t => t.UsageCount)
+                .Take(10)
+                .ToListAsync();
+        }
+        
+        public async Task<IEnumerable<string>> GetEmailsStartingWithAsync(string prefix)
+        {
+            if (string.IsNullOrEmpty(prefix))
+            {
+                return new List<string>();
+            }
+
+            // Find users whose email starts with the provided prefix
+            return await _userManager.Users
+                .Where(u => u.Email.StartsWith(prefix) && !u.IsBlocked)
+                .Select(u => u.Email)
                 .Take(10)
                 .ToListAsync();
         }

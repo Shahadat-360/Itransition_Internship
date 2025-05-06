@@ -97,10 +97,10 @@
                         
                         <div id="allowedUsersSection" class="mb-3" style="display: none;">
                             <label for="AllowedEmails" class="form-label">Allowed Users</label>
-                            <textarea name="AllowedEmails" id="AllowedEmails" class="form-control" rows="4"
-                                placeholder="Enter email addresses (one per line or separated by commas)"
-                            >@(Model.AllowedUserEmails != null ? string.Join(Environment.NewLine, Model.AllowedUserEmails) : "")</textarea>
-                            <div class="form-text">Add specific users who can access this template. Enter email addresses separated by line breaks or commas.</div>
+                            <input id="userEmailInput" type="email" class="form-control mb-2" placeholder="Enter email and press Enter" />
+                            <div id="emailContainer" class="d-flex flex-wrap gap-2 mb-2"></div>
+                            <input name="AllowedEmails" type="hidden" id="allowedUsersInput" />
+                            <div class="form-text">Add specific users who can access this template</div>
                         </div>
                     </div>
                 </div>
@@ -280,20 +280,13 @@
                 previewImg.src = '#';
             }
         }
-        
-        // Initialize allowed users section based on IsPublic
+    </script>
+    
+    @await Html.PartialAsync("_EmailAutocompletePartial", Model)
+    
+    <script>
+        // Check for newTopicId parameter in URL
         document.addEventListener('DOMContentLoaded', function() {
-            const isPublicCheckbox = document.getElementById('IsPublic');
-            const allowedUsersSection = document.getElementById('allowedUsersSection');
-            
-            // Initial state
-            allowedUsersSection.style.display = isPublicCheckbox.checked ? 'none' : 'block';
-            
-            isPublicCheckbox.addEventListener('change', function() {
-                allowedUsersSection.style.display = this.checked ? 'none' : 'block';
-            });
-            
-            // Check for newTopicId parameter in URL
             const urlParams = new URLSearchParams(window.location.search);
             const newTopicId = urlParams.get('newTopicId');
             if (newTopicId) {

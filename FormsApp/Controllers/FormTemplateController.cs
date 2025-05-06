@@ -281,43 +281,54 @@ namespace FormsApp.Controllers
                 _context.Add(formTemplate);
                 await _context.SaveChangesAsync();
                 
-                // Process tag names from the TagsJson field
+                // Process tags from JSON
                 if (!string.IsNullOrEmpty(viewModel.TagsJson))
                 {
-                    List<string> tagNames = new List<string>();
-                    
                     try 
                     {
-                        // Deserialize JSON string to list of tags
-                        tagNames = JsonSerializer.Deserialize<List<string>>(viewModel.TagsJson) ?? new List<string>();
-                        Console.WriteLine($"Deserialized tags: {string.Join(", ", tagNames)}");
+                        var tagNames = JsonSerializer.Deserialize<List<string>>(viewModel.TagsJson);
+                        
+                        if (tagNames != null && tagNames.Any())
+                        {
+                            foreach (var tagName in tagNames)
+                            {
+                                await AddTagToTemplate(tagName, formTemplate.Id);
+                            }
+                        }
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine($"Error deserializing tags: {ex.Message}");
+                        Console.WriteLine($"Error processing tags: {ex.Message}");
                     }
-                    
-                    // Process tag names if we found any
-                    foreach (var tagName in tagNames.Where(t => !string.IsNullOrWhiteSpace(t)))
-                    {
-                        await AddTagToTemplate(tagName, formTemplate.Id);
-                    }
-                    
-                    await _context.SaveChangesAsync();
                 }
                 
-                // Process allowed users
-                if (viewModel.AllowedUserEmails != null && viewModel.AllowedUserEmails.Any())
+                // Process allowed users if not public
+                if (!formTemplate.IsPublic && viewModel.AllowedUserEmails != null)
                 {
-                    await ProcessAllowedUsers(viewModel.AllowedUserEmails, formTemplate.Id);
+                    try
+                    {
+                        // Ensure AllowedUserEmails is correctly deserialized from JSON
+                        // The input should already be a List<string> from model binding in most cases
+                        List<string> emails = viewModel.AllowedUserEmails;
+                        
+                        // If not empty, process the emails
+                        if (emails.Any())
+                        {
+                            await ProcessAllowedUsers(emails, formTemplate.Id);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error processing allowed users: {ex.Message}");
+                    }
                 }
                 
                 TempData["SuccessMessage"] = "Form template created successfully.";
-                return RedirectToAction(nameof(Edit), new { id = formTemplate.Id });
+                return RedirectToAction(nameof(Details), new { id = formTemplate.Id });
             }
             
             // If we get here, something failed, redisplay form
-            // Reload topics for dropdown
+            // Load topics for dropdown
             ViewData["Topics"] = await _context.Topics
                 .OrderBy(t => t.Name)
                 .Select(t => new SelectListItem { Value = t.Id.ToString(), Text = t.Name })
@@ -465,14 +476,22 @@ namespace FormsApp.Controllers
             // Process allowed emails string to list
             if (!string.IsNullOrEmpty(viewModel.AllowedEmails))
             {
-                // Split by newlines and commas
-                viewModel.AllowedUserEmails = viewModel.AllowedEmails
-                    .Replace("\r\n", "\n")
-                    .Replace("\r", "\n")
-                    .Split(new[] { '\n', ',' }, StringSplitOptions.RemoveEmptyEntries)
-                    .Select(e => e.Trim())
-                    .Where(e => !string.IsNullOrWhiteSpace(e))
-                    .ToList();
+                try
+                {
+                    // Try to parse as JSON first (from the hidden input field)
+                    viewModel.AllowedUserEmails = JsonSerializer.Deserialize<List<string>>(viewModel.AllowedEmails);
+                }
+                catch
+                {
+                    // If not JSON, treat as newline/comma separated text (fallback for backward compatibility)
+                    viewModel.AllowedUserEmails = viewModel.AllowedEmails
+                        .Replace("\r\n", "\n")
+                        .Replace("\r", "\n")
+                        .Split(new[] { '\n', ',' }, StringSplitOptions.RemoveEmptyEntries)
+                        .Select(e => e.Trim())
+                        .Where(e => !string.IsNullOrWhiteSpace(e))
+                        .ToList();
+                }
             }
             else
             {
@@ -1409,6 +1428,15 @@ namespace FormsApp.Controllers
             }
             
             return RedirectToAction(nameof(Edit), new { id });
+        }
+
+        // GET: /FormTemplate/SearchEmails?term={searchTerm}
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> SearchEmails(string term)
+        {
+            var emails = await _searchService.GetEmailsStartingWithAsync(term);
+            return Json(emails);
         }
     }
 } 

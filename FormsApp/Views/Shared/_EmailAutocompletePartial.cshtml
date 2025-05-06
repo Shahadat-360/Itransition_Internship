@@ -1,0 +1,109 @@
+@model dynamic
+
+<script>
+    $(function() {
+        // Get elements
+        const userEmailInput = document.getElementById('userEmailInput');
+        const emailContainer = document.getElementById('emailContainer');
+        const allowedUsersInput = document.getElementById('allowedUsersInput');
+        let emails = [];
+        
+        // Load existing emails if provided (used in Edit page)
+        @if (Model != null && Model.AllowedUserEmails != null)
+        {
+            <text>
+            try {
+                const existingEmails = @Html.Raw(Json.Serialize(Model.AllowedUserEmails));
+                console.log("Loading initial emails from server:", existingEmails);
+                
+                if (existingEmails && existingEmails.length) {
+                    emails = [...existingEmails];
+                    renderEmails();
+                    updateEmails();
+                }
+            } catch (e) {
+                console.error("Error loading emails:", e);
+            }
+            </text>
+        }
+        
+        // Initialize autocomplete on the email input field
+        $(userEmailInput).autocomplete({
+            source: function(request, response) {
+                $.ajax({
+                    url: '@Url.Action("SearchEmails", "FormTemplate")',
+                    dataType: "json",
+                    data: { term: request.term },
+                    success: function(data) {
+                        // Filter out emails that are already added
+                        const availableEmails = data.filter(email => !emails.includes(email));
+                        response(availableEmails);
+                    }
+                });
+            },
+            minLength: 1,
+            select: function(event, ui) {
+                if (ui.item && !emails.includes(ui.item.value)) {
+                    addEmail(ui.item.value);
+                    $(this).val('');
+                    return false;
+                }
+            }
+        });
+        
+        userEmailInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && this.value.trim() !== '') {
+                e.preventDefault();
+                const email = this.value.trim();
+                if (!emails.includes(email)) {
+                    addEmail(email);
+                }
+                this.value = '';
+            }
+        });
+        
+        function addEmail(email) {
+            emails.push(email);
+            updateEmails();
+            
+            const emailElement = document.createElement('span');
+            emailElement.classList.add('badge', 'bg-info', 'me-1', 'mb-1', 'email-item');
+            emailElement.innerHTML = `${email} <i class="bi bi-x" onclick="removeEmail('${email}')"></i>`;
+            emailContainer.appendChild(emailElement);
+        }
+        
+        // Define the removeEmail function at the global scope 
+        window.removeEmail = function(email) {
+            emails = emails.filter(e => e !== email);
+            updateEmails();
+            renderEmails();
+        };
+        
+        function updateEmails() {
+            allowedUsersInput.value = JSON.stringify(emails);
+        }
+        
+        function renderEmails() {
+            emailContainer.innerHTML = '';
+            emails.forEach(email => {
+                const emailElement = document.createElement('span');
+                emailElement.classList.add('badge', 'bg-info', 'me-1', 'mb-1', 'email-item');
+                emailElement.innerHTML = `${email} <i class="bi bi-x" onclick="removeEmail('${email}')"></i>`;
+                emailContainer.appendChild(emailElement);
+            });
+        }
+        
+        // Toggle allowed users section based on IsPublic (if it exists)
+        const isPublicCheckbox = document.getElementById('IsPublic');
+        const allowedUsersSection = document.getElementById('allowedUsersSection');
+        
+        if (isPublicCheckbox && allowedUsersSection) {
+            // Initial state
+            allowedUsersSection.style.display = isPublicCheckbox.checked ? 'none' : 'block';
+            
+            isPublicCheckbox.addEventListener('change', function() {
+                allowedUsersSection.style.display = this.checked ? 'none' : 'block';
+            });
+        }
+    });
+</script> 

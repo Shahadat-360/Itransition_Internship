@@ -6,5 +6,6 @@ namespace FormsApp.Services
     {
         Task<IEnumerable<FormTemplate>> SearchTemplatesAsync(string searchTerm);
         Task<IEnumerable<Tag>> GetTagsStartingWithAsync(string prefix);
+        Task<IEnumerable<string>> GetEmailsStartingWithAsync(string prefix);
     }
 } 

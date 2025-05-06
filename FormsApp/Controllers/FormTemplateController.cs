@@ -76,8 +76,9 @@ namespace FormsApp.Controllers
             }
 
         }
-        
+
         // GET: /FormTemplate/Details/5
+        [Authorize]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -96,7 +97,7 @@ namespace FormsApp.Controllers
                 .Include(f => f.Likes)
                 .Include(f => f.AllowedUsers)
                 .FirstOrDefaultAsync(m => m.Id == id);
-                
+
             if (formTemplate == null)
             {
                 TempData["ErrorMessage"] = "Form template not found.";
@@ -110,15 +111,15 @@ namespace FormsApp.Controllers
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 var userEmail = User.FindFirstValue(ClaimTypes.Email);
                 var currentUserIsAdmin = User.IsInRole("Admin");
-                
+
                 // User has access if the template is public, they're the creator, an admin,
                 // or they're in the allowed users list by ID or email
-                hasAccess = formTemplate.IsPublic || 
-                           currentUserIsAdmin || 
+                hasAccess = formTemplate.IsPublic ||
+                           currentUserIsAdmin ||
                            formTemplate.CreatorId == userId ||
                            formTemplate.AllowedUsers.Any(au => au.UserId == userId) ||
                            (!string.IsNullOrEmpty(userEmail) && formTemplate.AllowedUsers.Any(au => au.Email == userEmail));
-                           
+
                 if (!hasAccess)
                 {
                     TempData["ErrorMessage"] = "You don't have permission to view this template.";
@@ -164,25 +165,25 @@ namespace FormsApp.Controllers
             var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var currentUserEmail = User.FindFirstValue(ClaimTypes.Email);
             var isAdmin = User.IsInRole("Admin");
-            
+
             // Set CanEdit - user can edit if they are the creator or an admin
             ViewData["CanEdit"] = isAdmin || (currentUserId == formTemplate.CreatorId);
-            
+
             // Set CanFill - user can fill if they are logged in and:
             // 1. The form is public, OR
             // 2. They created it, OR
             // 3. They are an admin, OR
             // 4. They are in the allowed users list by ID or email
-            var isAllowedUser = formTemplate.AllowedUsers != null && 
-                (formTemplate.AllowedUsers.Any(au => au.UserId == currentUserId) || 
+            var isAllowedUser = formTemplate.AllowedUsers != null &&
+                (formTemplate.AllowedUsers.Any(au => au.UserId == currentUserId) ||
                 (!string.IsNullOrEmpty(currentUserEmail) && formTemplate.AllowedUsers.Any(au => au.Email == currentUserEmail)));
 
-            ViewData["CanFill"] = User.Identity.IsAuthenticated && 
+            ViewData["CanFill"] = User.Identity.IsAuthenticated &&
                 (formTemplate.IsPublic || currentUserId == formTemplate.CreatorId || isAdmin || isAllowedUser);
-            
+
             // Set the CreatorId for comment permissions
             ViewData["CreatorId"] = formTemplate.CreatorId;
-            
+
             // Set Questions as QuestionViewModel list
             ViewData["Questions"] = formTemplate.Questions.Select(q => new QuestionViewModel
             {
@@ -199,7 +200,7 @@ namespace FormsApp.Controllers
                     Order = o.Order
                 }).ToList()
             }).ToList();
-            
+
             // Set Comments - we might need to fetch them first
             ViewData["Comments"] = await _context.Comments
                 .Where(c => c.TemplateId == id)

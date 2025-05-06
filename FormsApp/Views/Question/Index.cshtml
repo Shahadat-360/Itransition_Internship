@@ -211,7 +211,7 @@
                         <div id="editOptionsList">
                             <!-- Options will be added here dynamically -->
                         </div>
-                        <button type="button" id="editAddOption" class="btn btn-sm btn-outline-secondary mt-2">
+                        <button type="button" id="editAddOption" class="btn btn-sm btn-outline-secondary mt-2" disabled>
                             <i class="bi bi-plus"></i> Add Option
                         </button>
                     </div>
@@ -316,9 +316,9 @@
                     // Update the label based on question type
                     const optionsLabel = document.getElementById('editOptionsContainer').querySelector('.form-label');
                     if (type === 3) {
-                        optionsLabel.textContent = 'Options';
+                        optionsLabel.textContent = 'Options ( Can not be modified )';
                     } else {
-                        optionsLabel.textContent = 'Poll Options';
+                        optionsLabel.textContent = 'Poll Options ( Can not be modified )';
                     }
                     
                     // Clear existing options
@@ -377,8 +377,8 @@
                 .replace(/'/g, '&#039;');
                 
             newOption.innerHTML = `
-                <input type="text" name="Options[${editOptionIndex}].Text" class="form-control" placeholder="Option text" value="${escapedText}">
-                <button type="button" class="btn btn-outline-danger edit-remove-option">
+                <input type="text" name="Options[${editOptionIndex}].Text" class="form-control" placeholder="Option text" value="${escapedText}" readonly>
+                <button type="button" class="btn btn-outline-danger edit-remove-option" disabled>
                     <i class="bi bi-trash"></i>
                 </button>
             `;

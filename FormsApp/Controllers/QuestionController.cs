@@ -217,7 +217,7 @@ namespace FormsApp.Controllers
                 
                 _context.Questions.Add(question);
                 await _context.SaveChangesAsync();
-                
+
                 // If question type is MultipleChoice or Poll, add the options
                 if (model.Type == QuestionType.MultipleChoice || model.Type == QuestionType.Poll)
                 {
@@ -237,7 +237,7 @@ namespace FormsApp.Controllers
                         await _context.SaveChangesAsync();
                     }
                 }
-                
+
                 TempData["Success"] = "Question created successfully.";
                 return RedirectToAction("Index", new { id = model.TemplateId });
             }
@@ -351,37 +351,7 @@ namespace FormsApp.Controllers
                 
                 _context.Update(question);
                 await _context.SaveChangesAsync();
-                
-                // Handle options for Multiple Choice or Poll questions
-                if (question.Type == QuestionType.MultipleChoice || question.Type == QuestionType.Poll)
-                {
-                    // Get existing options
-                    var existingOptions = await _context.QuestionOptions
-                        .Where(o => o.QuestionId == question.Id)
-                        .ToListAsync();
-                    
-                    // Remove all existing options
-                    _context.QuestionOptions.RemoveRange(existingOptions);
-                    await _context.SaveChangesAsync();
-                    
-                    // Add new options
-                    if (model.Options != null && model.Options.Any())
-                    {
-                        int order = 0;
-                        foreach (var option in model.Options.Where(o => !string.IsNullOrWhiteSpace(o.Text)))
-                        {
-                            var questionOption = new QuestionOption
-                            {
-                                Text = option.Text,
-                                Order = order++,
-                                QuestionId = question.Id
-                            };
-                            _context.QuestionOptions.Add(questionOption);
-                        }
-                        await _context.SaveChangesAsync();
-                    }
-                }
-                
+
                 TempData["Success"] = "Question updated successfully.";
                 return RedirectToAction("Index", new { id = model.TemplateId });
             }

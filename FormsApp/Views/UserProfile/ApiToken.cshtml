@@ -1,0 +1,111 @@
+@model FormsApp.ViewModels.ApiTokenViewModel
+@{
+    ViewData["Title"] = "API Token Management";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <!-- Display success/error messages -->
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show">
+                    @TempData["SuccessMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+            
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show">
+                    @TempData["ErrorMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+            
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="mb-0">API Token Management</h2>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <p>
+                            API tokens allow external applications to access your form data in read-only mode.
+                            Only aggregated results from forms based on your templates will be accessible.
+                        </p>
+                    </div>
+                    
+                    @if (Model.HasActiveToken)
+                    {
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Your API Token:</label>
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control" value="@Model.ApiToken" id="apiTokenInput" readonly>
+                                <button class="btn btn-outline-secondary" type="button" onclick="copyToClipboard()">Copy</button>
+                            </div>
+                            <small class="text-muted">Keep this token secure. Anyone with this token can access your form data.</small>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <h5>API Endpoints:</h5>
+                            <div class="card mb-2">
+                                <div class="card-header">Get All Templates</div>
+                                <div class="card-body">
+                                    <code class="d-block mb-2">GET @Model.GetAllTemplatesUrl</code>
+                                    <small>Returns all templates with aggregated results.</small>
+                                </div>
+                            </div>
+                            
+                            <div class="card">
+                                <div class="card-header">Get Template by ID</div>
+                                <div class="card-body">
+                                    <code class="d-block mb-2">GET @Model.GetTemplateByIdUrl</code>
+                                    <small>Returns a specific template with aggregated results. Replace {templateId} with the actual template ID.</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <form asp-action="GenerateApiToken" method="post">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-warning" onclick="return confirm('Are you sure you want to regenerate your API token? This will invalidate the current token.')">
+                                <i class="bi bi-arrow-repeat"></i> Regenerate Token
+                            </button>
+                        </form>
+                    }
+                    else
+                    {
+                        <div class="text-center">
+                            <p>You don't have an active API token yet.</p>
+                            <form asp-action="GenerateApiToken" method="post">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-key"></i> Generate API Token
+                                </button>
+                            </form>
+                        </div>
+                    }
+                    
+                    <div class="mt-4">
+                        <a asp-controller="UserProfile" asp-action="Index" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Back to Profile
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function copyToClipboard() {
+            var copyText = document.getElementById("apiTokenInput");
+            copyText.select();
+            copyText.setSelectionRange(0, 99999); // For mobile devices
+            navigator.clipboard.writeText(copyText.value);
+            
+            // Show feedback
+            alert("API token copied to clipboard!");
+        }
+    </script>
+} 

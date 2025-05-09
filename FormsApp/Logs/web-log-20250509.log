@@ -1,0 +1,302 @@
+2025-05-09 15:00:04.157 +06:00 [INF] Starting application...
+2025-05-09 15:00:04.410 +06:00 [FTL] Application start-up failed
+Microsoft.Extensions.Hosting.HostAbortedException: The host was aborted.
+   at Microsoft.Extensions.Hosting.HostFactoryResolver.HostingListener.ThrowHostAborted()
+   at Microsoft.Extensions.Hosting.HostFactoryResolver.HostingListener.OnNext(KeyValuePair`2 value)
+   at System.Diagnostics.DiagnosticListener.Write(String name, Object value)
+   at Microsoft.Extensions.Hosting.HostBuilder.ResolveHost(IServiceProvider serviceProvider, DiagnosticListener diagnosticListener)
+   at Microsoft.Extensions.Hosting.HostApplicationBuilder.Build()
+   at Microsoft.AspNetCore.Builder.WebApplicationBuilder.Build()
+   at Program.<Main>$(String[] args) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Program.cs:line 72
+2025-05-09 15:00:32.470 +06:00 [INF] Starting application...
+2025-05-09 15:00:32.687 +06:00 [FTL] Application start-up failed
+Microsoft.Extensions.Hosting.HostAbortedException: The host was aborted.
+   at Microsoft.Extensions.Hosting.HostFactoryResolver.HostingListener.ThrowHostAborted()
+   at Microsoft.Extensions.Hosting.HostFactoryResolver.HostingListener.OnNext(KeyValuePair`2 value)
+   at System.Diagnostics.DiagnosticListener.Write(String name, Object value)
+   at Microsoft.Extensions.Hosting.HostBuilder.ResolveHost(IServiceProvider serviceProvider, DiagnosticListener diagnosticListener)
+   at Microsoft.Extensions.Hosting.HostApplicationBuilder.Build()
+   at Microsoft.AspNetCore.Builder.WebApplicationBuilder.Build()
+   at Program.<Main>$(String[] args) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Program.cs:line 72
+2025-05-09 15:00:50.777 +06:00 [INF] Starting application...
+2025-05-09 15:00:52.593 +06:00 [ERR] Failed executing DbCommand (4ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE TABLE [SalesforceUserProfiles] (
+    [Id] int NOT NULL IDENTITY,
+    [UserId] nvarchar(450) NOT NULL,
+    [IntegrationDate] datetime2 NOT NULL,
+    [SalesforceAccountId] nvarchar(max) NULL,
+    [SalesforceContactId] nvarchar(max) NULL,
+    CONSTRAINT [PK_SalesforceUserProfiles] PRIMARY KEY ([Id]),
+    CONSTRAINT [FK_SalesforceUserProfiles_AspNetUsers_UserId] FOREIGN KEY ([UserId]) REFERENCES [AspNetUsers] ([Id]) ON DELETE CASCADE
+);
+2025-05-09 15:00:52.615 +06:00 [ERR] An error occurred while migrating the database
+Microsoft.Data.SqlClient.SqlException (0x80131904): There is already an object named 'SalesforceUserProfiles' in the database.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, SqlCommand command, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlCommand.InternalEndExecuteNonQuery(IAsyncResult asyncResult, Boolean isInternal, String endMethod)
+   at Microsoft.Data.SqlClient.SqlCommand.EndExecuteNonQueryInternal(IAsyncResult asyncResult)
+   at Microsoft.Data.SqlClient.SqlCommand.EndExecuteNonQueryAsync(IAsyncResult asyncResult)
+   at Microsoft.Data.SqlClient.SqlCommand.<>c.<InternalExecuteNonQueryAsync>b__193_1(IAsyncResult asyncResult)
+   at System.Threading.Tasks.TaskFactory`1.FromAsyncCoreLogic(IAsyncResult iar, Func`2 endFunction, Action`1 endAction, Task`1 promise, Boolean requiresSynchronization)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteNonQueryAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteNonQueryAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteNonQueryAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.ExecuteAsync(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean beginTransaction, Boolean commitTransaction, Nullable`1 isolationLevel, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.ExecuteAsync(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean beginTransaction, Boolean commitTransaction, Nullable`1 isolationLevel, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.ExecuteNonQueryAsync(IReadOnlyList`1 migrationCommands, IRelationalConnection connection, MigrationExecutionState executionState, Boolean commitTransaction, Nullable`1 isolationLevel, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.Migrator.MigrateImplementationAsync(DbContext context, String targetMigration, MigrationExecutionState state, Boolean useTransaction, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.Migrator.MigrateImplementationAsync(DbContext context, String targetMigration, MigrationExecutionState state, Boolean useTransaction, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.Migrator.<>c.<<MigrateAsync>b__22_1>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.Migrator.MigrateAsync(String targetMigration, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.Migrator.MigrateAsync(String targetMigration, CancellationToken cancellationToken)
+   at FormsApp.Data.DbInitializer.InitializeAsync(IServiceProvider serviceProvider) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Data\DbInitializer.cs:line 24
+ClientConnectionId:102e9668-b987-4a24-b8c9-762a622b901a
+Error Number:2714,State:6,Class:16
+2025-05-09 15:00:53.161 +06:00 [INF] Checking for role 'Admin'. Exists: true
+2025-05-09 15:00:53.259 +06:00 [INF] Existing admin user 'admin@formsapp.com' already exists.
+2025-05-09 15:00:53.348 +06:00 [INF] Existing admin user 'admin@formsapp.com' already has the 'Admin' role.
+2025-05-09 15:03:15.954 +06:00 [INF] Starting application...
+2025-05-09 15:03:16.168 +06:00 [FTL] Application start-up failed
+Microsoft.Extensions.Hosting.HostAbortedException: The host was aborted.
+   at Microsoft.Extensions.Hosting.HostFactoryResolver.HostingListener.ThrowHostAborted()
+   at Microsoft.Extensions.Hosting.HostFactoryResolver.HostingListener.OnNext(KeyValuePair`2 value)
+   at System.Diagnostics.DiagnosticListener.Write(String name, Object value)
+   at Microsoft.Extensions.Hosting.HostBuilder.ResolveHost(IServiceProvider serviceProvider, DiagnosticListener diagnosticListener)
+   at Microsoft.Extensions.Hosting.HostApplicationBuilder.Build()
+   at Microsoft.AspNetCore.Builder.WebApplicationBuilder.Build()
+   at Program.<Main>$(String[] args) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Program.cs:line 72
+2025-05-09 15:04:05.774 +06:00 [INF] Starting application...
+2025-05-09 15:04:05.977 +06:00 [FTL] Application start-up failed
+Microsoft.Extensions.Hosting.HostAbortedException: The host was aborted.
+   at Microsoft.Extensions.Hosting.HostFactoryResolver.HostingListener.ThrowHostAborted()
+   at Microsoft.Extensions.Hosting.HostFactoryResolver.HostingListener.OnNext(KeyValuePair`2 value)
+   at System.Diagnostics.DiagnosticListener.Write(String name, Object value)
+   at Microsoft.Extensions.Hosting.HostBuilder.ResolveHost(IServiceProvider serviceProvider, DiagnosticListener diagnosticListener)
+   at Microsoft.Extensions.Hosting.HostApplicationBuilder.Build()
+   at Microsoft.AspNetCore.Builder.WebApplicationBuilder.Build()
+   at Program.<Main>$(String[] args) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Program.cs:line 72
+2025-05-09 15:04:29.214 +06:00 [INF] Starting application...
+2025-05-09 15:04:29.430 +06:00 [FTL] Application start-up failed
+Microsoft.Extensions.Hosting.HostAbortedException: The host was aborted.
+   at Microsoft.Extensions.Hosting.HostFactoryResolver.HostingListener.ThrowHostAborted()
+   at Microsoft.Extensions.Hosting.HostFactoryResolver.HostingListener.OnNext(KeyValuePair`2 value)
+   at System.Diagnostics.DiagnosticListener.Write(String name, Object value)
+   at Microsoft.Extensions.Hosting.HostBuilder.ResolveHost(IServiceProvider serviceProvider, DiagnosticListener diagnosticListener)
+   at Microsoft.Extensions.Hosting.HostApplicationBuilder.Build()
+   at Microsoft.AspNetCore.Builder.WebApplicationBuilder.Build()
+   at Program.<Main>$(String[] args) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Program.cs:line 72
+2025-05-09 15:04:50.945 +06:00 [INF] Starting application...
+2025-05-09 15:04:53.116 +06:00 [INF] Checking for role 'Admin'. Exists: false
+2025-05-09 15:04:53.124 +06:00 [INF] Role 'Admin' not found. Creating role.
+2025-05-09 15:04:53.271 +06:00 [INF] Role 'Admin' created successfully.
+2025-05-09 15:04:53.284 +06:00 [INF] Admin user 'admin@formsapp.com' not found, creating new user.
+2025-05-09 15:04:53.484 +06:00 [INF] Admin user 'admin@formsapp.com' created successfully. Assigning 'Admin' role.
+2025-05-09 15:04:53.595 +06:00 [INF] Successfully assigned 'Admin' role to user 'admin@formsapp.com'.
+2025-05-09 15:05:26.053 +06:00 [INF] Starting application...
+2025-05-09 15:05:29.815 +06:00 [INF] Checking for role 'Admin'. Exists: true
+2025-05-09 15:05:29.908 +06:00 [INF] Existing admin user 'admin@formsapp.com' already exists.
+2025-05-09 15:05:29.973 +06:00 [INF] Existing admin user 'admin@formsapp.com' already has the 'Admin' role.
+2025-05-09 15:05:38.631 +06:00 [INF] User admin@formsapp.com logged in successfully.
+2025-05-09 15:05:38.635 +06:00 [INF] Adding missing email claim for user 6fb4f704-166e-4421-b99d-0d8704e65fb6.
+2025-05-09 15:06:16.940 +06:00 [ERR] Failed to create Salesforce Account: [{"duplicateResult":{"allowSave":true,"duplicateRule":"Standard_Account_Duplicate_Rule","duplicateRuleEntityType":"Account","errorMessage":"Use one of these records?","matchResults":[{"entityType":"Account","errors":[],"matchEngine":"FuzzyMatchEngine","matchRecords":[{"additionalInformation":[],"fieldDiffs":[],"matchConfidence":100.0,"record":{"attributes":{"type":"Account","url":"/services/data/v59.0/sobjects/Account/001gL000005jO1hQAE"},"Id":"001gL000005jO1hQAE"}}],"rule":"Standard_Account_Match_Rule_v1_0","size":1,"success":true}]},"errorCode":"DUPLICATES_DETECTED","message":"Use one of these records?"}]
+2025-05-09 15:06:17.245 +06:00 [ERR] Error during Salesforce integration for user 6fb4f704-166e-4421-b99d-0d8704e65fb6
+System.Exception: Failed to create Salesforce Account: BadRequest
+   at FormsApp.Services.SalesforceService.CreateAccountAsync(SalesforceAccount account) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Services\SalesforceService.cs:line 81
+   at FormsApp.Controllers.UserProfileController.SalesforceIntegration(SalesforceProfileViewModel model) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Controllers\UserProfileController.cs:line 108
+2025-05-09 15:06:17.306 +06:00 [ERR] Error creating Salesforce Account/Contact for user admin@formsapp.com
+System.Exception: Failed to create Salesforce Account: BadRequest
+   at FormsApp.Services.SalesforceService.CreateAccountAsync(SalesforceAccount account) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Services\SalesforceService.cs:line 81
+   at FormsApp.Controllers.UserProfileController.SalesforceIntegration(SalesforceProfileViewModel model) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Controllers\UserProfileController.cs:line 108
+   at FormsApp.Controllers.UserProfileController.SalesforceIntegration(SalesforceProfileViewModel model) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Controllers\UserProfileController.cs:line 148
+2025-05-09 15:07:21.553 +06:00 [INF] Starting application...
+2025-05-09 15:07:24.489 +06:00 [INF] Checking for role 'Admin'. Exists: true
+2025-05-09 15:07:24.772 +06:00 [INF] Existing admin user 'admin@formsapp.com' already exists.
+2025-05-09 15:07:24.863 +06:00 [INF] Existing admin user 'admin@formsapp.com' already has the 'Admin' role.
+2025-05-09 15:12:12.357 +06:00 [ERR] Failed to create Salesforce Account: [{"duplicateResult":{"allowSave":true,"duplicateRule":"Standard_Account_Duplicate_Rule","duplicateRuleEntityType":"Account","errorMessage":"Use one of these records?","matchResults":[{"entityType":"Account","errors":[],"matchEngine":"FuzzyMatchEngine","matchRecords":[{"additionalInformation":[],"fieldDiffs":[],"matchConfidence":100.0,"record":{"attributes":{"type":"Account","url":"/services/data/v63.0/sobjects/Account/001gL000005jO1hQAE"},"Id":"001gL000005jO1hQAE"}}],"rule":"Standard_Account_Match_Rule_v1_0","size":1,"success":true}]},"errorCode":"DUPLICATES_DETECTED","message":"Use one of these records?"}]
+2025-05-09 15:12:14.905 +06:00 [ERR] Error during Salesforce integration for user 6fb4f704-166e-4421-b99d-0d8704e65fb6
+System.Exception: Failed to create Salesforce Account: BadRequest
+   at FormsApp.Services.SalesforceService.CreateAccountAsync(SalesforceAccount account) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Services\SalesforceService.cs:line 81
+   at FormsApp.Controllers.UserProfileController.SalesforceIntegration(SalesforceProfileViewModel model) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Controllers\UserProfileController.cs:line 108
+2025-05-09 15:12:14.965 +06:00 [ERR] Error creating Salesforce Account/Contact for user admin@formsapp.com
+System.Exception: Failed to create Salesforce Account: BadRequest
+   at FormsApp.Services.SalesforceService.CreateAccountAsync(SalesforceAccount account) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Services\SalesforceService.cs:line 81
+   at FormsApp.Controllers.UserProfileController.SalesforceIntegration(SalesforceProfileViewModel model) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Controllers\UserProfileController.cs:line 108
+   at FormsApp.Controllers.UserProfileController.SalesforceIntegration(SalesforceProfileViewModel model) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Controllers\UserProfileController.cs:line 148
+2025-05-09 15:12:33.823 +06:00 [WRN] Savepoints are disabled because Multiple Active Result Sets (MARS) is enabled. If 'SaveChanges' fails, then the transaction cannot be automatically rolled back to a known clean state. Instead, the transaction should be rolled back by the application before retrying 'SaveChanges'. See https://go.microsoft.com/fwlink/?linkid=2149338 for more information and examples. To identify the code which triggers this warning, call 'ConfigureWarnings(w => w.Throw(SqlServerEventId.SavepointsDisabledBecauseOfMARS))'.
+2025-05-09 15:16:24.770 +06:00 [INF] Starting application...
+2025-05-09 15:16:27.206 +06:00 [INF] Checking for role 'Admin'. Exists: true
+2025-05-09 15:16:27.316 +06:00 [INF] Existing admin user 'admin@formsapp.com' already exists.
+2025-05-09 15:16:27.384 +06:00 [INF] Existing admin user 'admin@formsapp.com' already has the 'Admin' role.
+2025-05-09 18:23:19.486 +06:00 [INF] Starting application...
+2025-05-09 18:23:23.309 +06:00 [INF] Checking for role 'Admin'. Exists: true
+2025-05-09 18:23:23.446 +06:00 [INF] Existing admin user 'admin@formsapp.com' already exists.
+2025-05-09 18:23:23.524 +06:00 [INF] Existing admin user 'admin@formsapp.com' already has the 'Admin' role.
+2025-05-09 18:24:33.793 +06:00 [ERR] Failed to create Salesforce Contact: [{"duplicateResult":{"allowSave":true,"duplicateRule":"Standard_Contact_Duplicate_Rule","duplicateRuleEntityType":"Contact","errorMessage":"Use one of these records?","matchResults":[{"entityType":"Contact","errors":[],"matchEngine":"FuzzyMatchEngine","matchRecords":[{"additionalInformation":[],"fieldDiffs":[],"matchConfidence":100.0,"record":{"attributes":{"type":"Contact","url":"/services/data/v63.0/sobjects/Contact/003gL000003QkS5QAK"},"Id":"003gL000003QkS5QAK"}}],"rule":"Standard_Contact_Match_Rule_v1_1","size":1,"success":true}]},"errorCode":"DUPLICATES_DETECTED","message":"Use one of these records?"}]
+2025-05-09 18:24:33.934 +06:00 [ERR] Error during Salesforce integration for user 6fb4f704-166e-4421-b99d-0d8704e65fb6
+System.Exception: Failed to create Salesforce Contact: BadRequest
+   at FormsApp.Services.SalesforceService.CreateContactAsync(SalesforceContact contact) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Services\SalesforceService.cs:line 104
+   at FormsApp.Controllers.UserProfileController.SalesforceIntegration(SalesforceProfileViewModel model) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Controllers\UserProfileController.cs:line 122
+2025-05-09 18:24:33.999 +06:00 [ERR] Error creating Salesforce Account/Contact for user admin@formsapp.com
+System.Exception: Failed to create Salesforce Contact: BadRequest
+   at FormsApp.Services.SalesforceService.CreateContactAsync(SalesforceContact contact) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Services\SalesforceService.cs:line 104
+   at FormsApp.Controllers.UserProfileController.SalesforceIntegration(SalesforceProfileViewModel model) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Controllers\UserProfileController.cs:line 122
+   at FormsApp.Controllers.UserProfileController.SalesforceIntegration(SalesforceProfileViewModel model) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Controllers\UserProfileController.cs:line 148
+2025-05-09 18:27:14.015 +06:00 [INF] Starting application...
+2025-05-09 18:27:17.369 +06:00 [INF] Checking for role 'Admin'. Exists: true
+2025-05-09 18:27:17.477 +06:00 [INF] Existing admin user 'admin@formsapp.com' already exists.
+2025-05-09 18:27:17.553 +06:00 [INF] Existing admin user 'admin@formsapp.com' already has the 'Admin' role.
+2025-05-09 18:27:39.314 +06:00 [ERR] Failed to create Salesforce Account: [{"duplicateResult":{"allowSave":true,"duplicateRule":"Standard_Account_Duplicate_Rule","duplicateRuleEntityType":"Account","errorMessage":"Use one of these records?","matchResults":[{"entityType":"Account","errors":[],"matchEngine":"FuzzyMatchEngine","matchRecords":[{"additionalInformation":[],"fieldDiffs":[],"matchConfidence":100.0,"record":{"attributes":{"type":"Account","url":"/services/data/v63.0/sobjects/Account/001gL000005kPa4QAE"},"Id":"001gL000005kPa4QAE"}}],"rule":"Standard_Account_Match_Rule_v1_0","size":1,"success":true}]},"errorCode":"DUPLICATES_DETECTED","message":"Use one of these records?"}]
+2025-05-09 18:27:39.546 +06:00 [ERR] Error during Salesforce integration for user 6fb4f704-166e-4421-b99d-0d8704e65fb6
+System.Exception: Failed to create Salesforce Account: BadRequest
+   at FormsApp.Services.SalesforceService.CreateAccountAsync(SalesforceAccount account) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Services\SalesforceService.cs:line 81
+   at FormsApp.Controllers.UserProfileController.SalesforceIntegration(SalesforceProfileViewModel model) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Controllers\UserProfileController.cs:line 108
+2025-05-09 18:27:39.611 +06:00 [ERR] Error creating Salesforce Account/Contact for user admin@formsapp.com
+System.Exception: Failed to create Salesforce Account: BadRequest
+   at FormsApp.Services.SalesforceService.CreateAccountAsync(SalesforceAccount account) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Services\SalesforceService.cs:line 81
+   at FormsApp.Controllers.UserProfileController.SalesforceIntegration(SalesforceProfileViewModel model) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Controllers\UserProfileController.cs:line 108
+   at FormsApp.Controllers.UserProfileController.SalesforceIntegration(SalesforceProfileViewModel model) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Controllers\UserProfileController.cs:line 148
+2025-05-09 18:28:35.945 +06:00 [INF] Starting application...
+2025-05-09 18:28:38.874 +06:00 [INF] Checking for role 'Admin'. Exists: true
+2025-05-09 18:28:38.960 +06:00 [INF] Existing admin user 'admin@formsapp.com' already exists.
+2025-05-09 18:28:39.107 +06:00 [INF] Existing admin user 'admin@formsapp.com' already has the 'Admin' role.
+2025-05-09 18:30:56.471 +06:00 [WRN] Savepoints are disabled because Multiple Active Result Sets (MARS) is enabled. If 'SaveChanges' fails, then the transaction cannot be automatically rolled back to a known clean state. Instead, the transaction should be rolled back by the application before retrying 'SaveChanges'. See https://go.microsoft.com/fwlink/?linkid=2149338 for more information and examples. To identify the code which triggers this warning, call 'ConfigureWarnings(w => w.Throw(SqlServerEventId.SavepointsDisabledBecauseOfMARS))'.
+2025-05-09 18:31:48.728 +06:00 [INF] Adding missing email claim for user 40f6cebf-64e7-48ff-8609-c0ae8fdc8d5e.
+2025-05-09 18:32:45.177 +06:00 [ERR] Failed to create Salesforce Contact: [{"duplicateResult":{"allowSave":true,"duplicateRule":"Standard_Contact_Duplicate_Rule","duplicateRuleEntityType":"Contact","errorMessage":"Use one of these records?","matchResults":[{"entityType":"Contact","errors":[],"matchEngine":"FuzzyMatchEngine","matchRecords":[{"additionalInformation":[],"fieldDiffs":[],"matchConfidence":100.0,"record":{"attributes":{"type":"Contact","url":"/services/data/v63.0/sobjects/Contact/003gL000003REGSQA4"},"Id":"003gL000003REGSQA4"}}],"rule":"Standard_Contact_Match_Rule_v1_1","size":1,"success":true}]},"errorCode":"DUPLICATES_DETECTED","message":"Use one of these records?"}]
+2025-05-09 18:32:45.277 +06:00 [ERR] Error during Salesforce integration for user 40f6cebf-64e7-48ff-8609-c0ae8fdc8d5e
+System.Exception: Failed to create Salesforce Contact: BadRequest
+   at FormsApp.Services.SalesforceService.CreateContactAsync(SalesforceContact contact) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Services\SalesforceService.cs:line 104
+   at FormsApp.Controllers.UserProfileController.SalesforceIntegration(SalesforceProfileViewModel model) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Controllers\UserProfileController.cs:line 122
+2025-05-09 18:32:45.340 +06:00 [ERR] Error creating Salesforce Account/Contact for user Shahadat
+System.Exception: Failed to create Salesforce Contact: BadRequest
+   at FormsApp.Services.SalesforceService.CreateContactAsync(SalesforceContact contact) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Services\SalesforceService.cs:line 104
+   at FormsApp.Controllers.UserProfileController.SalesforceIntegration(SalesforceProfileViewModel model) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Controllers\UserProfileController.cs:line 122
+   at FormsApp.Controllers.UserProfileController.SalesforceIntegration(SalesforceProfileViewModel model) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Controllers\UserProfileController.cs:line 148
+2025-05-09 18:33:08.829 +06:00 [ERR] Failed to create Salesforce Account: [{"duplicateResult":{"allowSave":true,"duplicateRule":"Standard_Account_Duplicate_Rule","duplicateRuleEntityType":"Account","errorMessage":"Use one of these records?","matchResults":[{"entityType":"Account","errors":[],"matchEngine":"FuzzyMatchEngine","matchRecords":[{"additionalInformation":[],"fieldDiffs":[],"matchConfidence":100.0,"record":{"attributes":{"type":"Account","url":"/services/data/v63.0/sobjects/Account/001gL000005k02CQAQ"},"Id":"001gL000005k02CQAQ"}}],"rule":"Standard_Account_Match_Rule_v1_0","size":1,"success":true}]},"errorCode":"DUPLICATES_DETECTED","message":"Use one of these records?"}]
+2025-05-09 18:33:08.965 +06:00 [ERR] Error during Salesforce integration for user 40f6cebf-64e7-48ff-8609-c0ae8fdc8d5e
+System.Exception: Failed to create Salesforce Account: BadRequest
+   at FormsApp.Services.SalesforceService.CreateAccountAsync(SalesforceAccount account) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Services\SalesforceService.cs:line 81
+   at FormsApp.Controllers.UserProfileController.SalesforceIntegration(SalesforceProfileViewModel model) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Controllers\UserProfileController.cs:line 108
+2025-05-09 18:33:09.027 +06:00 [ERR] Error creating Salesforce Account/Contact for user Shahadat
+System.Exception: Failed to create Salesforce Account: BadRequest
+   at FormsApp.Services.SalesforceService.CreateAccountAsync(SalesforceAccount account) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Services\SalesforceService.cs:line 81
+   at FormsApp.Controllers.UserProfileController.SalesforceIntegration(SalesforceProfileViewModel model) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Controllers\UserProfileController.cs:line 108
+   at FormsApp.Controllers.UserProfileController.SalesforceIntegration(SalesforceProfileViewModel model) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Controllers\UserProfileController.cs:line 148
+2025-05-09 18:33:51.001 +06:00 [INF] Starting application...
+2025-05-09 18:33:54.459 +06:00 [INF] Checking for role 'Admin'. Exists: true
+2025-05-09 18:33:54.582 +06:00 [INF] Existing admin user 'admin@formsapp.com' already exists.
+2025-05-09 18:33:54.653 +06:00 [INF] Existing admin user 'admin@formsapp.com' already has the 'Admin' role.
+2025-05-09 18:34:13.404 +06:00 [ERR] Failed to create Salesforce Account: [{"duplicateResult":{"allowSave":true,"duplicateRule":"Standard_Account_Duplicate_Rule","duplicateRuleEntityType":"Account","errorMessage":"Use one of these records?","matchResults":[{"entityType":"Account","errors":[],"matchEngine":"FuzzyMatchEngine","matchRecords":[{"additionalInformation":[],"fieldDiffs":[],"matchConfidence":100.0,"record":{"attributes":{"type":"Account","url":"/services/data/v63.0/sobjects/Account/001gL000005kR4SQAU"},"Id":"001gL000005kR4SQAU"}}],"rule":"Standard_Account_Match_Rule_v1_0","size":1,"success":true}]},"errorCode":"DUPLICATES_DETECTED","message":"Use one of these records?"}]
+2025-05-09 18:34:13.665 +06:00 [ERR] Error during Salesforce integration for user 40f6cebf-64e7-48ff-8609-c0ae8fdc8d5e
+System.Exception: Failed to create Salesforce Account: BadRequest
+   at FormsApp.Services.SalesforceService.CreateAccountAsync(SalesforceAccount account) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Services\SalesforceService.cs:line 81
+   at FormsApp.Controllers.UserProfileController.SalesforceIntegration(SalesforceProfileViewModel model) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Controllers\UserProfileController.cs:line 108
+2025-05-09 18:34:13.732 +06:00 [ERR] Error creating Salesforce Account/Contact for user Shahadat
+System.Exception: Failed to create Salesforce Account: BadRequest
+   at FormsApp.Services.SalesforceService.CreateAccountAsync(SalesforceAccount account) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Services\SalesforceService.cs:line 81
+   at FormsApp.Controllers.UserProfileController.SalesforceIntegration(SalesforceProfileViewModel model) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Controllers\UserProfileController.cs:line 108
+   at FormsApp.Controllers.UserProfileController.SalesforceIntegration(SalesforceProfileViewModel model) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Controllers\UserProfileController.cs:line 148
+2025-05-09 18:35:20.310 +06:00 [INF] Starting application...
+2025-05-09 18:35:23.060 +06:00 [INF] Checking for role 'Admin'. Exists: true
+2025-05-09 18:35:23.178 +06:00 [INF] Existing admin user 'admin@formsapp.com' already exists.
+2025-05-09 18:35:23.245 +06:00 [INF] Existing admin user 'admin@formsapp.com' already has the 'Admin' role.
+2025-05-09 18:35:53.731 +06:00 [WRN] Savepoints are disabled because Multiple Active Result Sets (MARS) is enabled. If 'SaveChanges' fails, then the transaction cannot be automatically rolled back to a known clean state. Instead, the transaction should be rolled back by the application before retrying 'SaveChanges'. See https://go.microsoft.com/fwlink/?linkid=2149338 for more information and examples. To identify the code which triggers this warning, call 'ConfigureWarnings(w => w.Throw(SqlServerEventId.SavepointsDisabledBecauseOfMARS))'.
+2025-05-09 18:36:05.147 +06:00 [INF] User admin@formsapp.com logged in successfully.
+2025-05-09 18:36:30.695 +06:00 [ERR] Failed to create Salesforce Account: [{"duplicateResult":{"allowSave":true,"duplicateRule":"Standard_Account_Duplicate_Rule","duplicateRuleEntityType":"Account","errorMessage":"Use one of these records?","matchResults":[{"entityType":"Account","errors":[],"matchEngine":"FuzzyMatchEngine","matchRecords":[{"additionalInformation":[],"fieldDiffs":[],"matchConfidence":100.0,"record":{"attributes":{"type":"Account","url":"/services/data/v63.0/sobjects/Account/001gL000005kYSPQA2"},"Id":"001gL000005kYSPQA2"}}],"rule":"Standard_Account_Match_Rule_v1_0","size":1,"success":true}]},"errorCode":"DUPLICATES_DETECTED","message":"Use one of these records?"}]
+2025-05-09 18:36:30.899 +06:00 [ERR] Error during Salesforce integration for user 6fb4f704-166e-4421-b99d-0d8704e65fb6
+System.Exception: Failed to create Salesforce Account: BadRequest
+   at FormsApp.Services.SalesforceService.CreateAccountAsync(SalesforceAccount account) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Services\SalesforceService.cs:line 81
+   at FormsApp.Controllers.UserProfileController.SalesforceIntegration(SalesforceProfileViewModel model) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Controllers\UserProfileController.cs:line 108
+2025-05-09 18:36:30.943 +06:00 [ERR] Error creating Salesforce Account/Contact for user admin@formsapp.com
+System.Exception: Failed to create Salesforce Account: BadRequest
+   at FormsApp.Services.SalesforceService.CreateAccountAsync(SalesforceAccount account) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Services\SalesforceService.cs:line 81
+   at FormsApp.Controllers.UserProfileController.SalesforceIntegration(SalesforceProfileViewModel model) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Controllers\UserProfileController.cs:line 108
+   at FormsApp.Controllers.UserProfileController.SalesforceIntegration(SalesforceProfileViewModel model) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Controllers\UserProfileController.cs:line 148
+2025-05-09 18:36:41.901 +06:00 [ERR] Failed to create Salesforce Account: [{"duplicateResult":{"allowSave":true,"duplicateRule":"Standard_Account_Duplicate_Rule","duplicateRuleEntityType":"Account","errorMessage":"Use one of these records?","matchResults":[{"entityType":"Account","errors":[],"matchEngine":"FuzzyMatchEngine","matchRecords":[{"additionalInformation":[],"fieldDiffs":[],"matchConfidence":100.0,"record":{"attributes":{"type":"Account","url":"/services/data/v63.0/sobjects/Account/001gL000005kYSPQA2"},"Id":"001gL000005kYSPQA2"}}],"rule":"Standard_Account_Match_Rule_v1_0","size":1,"success":true}]},"errorCode":"DUPLICATES_DETECTED","message":"Use one of these records?"}]
+2025-05-09 18:36:42.044 +06:00 [ERR] Error during Salesforce integration for user 6fb4f704-166e-4421-b99d-0d8704e65fb6
+System.Exception: Failed to create Salesforce Account: BadRequest
+   at FormsApp.Services.SalesforceService.CreateAccountAsync(SalesforceAccount account) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Services\SalesforceService.cs:line 81
+   at FormsApp.Controllers.UserProfileController.SalesforceIntegration(SalesforceProfileViewModel model) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Controllers\UserProfileController.cs:line 108
+2025-05-09 18:36:42.088 +06:00 [ERR] Error creating Salesforce Account/Contact for user admin@formsapp.com
+System.Exception: Failed to create Salesforce Account: BadRequest
+   at FormsApp.Services.SalesforceService.CreateAccountAsync(SalesforceAccount account) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Services\SalesforceService.cs:line 81
+   at FormsApp.Controllers.UserProfileController.SalesforceIntegration(SalesforceProfileViewModel model) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Controllers\UserProfileController.cs:line 108
+   at FormsApp.Controllers.UserProfileController.SalesforceIntegration(SalesforceProfileViewModel model) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Controllers\UserProfileController.cs:line 148
+2025-05-09 18:36:53.534 +06:00 [ERR] Failed to create Salesforce Contact: [{"duplicateResult":{"allowSave":true,"duplicateRule":"Standard_Contact_Duplicate_Rule","duplicateRuleEntityType":"Contact","errorMessage":"Use one of these records?","matchResults":[{"entityType":"Contact","errors":[],"matchEngine":"FuzzyMatchEngine","matchRecords":[{"additionalInformation":[],"fieldDiffs":[],"matchConfidence":100.0,"record":{"attributes":{"type":"Contact","url":"/services/data/v63.0/sobjects/Contact/003gL000003RIaDQAW"},"Id":"003gL000003RIaDQAW"}}],"rule":"Standard_Contact_Match_Rule_v1_1","size":1,"success":true}]},"errorCode":"DUPLICATES_DETECTED","message":"Use one of these records?"}]
+2025-05-09 18:36:53.663 +06:00 [ERR] Error during Salesforce integration for user 6fb4f704-166e-4421-b99d-0d8704e65fb6
+System.Exception: Failed to create Salesforce Contact: BadRequest
+   at FormsApp.Services.SalesforceService.CreateContactAsync(SalesforceContact contact) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Services\SalesforceService.cs:line 104
+   at FormsApp.Controllers.UserProfileController.SalesforceIntegration(SalesforceProfileViewModel model) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Controllers\UserProfileController.cs:line 122
+2025-05-09 18:36:53.701 +06:00 [ERR] Error creating Salesforce Account/Contact for user admin@formsapp.com
+System.Exception: Failed to create Salesforce Contact: BadRequest
+   at FormsApp.Services.SalesforceService.CreateContactAsync(SalesforceContact contact) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Services\SalesforceService.cs:line 104
+   at FormsApp.Controllers.UserProfileController.SalesforceIntegration(SalesforceProfileViewModel model) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Controllers\UserProfileController.cs:line 122
+   at FormsApp.Controllers.UserProfileController.SalesforceIntegration(SalesforceProfileViewModel model) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Controllers\UserProfileController.cs:line 148
+2025-05-09 18:37:06.817 +06:00 [ERR] Failed to create Salesforce Account: [{"duplicateResult":{"allowSave":true,"duplicateRule":"Standard_Account_Duplicate_Rule","duplicateRuleEntityType":"Account","errorMessage":"Use one of these records?","matchResults":[{"entityType":"Account","errors":[],"matchEngine":"FuzzyMatchEngine","matchRecords":[{"additionalInformation":[],"fieldDiffs":[],"matchConfidence":100.0,"record":{"attributes":{"type":"Account","url":"/services/data/v63.0/sobjects/Account/001gL000005kYniQAE"},"Id":"001gL000005kYniQAE"}},{"additionalInformation":[],"fieldDiffs":[],"matchConfidence":95.0,"record":{"attributes":{"type":"Account","url":"/services/data/v63.0/sobjects/Account/001gL000005kYSPQA2"},"Id":"001gL000005kYSPQA2"}}],"rule":"Standard_Account_Match_Rule_v1_0","size":2,"success":true}]},"errorCode":"DUPLICATES_DETECTED","message":"Use one of these records?"}]
+2025-05-09 18:37:06.901 +06:00 [ERR] Error during Salesforce integration for user 6fb4f704-166e-4421-b99d-0d8704e65fb6
+System.Exception: Failed to create Salesforce Account: BadRequest
+   at FormsApp.Services.SalesforceService.CreateAccountAsync(SalesforceAccount account) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Services\SalesforceService.cs:line 81
+   at FormsApp.Controllers.UserProfileController.SalesforceIntegration(SalesforceProfileViewModel model) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Controllers\UserProfileController.cs:line 108
+2025-05-09 18:37:07.013 +06:00 [ERR] Error creating Salesforce Account/Contact for user admin@formsapp.com
+System.Exception: Failed to create Salesforce Account: BadRequest
+   at FormsApp.Services.SalesforceService.CreateAccountAsync(SalesforceAccount account) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Services\SalesforceService.cs:line 81
+   at FormsApp.Controllers.UserProfileController.SalesforceIntegration(SalesforceProfileViewModel model) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Controllers\UserProfileController.cs:line 108
+   at FormsApp.Controllers.UserProfileController.SalesforceIntegration(SalesforceProfileViewModel model) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Controllers\UserProfileController.cs:line 148
+2025-05-09 18:42:20.268 +06:00 [INF] Starting application...
+2025-05-09 18:42:22.980 +06:00 [INF] Checking for role 'Admin'. Exists: true
+2025-05-09 18:42:23.069 +06:00 [INF] Existing admin user 'admin@formsapp.com' already exists.
+2025-05-09 18:42:23.138 +06:00 [INF] Existing admin user 'admin@formsapp.com' already has the 'Admin' role.
+2025-05-09 18:43:59.410 +06:00 [ERR] Failed to create Salesforce Account: [{"duplicateResult":{"allowSave":true,"duplicateRule":"Standard_Account_Duplicate_Rule","duplicateRuleEntityType":"Account","errorMessage":"Use one of these records?","matchResults":[{"entityType":"Account","errors":[],"matchEngine":"FuzzyMatchEngine","matchRecords":[{"additionalInformation":[],"fieldDiffs":[],"matchConfidence":100.0,"record":{"attributes":{"type":"Account","url":"/services/data/v63.0/sobjects/Account/001gL000005kYSPQA2"},"Id":"001gL000005kYSPQA2"}}],"rule":"Standard_Account_Match_Rule_v1_0","size":1,"success":true}]},"errorCode":"DUPLICATES_DETECTED","message":"Use one of these records?"}]
+2025-05-09 18:43:59.570 +06:00 [ERR] Error during Salesforce integration for user 6fb4f704-166e-4421-b99d-0d8704e65fb6
+System.Exception: Failed to create Salesforce Account: BadRequest
+   at FormsApp.Services.SalesforceService.CreateAccountAsync(SalesforceAccount account) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Services\SalesforceService.cs:line 81
+   at FormsApp.Controllers.UserProfileController.SalesforceIntegration(SalesforceProfileViewModel model) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Controllers\UserProfileController.cs:line 108
+2025-05-09 18:43:59.634 +06:00 [ERR] Error creating Salesforce Account/Contact for user admin@formsapp.com
+System.Exception: Failed to create Salesforce Account: BadRequest
+   at FormsApp.Services.SalesforceService.CreateAccountAsync(SalesforceAccount account) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Services\SalesforceService.cs:line 81
+   at FormsApp.Controllers.UserProfileController.SalesforceIntegration(SalesforceProfileViewModel model) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Controllers\UserProfileController.cs:line 108
+   at FormsApp.Controllers.UserProfileController.SalesforceIntegration(SalesforceProfileViewModel model) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Controllers\UserProfileController.cs:line 148
+2025-05-09 18:48:25.032 +06:00 [INF] Starting application...
+2025-05-09 18:48:27.792 +06:00 [INF] Checking for role 'Admin'. Exists: true
+2025-05-09 18:48:27.920 +06:00 [INF] Existing admin user 'admin@formsapp.com' already exists.
+2025-05-09 18:48:27.976 +06:00 [INF] Existing admin user 'admin@formsapp.com' already has the 'Admin' role.
+2025-05-09 18:52:29.301 +06:00 [WRN] Savepoints are disabled because Multiple Active Result Sets (MARS) is enabled. If 'SaveChanges' fails, then the transaction cannot be automatically rolled back to a known clean state. Instead, the transaction should be rolled back by the application before retrying 'SaveChanges'. See https://go.microsoft.com/fwlink/?linkid=2149338 for more information and examples. To identify the code which triggers this warning, call 'ConfigureWarnings(w => w.Throw(SqlServerEventId.SavepointsDisabledBecauseOfMARS))'.
+2025-05-09 18:52:51.602 +06:00 [INF] User 1337.shahadat@gmail.com logged in successfully.
+2025-05-09 18:53:31.591 +06:00 [ERR] Failed to create Salesforce Account: [{"duplicateResult":{"allowSave":true,"duplicateRule":"Standard_Account_Duplicate_Rule","duplicateRuleEntityType":"Account","errorMessage":"Use one of these records?","matchResults":[{"entityType":"Account","errors":[],"matchEngine":"FuzzyMatchEngine","matchRecords":[{"additionalInformation":[],"fieldDiffs":[],"matchConfidence":100.0,"record":{"attributes":{"type":"Account","url":"/services/data/v63.0/sobjects/Account/001gL000005jspPQAQ"},"Id":"001gL000005jspPQAQ"}}],"rule":"Standard_Account_Match_Rule_v1_0","size":1,"success":true}]},"errorCode":"DUPLICATES_DETECTED","message":"Use one of these records?"}]
+2025-05-09 18:53:31.751 +06:00 [ERR] Error during Salesforce integration for user 40f6cebf-64e7-48ff-8609-c0ae8fdc8d5e
+System.Exception: Failed to create Salesforce Account: BadRequest
+   at FormsApp.Services.SalesforceService.CreateAccountAsync(SalesforceAccount account) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Services\SalesforceService.cs:line 81
+   at FormsApp.Controllers.UserProfileController.SalesforceIntegration(SalesforceProfileViewModel model) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Controllers\UserProfileController.cs:line 108
+2025-05-09 18:53:31.812 +06:00 [ERR] Error creating Salesforce Account/Contact for user Shahadat
+System.Exception: Failed to create Salesforce Account: BadRequest
+   at FormsApp.Services.SalesforceService.CreateAccountAsync(SalesforceAccount account) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Services\SalesforceService.cs:line 81
+   at FormsApp.Controllers.UserProfileController.SalesforceIntegration(SalesforceProfileViewModel model) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Controllers\UserProfileController.cs:line 108
+   at FormsApp.Controllers.UserProfileController.SalesforceIntegration(SalesforceProfileViewModel model) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Controllers\UserProfileController.cs:line 148
+2025-05-09 20:07:47.758 +06:00 [ERR] Failed to create Salesforce Account: [{"duplicateResult":{"allowSave":true,"duplicateRule":"Standard_Account_Duplicate_Rule","duplicateRuleEntityType":"Account","errorMessage":"Use one of these records?","matchResults":[{"entityType":"Account","errors":[],"matchEngine":"FuzzyMatchEngine","matchRecords":[{"additionalInformation":[],"fieldDiffs":[],"matchConfidence":100.0,"record":{"attributes":{"type":"Account","url":"/services/data/v63.0/sobjects/Account/001gL000005jspPQAQ"},"Id":"001gL000005jspPQAQ"}}],"rule":"Standard_Account_Match_Rule_v1_0","size":1,"success":true}]},"errorCode":"DUPLICATES_DETECTED","message":"Use one of these records?"}]
+2025-05-09 20:07:48.007 +06:00 [ERR] Error during Salesforce integration for user 40f6cebf-64e7-48ff-8609-c0ae8fdc8d5e
+System.Exception: Failed to create Salesforce Account: BadRequest
+   at FormsApp.Services.SalesforceService.CreateAccountAsync(SalesforceAccount account) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Services\SalesforceService.cs:line 81
+   at FormsApp.Controllers.UserProfileController.SalesforceIntegration(SalesforceProfileViewModel model) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Controllers\UserProfileController.cs:line 108
+2025-05-09 20:07:48.078 +06:00 [ERR] Error creating Salesforce Account/Contact for user Shahadat
+System.Exception: Failed to create Salesforce Account: BadRequest
+   at FormsApp.Services.SalesforceService.CreateAccountAsync(SalesforceAccount account) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Services\SalesforceService.cs:line 81
+   at FormsApp.Controllers.UserProfileController.SalesforceIntegration(SalesforceProfileViewModel model) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Controllers\UserProfileController.cs:line 108
+   at FormsApp.Controllers.UserProfileController.SalesforceIntegration(SalesforceProfileViewModel model) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Controllers\UserProfileController.cs:line 148
+2025-05-09 20:08:07.929 +06:00 [ERR] Failed to create Salesforce Account: [{"duplicateResult":{"allowSave":true,"duplicateRule":"Standard_Account_Duplicate_Rule","duplicateRuleEntityType":"Account","errorMessage":"Use one of these records?","matchResults":[{"entityType":"Account","errors":[],"matchEngine":"FuzzyMatchEngine","matchRecords":[{"additionalInformation":[],"fieldDiffs":[],"matchConfidence":95.0,"record":{"attributes":{"type":"Account","url":"/services/data/v63.0/sobjects/Account/001gL000005jspPQAQ"},"Id":"001gL000005jspPQAQ"}}],"rule":"Standard_Account_Match_Rule_v1_0","size":1,"success":true}]},"errorCode":"DUPLICATES_DETECTED","message":"Use one of these records?"}]
+2025-05-09 20:08:08.008 +06:00 [ERR] Error during Salesforce integration for user 40f6cebf-64e7-48ff-8609-c0ae8fdc8d5e
+System.Exception: Failed to create Salesforce Account: BadRequest
+   at FormsApp.Services.SalesforceService.CreateAccountAsync(SalesforceAccount account) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Services\SalesforceService.cs:line 81
+   at FormsApp.Controllers.UserProfileController.SalesforceIntegration(SalesforceProfileViewModel model) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Controllers\UserProfileController.cs:line 108
+2025-05-09 20:08:08.049 +06:00 [ERR] Error creating Salesforce Account/Contact for user Shahadat
+System.Exception: Failed to create Salesforce Account: BadRequest
+   at FormsApp.Services.SalesforceService.CreateAccountAsync(SalesforceAccount account) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Services\SalesforceService.cs:line 81
+   at FormsApp.Controllers.UserProfileController.SalesforceIntegration(SalesforceProfileViewModel model) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Controllers\UserProfileController.cs:line 108
+   at FormsApp.Controllers.UserProfileController.SalesforceIntegration(SalesforceProfileViewModel model) in C:\Users\MD_Sh\Downloads\New folder\Itransition_Internship\FormsApp\Controllers\UserProfileController.cs:line 148
+2025-05-09 20:09:43.359 +06:00 [WRN] Savepoints are disabled because Multiple Active Result Sets (MARS) is enabled. If 'SaveChanges' fails, then the transaction cannot be automatically rolled back to a known clean state. Instead, the transaction should be rolled back by the application before retrying 'SaveChanges'. See https://go.microsoft.com/fwlink/?linkid=2149338 for more information and examples. To identify the code which triggers this warning, call 'ConfigureWarnings(w => w.Throw(SqlServerEventId.SavepointsDisabledBecauseOfMARS))'.
+2025-05-09 20:18:58.533 +06:00 [INF] Adding missing email claim for user 257bcda0-1bfd-4082-a4cb-995831b90361.
+2025-05-09 20:19:57.644 +06:00 [WRN] Savepoints are disabled because Multiple Active Result Sets (MARS) is enabled. If 'SaveChanges' fails, then the transaction cannot be automatically rolled back to a known clean state. Instead, the transaction should be rolled back by the application before retrying 'SaveChanges'. See https://go.microsoft.com/fwlink/?linkid=2149338 for more information and examples. To identify the code which triggers this warning, call 'ConfigureWarnings(w => w.Throw(SqlServerEventId.SavepointsDisabledBecauseOfMARS))'.

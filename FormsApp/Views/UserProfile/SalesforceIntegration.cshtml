@@ -1,0 +1,171 @@
+@model FormsApp.ViewModels.SalesforceProfileViewModel
+@{
+    ViewData["Title"] = "Connect to CRM";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="mb-0">Connect to CRM</h2>
+                </div>
+                <div class="card-body">
+                    <p class="lead mb-4">
+                        Please provide additional information to help us better serve you through our customer relationship management system.
+                    </p>
+
+                    <form asp-action="SalesforceIntegration" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <h4>Company Information</h4>
+                        <hr />
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="CompanyName" class="control-label"></label>
+                                    <input asp-for="CompanyName" class="form-control" />
+                                    <span asp-validation-for="CompanyName" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="Website" class="control-label"></label>
+                                    <input asp-for="Website" class="form-control" />
+                                    <span asp-validation-for="Website" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="Industry" class="control-label"></label>
+                                    <select asp-for="Industry" class="form-control">
+                                        <option value="">-- Select Industry --</option>
+                                        <option value="Agriculture">Agriculture</option>
+                                        <option value="Banking">Banking</option>
+                                        <option value="Communications">Communications</option>
+                                        <option value="Construction">Construction</option>
+                                        <option value="Consulting">Consulting</option>
+                                        <option value="Education">Education</option>
+                                        <option value="Electronics">Electronics</option>
+                                        <option value="Energy">Energy</option>
+                                        <option value="Engineering">Engineering</option>
+                                        <option value="Entertainment">Entertainment</option>
+                                        <option value="Environmental">Environmental</option>
+                                        <option value="Finance">Finance</option>
+                                        <option value="Food & Beverage">Food & Beverage</option>
+                                        <option value="Government">Government</option>
+                                        <option value="Healthcare">Healthcare</option>
+                                        <option value="Hospitality">Hospitality</option>
+                                        <option value="Insurance">Insurance</option>
+                                        <option value="Manufacturing">Manufacturing</option>
+                                        <option value="Media">Media</option>
+                                        <option value="Not For Profit">Not For Profit</option>
+                                        <option value="Recreation">Recreation</option>
+                                        <option value="Retail">Retail</option>
+                                        <option value="Shipping">Shipping</option>
+                                        <option value="Technology">Technology</option>
+                                        <option value="Telecommunications">Telecommunications</option>
+                                        <option value="Transportation">Transportation</option>
+                                        <option value="Utilities">Utilities</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                    <span asp-validation-for="Industry" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="BusinessPhone" class="control-label"></label>
+                                    <input asp-for="BusinessPhone" class="form-control" />
+                                    <span asp-validation-for="BusinessPhone" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="City" class="control-label"></label>
+                                    <input asp-for="City" class="form-control" />
+                                    <span asp-validation-for="City" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="Country" class="control-label"></label>
+                                    <input asp-for="Country" class="form-control" />
+                                    <span asp-validation-for="Country" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="CompanyDescription" class="control-label"></label>
+                            <textarea asp-for="CompanyDescription" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="CompanyDescription" class="text-danger"></span>
+                        </div>
+
+                        <h4 class="mt-4">Personal Information</h4>
+                        <hr />
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="FirstName" class="control-label"></label>
+                                    <input asp-for="FirstName" class="form-control" />
+                                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="LastName" class="control-label"></label>
+                                    <input asp-for="LastName" class="form-control" />
+                                    <span asp-validation-for="LastName" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="Email" class="control-label"></label>
+                                    <input asp-for="Email" class="form-control" readonly="@(ViewData["EmailReadOnly"] != null)" />
+                                    <span asp-validation-for="Email" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="Phone" class="control-label"></label>
+                                    <input asp-for="Phone" class="form-control" />
+                                    <span asp-validation-for="Phone" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="JobTitle" class="control-label"></label>
+                                    <input asp-for="JobTitle" class="form-control" />
+                                    <span asp-validation-for="JobTitle" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="Department" class="control-label"></label>
+                                    <input asp-for="Department" class="form-control" />
+                                    <span asp-validation-for="Department" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group mt-4">
+                            <button type="submit" class="btn btn-success">Connect to CRM</button>
+                            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} 

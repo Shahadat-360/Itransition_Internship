@@ -10,5 +10,8 @@ namespace FormsApp.Models
         // Navigation properties
         public virtual ICollection<FormTemplate> CreatedTemplates { get; set; } = new List<FormTemplate>();
         public virtual ICollection<FormResponse> FilledForms { get; set; } = new List<FormResponse>();
+
+        // Salesforce integration properties
+        public virtual SalesforceUserProfile? SalesforceProfile { get; set; }
     }
 } 

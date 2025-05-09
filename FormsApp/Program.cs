@@ -65,6 +65,9 @@ try
 
     // Add service registrations
     builder.Services.AddScoped<FormResponseService>();
+    // Configure Salesforce
+    builder.Services.Configure<SalesforceConfig>(builder.Configuration.GetSection("Salesforce"));
+    builder.Services.AddHttpClient<ISalesforceService, SalesforceService>();
 
     var app = builder.Build();
 

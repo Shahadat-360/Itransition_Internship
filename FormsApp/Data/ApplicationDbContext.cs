@@ -50,6 +50,11 @@ namespace FormsApp.Data
                 .HasIndex(u => u.NormalizedEmail)
                 .IsUnique();
             
+            // Add unique index for Topic name
+            builder.Entity<Topic>()
+                .HasIndex(t => t.Name)
+                .IsUnique();
+            
             // Configure relationships and constraints
             builder.Entity<FormTemplate>()
                 .HasOne(t => t.Creator)

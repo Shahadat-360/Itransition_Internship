@@ -135,17 +135,7 @@ namespace FormsApp.Services
                     
                     result["mostCommon"] = textValues;
                     
-                    // Get response length statistics
-                    var lengths = answers.Where(a => !string.IsNullOrEmpty(a.TextValue))
-                        .Select(a => a.TextValue!.Length)
-                        .ToList();
-                    
-                    if (lengths.Any())
-                    {
-                        result["averageLength"] = lengths.Average();
-                        result["minLength"] = lengths.Min();
-                        result["maxLength"] = lengths.Max();
-                    }
+                    // Length statistics removed as requested
                     break;
                 
                 default:

@@ -47,7 +47,7 @@ namespace FormsApp.Services
                         if (formData.TryGetValue(questionKey, out var intValue))
                         {
                             // Validate that this is actually an integer
-                            if (!string.IsNullOrWhiteSpace(intValue) && !int.TryParse(intValue, out _))
+                            if (!string.IsNullOrWhiteSpace(intValue) && !int.TryParse(intValue, out int parsedValue))
                             {
                                 validationErrors.Add($"'{question.Text}' must be a valid number.");
                             }
@@ -76,6 +76,12 @@ namespace FormsApp.Services
                         Text = answerText,
                         CreatedAt = DateTime.UtcNow
                     };
+                    
+                    // Set the right property based on question type
+                    if (question.Type == QuestionType.Integer && int.TryParse(answerText, out int intVal))
+                    {
+                        answer.IntValue = intVal;
+                    }
                     
                     answers.Add(answer);
                 }
@@ -117,7 +123,7 @@ namespace FormsApp.Services
                         if (formData.TryGetValue(questionKey, out var intValue))
                         {
                             // Validate that this is actually an integer
-                            if (!string.IsNullOrWhiteSpace(intValue) && !int.TryParse(intValue, out _))
+                            if (!string.IsNullOrWhiteSpace(intValue) && !int.TryParse(intValue, out int parsedValue))
                             {
                                 validationErrors.Add($"'{question.Text}' must be a valid number.");
                             }
@@ -150,6 +156,13 @@ namespace FormsApp.Services
                     {
                         // Update the existing answer
                         existingAnswer.Text = answerText;
+                        
+                        // Set the appropriate value based on question type
+                        if (question.Type == QuestionType.Integer && int.TryParse(answerText, out int intVal))
+                        {
+                            existingAnswer.IntValue = intVal;
+                        }
+                        
                         _context.Answers.Update(existingAnswer);
                     }
                 }
@@ -163,6 +176,12 @@ namespace FormsApp.Services
                         Text = answerText,
                         CreatedAt = DateTime.UtcNow
                     };
+                    
+                    // Set the right property based on question type
+                    if (question.Type == QuestionType.Integer && int.TryParse(answerText, out int intVal))
+                    {
+                        answer.IntValue = intVal;
+                    }
                     
                     response.Answers.Add(answer);
                     _context.Answers.Add(answer);

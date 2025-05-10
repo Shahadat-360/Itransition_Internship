@@ -115,12 +115,24 @@ namespace FormsApp.Services
                 case QuestionType.MultipleChoice:
                 case QuestionType.Poll:
                     // Count occurrences of each option
-                    var options = answers.GroupBy(a => a.TextValue)
+                    var optionGroups = answers.GroupBy(a => a.TextValue)
                         .Select(g => new { Option = g.Key, Count = g.Count() })
                         .OrderByDescending(item => item.Count)
-                        .ToDictionary(item => item.Option ?? "No Answer", item => item.Count);
+                        .ToList();
+                    
+                    // Calculate total responses for percentage calculation
+                    int totalResponses = answers.Count;
+                    
+                    // Create dictionary with option -> percentage
+                    var options = optionGroups.ToDictionary(
+                        item => item.Option ?? "No Answer", 
+                        item => totalResponses > 0 
+                            ? Math.Round((double)item.Count / totalResponses * 100, 1) 
+                            : 0.0
+                    );
                     
                     result["options"] = options;
+                    result["totalResponses"] = totalResponses;
                     break;
                     
                 case QuestionType.SingleLineText:

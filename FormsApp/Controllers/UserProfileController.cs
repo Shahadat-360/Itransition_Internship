@@ -17,17 +17,20 @@ namespace FormsApp.Controllers
         private readonly ILogger<UserProfileController> _logger;
         private readonly ISalesforceService _salesforceService;
         private readonly ApplicationDbContext _context;
+        private readonly IApiTokenService _apiTokenService;
 
         public UserProfileController(
             UserManager<ApplicationUser> userManager,
             ILogger<UserProfileController> logger,
             ISalesforceService salesforceService,
-            ApplicationDbContext context)
+            ApplicationDbContext context,
+            IApiTokenService apiTokenService)
         {
             _userManager = userManager;
             _logger = logger;
             _salesforceService = salesforceService;
             _context = context;
+            _apiTokenService = apiTokenService;
         }
 
         [HttpGet]
@@ -35,6 +38,70 @@ namespace FormsApp.Controllers
         {
             var user = await _userManager.GetUserAsync(User);
             return View(user);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ApiToken()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var tokens = await _apiTokenService.GetTokensByUserIdAsync(user.Id);
+            var activeToken = tokens.FirstOrDefault(t => t.IsActive)?.Token;
+            
+            var viewModel = new ApiTokenViewModel
+            {
+                ApiToken = activeToken,
+                HasActiveToken = !string.IsNullOrEmpty(activeToken),
+                ApiEndpointBaseUrl = $"{Request.Scheme}://{Request.Host}/api/v1"
+            };
+            
+            return View(viewModel);
+        }
+        
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> GenerateApiToken()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            
+            try
+            {
+                var token = await _apiTokenService.GenerateTokenForUserAsync(user.Id);
+                TempData["SuccessMessage"] = "New API token generated successfully.";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error generating API token for user {UserId}", user.Id);
+                TempData["ErrorMessage"] = "There was an error generating your API token.";
+            }
+            
+            return RedirectToAction(nameof(ApiToken));
+        }
+        
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RevokeApiToken(int tokenId)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            
+            try
+            {
+                var result = await _apiTokenService.RevokeTokenAsync(tokenId, user.Id);
+                if (result)
+                {
+                    TempData["SuccessMessage"] = "API token revoked successfully.";
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Could not find the specified token.";
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error revoking API token for user {UserId}", user.Id);
+                TempData["ErrorMessage"] = "There was an error revoking your API token.";
+            }
+            
+            return RedirectToAction(nameof(ApiToken));
         }
 
         [HttpGet]

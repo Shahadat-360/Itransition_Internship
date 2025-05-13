@@ -8,9 +8,7 @@ namespace FormsApp.Models
         MultiLineText,
         Integer,
         MultipleChoice,
-        Poll,
-        ShortAnswer,
-        LongAnswer
+        Poll
     }
 
     public class Question

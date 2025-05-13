@@ -53,7 +53,15 @@ namespace FormsApp.Controllers
             {
                 topic.CreatedAt = DateTime.UtcNow;
                 _context.Add(topic);
-                await _context.SaveChangesAsync();
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch(Exception ex)
+                {
+                    TempData["ErrorMessage"] = "Duplicate Topic Can't be Created!";
+                    return Redirect(returnUrl);
+                }
                 
                 // If AJAX request, return JSON response
                 if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")

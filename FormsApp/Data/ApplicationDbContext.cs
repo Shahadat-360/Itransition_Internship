@@ -23,6 +23,7 @@ namespace FormsApp.Data
         public DbSet<TemplateAccessUser> TemplateAccessUsers { get; set; } = null!;
         public DbSet<QuestionOption> QuestionOptions { get; set; } = null!;
         public DbSet<Topic> Topics { get; set; } = null!;
+        public DbSet<ApiToken> ApiTokens { get; set; } = null!;
 
         // Salesforce integration
         public DbSet<SalesforceUserProfile> SalesforceUserProfiles { get; set; } = null!;
@@ -47,6 +48,11 @@ namespace FormsApp.Data
             // Add unique index for email
             builder.Entity<ApplicationUser>()
                 .HasIndex(u => u.NormalizedEmail)
+                .IsUnique();
+            
+            // Add unique index for Topic name
+            builder.Entity<Topic>()
+                .HasIndex(t => t.Name)
                 .IsUnique();
             
             // Configure relationships and constraints
@@ -154,6 +160,18 @@ namespace FormsApp.Data
                 .WithOne(u => u.SalesforceProfile)
                 .HasForeignKey<SalesforceUserProfile>(s => s.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            // Configure ApiToken
+            builder.Entity<ApiToken>()
+                .HasOne(t => t.User)
+                .WithMany(u => u.ApiTokens)
+                .HasForeignKey(t => t.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Add index for faster token lookups
+            builder.Entity<ApiToken>()
+                .HasIndex(t => t.Token)
+                .IsUnique();
 
             // Seed default topics removed - users will create their own topics
         }

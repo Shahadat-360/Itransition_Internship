@@ -20,6 +20,7 @@ namespace FormsApp.Services
             // Get all templates created by the user
             var templates = await _context.FormTemplates
                 .Include(t => t.Questions)
+                .Include(t => t.Creator)
                 .Where(t => t.CreatorId == userId)
                 .ToListAsync();
             
@@ -34,6 +35,7 @@ namespace FormsApp.Services
                     Description = template.Description,
                     CreatedAt = template.CreatedAt,
                     ResponseCount = await _context.FormResponses.CountAsync(r => r.TemplateId == template.Id),
+                    AuthorName = template.Creator?.UserName ?? "Unknown",
                     Questions = await GetAggregatedQuestionsAsync(template.Id, template.Questions.ToList())
                 };
                 
@@ -48,6 +50,7 @@ namespace FormsApp.Services
             // Get the template and verify ownership
             var template = await _context.FormTemplates
                 .Include(t => t.Questions)
+                .Include(t => t.Creator)
                 .FirstOrDefaultAsync(t => t.Id == templateId && t.CreatorId == userId);
             
             if (template == null)
@@ -60,6 +63,7 @@ namespace FormsApp.Services
                 Description = template.Description,
                 CreatedAt = template.CreatedAt,
                 ResponseCount = await _context.FormResponses.CountAsync(r => r.TemplateId == template.Id),
+                AuthorName = template.Creator?.UserName ?? "Unknown",
                 Questions = await GetAggregatedQuestionsAsync(template.Id, template.Questions.ToList())
             };
             
@@ -115,12 +119,24 @@ namespace FormsApp.Services
                 case QuestionType.MultipleChoice:
                 case QuestionType.Poll:
                     // Count occurrences of each option
-                    var options = answers.GroupBy(a => a.TextValue)
+                    var optionGroups = answers.GroupBy(a => a.TextValue)
                         .Select(g => new { Option = g.Key, Count = g.Count() })
                         .OrderByDescending(item => item.Count)
-                        .ToDictionary(item => item.Option ?? "No Answer", item => item.Count);
+                        .ToList();
+                    
+                    // Calculate total responses for percentage calculation
+                    int totalResponses = answers.Count;
+                    
+                    // Create dictionary with option -> percentage
+                    var options = optionGroups.ToDictionary(
+                        item => item.Option ?? "No Answer", 
+                        item => totalResponses > 0 
+                            ? Math.Round((double)item.Count / totalResponses * 100, 1) 
+                            : 0.0
+                    );
                     
                     result["options"] = options;
+                    result["totalResponses"] = totalResponses;
                     break;
                     
                 case QuestionType.SingleLineText:
@@ -135,17 +151,7 @@ namespace FormsApp.Services
                     
                     result["mostCommon"] = textValues;
                     
-                    // Get response length statistics
-                    var lengths = answers.Where(a => !string.IsNullOrEmpty(a.TextValue))
-                        .Select(a => a.TextValue!.Length)
-                        .ToList();
-                    
-                    if (lengths.Any())
-                    {
-                        result["averageLength"] = lengths.Average();
-                        result["minLength"] = lengths.Min();
-                        result["maxLength"] = lengths.Max();
-                    }
+                    // Length statistics removed as requested
                     break;
                 
                 default:
@@ -165,6 +171,7 @@ namespace FormsApp.Services
         public string Description { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
         public int ResponseCount { get; set; }
+        public string AuthorName { get; set; } = string.Empty;
         public List<QuestionAggregateResult> Questions { get; set; } = new List<QuestionAggregateResult>();
     }
 

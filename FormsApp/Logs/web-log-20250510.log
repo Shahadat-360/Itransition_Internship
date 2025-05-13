@@ -207,3 +207,8 @@ Error Number:2601,State:1,Class:14
    at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
    at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
    at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+2025-05-10 16:52:30.389 +06:00 [INF] Starting application...
+2025-05-10 16:52:34.433 +06:00 [INF] Checking for role 'Admin'. Exists: true
+2025-05-10 16:52:34.541 +06:00 [INF] Existing admin user 'admin@formsapp.com' already exists.
+2025-05-10 16:52:34.602 +06:00 [INF] Existing admin user 'admin@formsapp.com' already has the 'Admin' role.
+2025-05-10 16:52:40.180 +06:00 [INF] User shahadat.190621@s.pust.ac.bd logged in successfully.

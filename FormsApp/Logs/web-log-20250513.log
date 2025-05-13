@@ -1,0 +1,280 @@
+2025-05-13 17:43:24.985 +06:00 [INF] Starting application...
+2025-05-13 17:43:29.152 +06:00 [INF] Checking for role 'Admin'. Exists: true
+2025-05-13 17:43:29.293 +06:00 [INF] Existing admin user 'admin@formsapp.com' already exists.
+2025-05-13 17:43:29.355 +06:00 [INF] Existing admin user 'admin@formsapp.com' already has the 'Admin' role.
+2025-05-13 17:43:35.807 +06:00 [INF] Starting application...
+2025-05-13 17:43:38.753 +06:00 [INF] Checking for role 'Admin'. Exists: true
+2025-05-13 17:43:38.835 +06:00 [INF] Existing admin user 'admin@formsapp.com' already exists.
+2025-05-13 17:43:38.890 +06:00 [INF] Existing admin user 'admin@formsapp.com' already has the 'Admin' role.
+2025-05-13 17:44:13.679 +06:00 [WRN] Compiling a query which loads related collections for more than one collection navigation, either via 'Include' or through projection, but no 'QuerySplittingBehavior' has been configured. By default, Entity Framework will use 'QuerySplittingBehavior.SingleQuery', which can potentially result in slow query performance. See https://go.microsoft.com/fwlink/?linkid=2134277 for more information. To identify the query that's triggering this warning call 'ConfigureWarnings(w => w.Throw(RelationalEventId.MultipleCollectionIncludeWarning))'.
+2025-05-13 17:51:29.991 +06:00 [INF] Starting application...
+2025-05-13 17:51:32.890 +06:00 [INF] Checking for role 'Admin'. Exists: true
+2025-05-13 17:51:33.480 +06:00 [INF] Existing admin user 'admin@formsapp.com' already exists.
+2025-05-13 17:51:33.654 +06:00 [INF] Existing admin user 'admin@formsapp.com' already has the 'Admin' role.
+2025-05-13 17:51:39.598 +06:00 [WRN] Compiling a query which loads related collections for more than one collection navigation, either via 'Include' or through projection, but no 'QuerySplittingBehavior' has been configured. By default, Entity Framework will use 'QuerySplittingBehavior.SingleQuery', which can potentially result in slow query performance. See https://go.microsoft.com/fwlink/?linkid=2134277 for more information. To identify the query that's triggering this warning call 'ConfigureWarnings(w => w.Throw(RelationalEventId.MultipleCollectionIncludeWarning))'.
+2025-05-13 17:51:44.851 +06:00 [INF] CreateTicket POST received. Summary: dfasdasd, Priority: Average
+2025-05-13 17:51:44.852 +06:00 [WRN] Model state is invalid: The Template field is required.
+2025-05-13 17:53:21.367 +06:00 [INF] CreateTicket POST received. Summary: dfasdasd, Priority: Average
+2025-05-13 17:53:21.368 +06:00 [WRN] Model state is invalid: The Template field is required.
+2025-05-13 17:55:07.607 +06:00 [INF] Starting application...
+2025-05-13 17:55:10.268 +06:00 [INF] Checking for role 'Admin'. Exists: true
+2025-05-13 17:55:10.411 +06:00 [INF] Existing admin user 'admin@formsapp.com' already exists.
+2025-05-13 17:55:10.493 +06:00 [INF] Existing admin user 'admin@formsapp.com' already has the 'Admin' role.
+2025-05-13 17:55:18.730 +06:00 [INF] CreateTicket POST received. Summary: werwedweded, Priority: High
+2025-05-13 17:55:18.732 +06:00 [INF] Model values: ReportedBy=admin@formsapp.com, Template=null, Link=/Support/CreateTicket
+2025-05-13 17:55:18.733 +06:00 [WRN] Validation error for Template: The Template field is required.
+2025-05-13 17:58:07.840 +06:00 [INF] Starting application...
+2025-05-13 17:58:10.897 +06:00 [INF] Checking for role 'Admin'. Exists: true
+2025-05-13 17:58:11.015 +06:00 [INF] Existing admin user 'admin@formsapp.com' already exists.
+2025-05-13 17:58:11.070 +06:00 [INF] Existing admin user 'admin@formsapp.com' already has the 'Admin' role.
+2025-05-13 17:58:27.600 +06:00 [INF] CreateTicket POST received with model: {"Summary":"gfdsgsdfgs","Priority":"Average","ReportedBy":"admin@formsapp.com","Template":"NoTemplate","Link":"/Support/CreateTicket","ReturnUrl":"https://localhost:7179/","$type":"SupportTicketViewModel"}
+2025-05-13 17:58:27.604 +06:00 [INF] Template value from form: NoTemplate
+2025-05-13 17:58:27.608 +06:00 [INF] Uploading ticket to Dropbox: {"Id":0,"ReportedBy":"admin@formsapp.com","Summary":"gfdsgsdfgs","Template":"NoTemplate","Link":"/Support/CreateTicket","Priority":"Average","CreatedAt":"2025-05-13T11:58:27.6058000Z","$type":"SupportTicket"}
+2025-05-13 17:58:27.610 +06:00 [INF] Starting upload to Dropbox for ticket from admin@formsapp.com
+2025-05-13 17:58:28.172 +06:00 [INF] Folder /Support Tickets doesn't exist, creating it
+2025-05-13 17:58:28.420 +06:00 [ERR] Failed to create folder in Dropbox. Status: "BadRequest", Response: Error in call to API function "files/create_folder_v2": Your app is not permitted to access this endpoint because it does not have the required scope 'files.content.write'. The owner of the app can enable the scope for the app using the Permissions tab on the App Console.
+2025-05-13 17:58:28.519 +06:00 [ERR] Error ensuring folder exists in Dropbox
+System.Exception: Failed to create folder in Dropbox: BadRequest - Error in call to API function "files/create_folder_v2": Your app is not permitted to access this endpoint because it does not have the required scope 'files.content.write'. The owner of the app can enable the scope for the app using the Permissions tab on the App Console.
+   at FormsApp.Services.DropboxService.EnsureFolderExistsAsync() in C:\Users\MD_Sh\Downloads\New folder\New folder (2)\Itransition_Internship\FormsApp\Services\DropboxService.cs:line 157
+2025-05-13 17:58:28.636 +06:00 [ERR] Error uploading to Dropbox
+System.Exception: Error ensuring folder exists in Dropbox: Failed to create folder in Dropbox: BadRequest - Error in call to API function "files/create_folder_v2": Your app is not permitted to access this endpoint because it does not have the required scope 'files.content.write'. The owner of the app can enable the scope for the app using the Permissions tab on the App Console.
+ ---> System.Exception: Failed to create folder in Dropbox: BadRequest - Error in call to API function "files/create_folder_v2": Your app is not permitted to access this endpoint because it does not have the required scope 'files.content.write'. The owner of the app can enable the scope for the app using the Permissions tab on the App Console.
+   at FormsApp.Services.DropboxService.EnsureFolderExistsAsync() in C:\Users\MD_Sh\Downloads\New folder\New folder (2)\Itransition_Internship\FormsApp\Services\DropboxService.cs:line 157
+   --- End of inner exception stack trace ---
+   at FormsApp.Services.DropboxService.EnsureFolderExistsAsync() in C:\Users\MD_Sh\Downloads\New folder\New folder (2)\Itransition_Internship\FormsApp\Services\DropboxService.cs:line 165
+   at FormsApp.Services.DropboxService.UploadJsonFileAsync(SupportTicket ticket) in C:\Users\MD_Sh\Downloads\New folder\New folder (2)\Itransition_Internship\FormsApp\Services\DropboxService.cs:line 47
+2025-05-13 17:58:28.756 +06:00 [ERR] Error submitting support ticket
+System.Exception: Error uploading to Dropbox: Error ensuring folder exists in Dropbox: Failed to create folder in Dropbox: BadRequest - Error in call to API function "files/create_folder_v2": Your app is not permitted to access this endpoint because it does not have the required scope 'files.content.write'. The owner of the app can enable the scope for the app using the Permissions tab on the App Console.
+ ---> System.Exception: Error ensuring folder exists in Dropbox: Failed to create folder in Dropbox: BadRequest - Error in call to API function "files/create_folder_v2": Your app is not permitted to access this endpoint because it does not have the required scope 'files.content.write'. The owner of the app can enable the scope for the app using the Permissions tab on the App Console.
+ ---> System.Exception: Failed to create folder in Dropbox: BadRequest - Error in call to API function "files/create_folder_v2": Your app is not permitted to access this endpoint because it does not have the required scope 'files.content.write'. The owner of the app can enable the scope for the app using the Permissions tab on the App Console.
+   at FormsApp.Services.DropboxService.EnsureFolderExistsAsync() in C:\Users\MD_Sh\Downloads\New folder\New folder (2)\Itransition_Internship\FormsApp\Services\DropboxService.cs:line 157
+   --- End of inner exception stack trace ---
+   at FormsApp.Services.DropboxService.EnsureFolderExistsAsync() in C:\Users\MD_Sh\Downloads\New folder\New folder (2)\Itransition_Internship\FormsApp\Services\DropboxService.cs:line 165
+   at FormsApp.Services.DropboxService.UploadJsonFileAsync(SupportTicket ticket) in C:\Users\MD_Sh\Downloads\New folder\New folder (2)\Itransition_Internship\FormsApp\Services\DropboxService.cs:line 47
+   --- End of inner exception stack trace ---
+   at FormsApp.Services.DropboxService.UploadJsonFileAsync(SupportTicket ticket) in C:\Users\MD_Sh\Downloads\New folder\New folder (2)\Itransition_Internship\FormsApp\Services\DropboxService.cs:line 104
+   at FormsApp.Controllers.SupportController.CreateTicket(SupportTicketViewModel model) in C:\Users\MD_Sh\Downloads\New folder\New folder (2)\Itransition_Internship\FormsApp\Controllers\SupportController.cs:line 129
+2025-05-13 18:10:06.205 +06:00 [INF] Starting application...
+2025-05-13 18:10:09.970 +06:00 [INF] Checking for role 'Admin'. Exists: true
+2025-05-13 18:10:10.079 +06:00 [INF] Existing admin user 'admin@formsapp.com' already exists.
+2025-05-13 18:10:10.141 +06:00 [INF] Existing admin user 'admin@formsapp.com' already has the 'Admin' role.
+2025-05-13 18:10:18.844 +06:00 [INF] CreateTicket POST received with model: {"Summary":"dfasfdasf","Priority":"Average","ReportedBy":"admin@formsapp.com","Template":"NoTemplate","Link":"/Support/CreateTicket","ReturnUrl":"https://localhost:7179/","$type":"SupportTicketViewModel"}
+2025-05-13 18:10:18.847 +06:00 [INF] Template value from form: NoTemplate
+2025-05-13 18:10:18.850 +06:00 [INF] Uploading ticket to Dropbox: {"Id":0,"ReportedBy":"admin@formsapp.com","Summary":"dfasfdasf","Template":"NoTemplate","Link":"/Support/CreateTicket","Priority":"Average","CreatedAt":"2025-05-13T12:10:18.8489167Z","$type":"SupportTicket"}
+2025-05-13 18:10:18.869 +06:00 [INF] Starting upload to Dropbox for file support_ticket_20250513_121018
+2025-05-13 18:10:19.313 +06:00 [INF] Folder /Support Tickets doesn't exist, creating it
+2025-05-13 18:10:19.568 +06:00 [ERR] Failed to create folder in Dropbox. Status: "BadRequest", Response: Error in call to API function "files/create_folder_v2": Your app is not permitted to access this endpoint because it does not have the required scope 'files.content.write'. The owner of the app can enable the scope for the app using the Permissions tab on the App Console.
+2025-05-13 18:10:19.670 +06:00 [ERR] Error ensuring folder exists in Dropbox
+System.Exception: Failed to create folder in Dropbox: BadRequest - Error in call to API function "files/create_folder_v2": Your app is not permitted to access this endpoint because it does not have the required scope 'files.content.write'. The owner of the app can enable the scope for the app using the Permissions tab on the App Console.
+   at FormsApp.Services.DropboxService.EnsureFolderExistsAsync() in C:\Users\MD_Sh\Downloads\New folder\New folder (2)\Itransition_Internship\FormsApp\Services\DropboxService.cs:line 217
+2025-05-13 18:10:19.792 +06:00 [ERR] Error uploading to Dropbox
+System.Exception: Error ensuring folder exists in Dropbox: Failed to create folder in Dropbox: BadRequest - Error in call to API function "files/create_folder_v2": Your app is not permitted to access this endpoint because it does not have the required scope 'files.content.write'. The owner of the app can enable the scope for the app using the Permissions tab on the App Console.
+ ---> System.Exception: Failed to create folder in Dropbox: BadRequest - Error in call to API function "files/create_folder_v2": Your app is not permitted to access this endpoint because it does not have the required scope 'files.content.write'. The owner of the app can enable the scope for the app using the Permissions tab on the App Console.
+   at FormsApp.Services.DropboxService.EnsureFolderExistsAsync() in C:\Users\MD_Sh\Downloads\New folder\New folder (2)\Itransition_Internship\FormsApp\Services\DropboxService.cs:line 217
+   --- End of inner exception stack trace ---
+   at FormsApp.Services.DropboxService.EnsureFolderExistsAsync() in C:\Users\MD_Sh\Downloads\New folder\New folder (2)\Itransition_Internship\FormsApp\Services\DropboxService.cs:line 225
+   at FormsApp.Services.DropboxService.UploadJsonFileAsync(String jsonContent, String fileName) in C:\Users\MD_Sh\Downloads\New folder\New folder (2)\Itransition_Internship\FormsApp\Services\DropboxService.cs:line 49
+2025-05-13 18:10:20.186 +06:00 [ERR] Error submitting support ticket
+System.Exception: Error uploading to Dropbox: Error ensuring folder exists in Dropbox: Failed to create folder in Dropbox: BadRequest - Error in call to API function "files/create_folder_v2": Your app is not permitted to access this endpoint because it does not have the required scope 'files.content.write'. The owner of the app can enable the scope for the app using the Permissions tab on the App Console.
+ ---> System.Exception: Error ensuring folder exists in Dropbox: Failed to create folder in Dropbox: BadRequest - Error in call to API function "files/create_folder_v2": Your app is not permitted to access this endpoint because it does not have the required scope 'files.content.write'. The owner of the app can enable the scope for the app using the Permissions tab on the App Console.
+ ---> System.Exception: Failed to create folder in Dropbox: BadRequest - Error in call to API function "files/create_folder_v2": Your app is not permitted to access this endpoint because it does not have the required scope 'files.content.write'. The owner of the app can enable the scope for the app using the Permissions tab on the App Console.
+   at FormsApp.Services.DropboxService.EnsureFolderExistsAsync() in C:\Users\MD_Sh\Downloads\New folder\New folder (2)\Itransition_Internship\FormsApp\Services\DropboxService.cs:line 217
+   --- End of inner exception stack trace ---
+   at FormsApp.Services.DropboxService.EnsureFolderExistsAsync() in C:\Users\MD_Sh\Downloads\New folder\New folder (2)\Itransition_Internship\FormsApp\Services\DropboxService.cs:line 225
+   at FormsApp.Services.DropboxService.UploadJsonFileAsync(String jsonContent, String fileName) in C:\Users\MD_Sh\Downloads\New folder\New folder (2)\Itransition_Internship\FormsApp\Services\DropboxService.cs:line 49
+   --- End of inner exception stack trace ---
+   at FormsApp.Services.DropboxService.UploadJsonFileAsync(String jsonContent, String fileName) in C:\Users\MD_Sh\Downloads\New folder\New folder (2)\Itransition_Internship\FormsApp\Services\DropboxService.cs:line 97
+   at FormsApp.Services.DropboxService.UploadJsonFileAsync(SupportTicket ticket) in C:\Users\MD_Sh\Downloads\New folder\New folder (2)\Itransition_Internship\FormsApp\Services\DropboxService.cs:line 112
+   at FormsApp.Controllers.SupportController.CreateTicket(SupportTicketViewModel model) in C:\Users\MD_Sh\Downloads\New folder\New folder (2)\Itransition_Internship\FormsApp\Controllers\SupportController.cs:line 129
+2025-05-13 18:21:49.716 +06:00 [INF] Starting application...
+2025-05-13 18:21:52.418 +06:00 [INF] Checking for role 'Admin'. Exists: true
+2025-05-13 18:21:52.529 +06:00 [INF] Existing admin user 'admin@formsapp.com' already exists.
+2025-05-13 18:21:52.589 +06:00 [INF] Existing admin user 'admin@formsapp.com' already has the 'Admin' role.
+2025-05-13 18:22:01.220 +06:00 [INF] CreateTicket POST received with model: {"Summary":"afdafdeawdfawdf","Priority":"Average","ReportedBy":"admin@formsapp.com","Template":"NoTemplate","Link":"/Support/CreateTicket","ReturnUrl":"https://localhost:7179/","$type":"SupportTicketViewModel"}
+2025-05-13 18:22:01.223 +06:00 [INF] Template value from form: NoTemplate
+2025-05-13 18:22:01.225 +06:00 [INF] Uploading ticket to Dropbox: {"Id":0,"ReportedBy":"admin@formsapp.com","Summary":"afdafdeawdfawdf","Template":"NoTemplate","Link":"/Support/CreateTicket","Priority":"Average","CreatedAt":"2025-05-13T12:22:01.2242001Z","$type":"SupportTicket"}
+2025-05-13 18:22:01.242 +06:00 [INF] Starting upload to Dropbox for file support_ticket_20250513_122201
+2025-05-13 18:22:01.707 +06:00 [INF] Folder /SupportTicketsForms doesn't exist, creating it
+2025-05-13 18:22:01.962 +06:00 [ERR] Failed to create folder in Dropbox. Status: "BadRequest", Response: Error in call to API function "files/create_folder_v2": Your app is not permitted to access this endpoint because it does not have the required scope 'files.content.write'. The owner of the app can enable the scope for the app using the Permissions tab on the App Console.
+2025-05-13 18:22:02.052 +06:00 [ERR] Error ensuring folder exists in Dropbox
+System.Exception: Failed to create folder in Dropbox: BadRequest - Error in call to API function "files/create_folder_v2": Your app is not permitted to access this endpoint because it does not have the required scope 'files.content.write'. The owner of the app can enable the scope for the app using the Permissions tab on the App Console.
+   at FormsApp.Services.DropboxService.EnsureFolderExistsAsync() in C:\Users\MD_Sh\Downloads\New folder\New folder (2)\Itransition_Internship\FormsApp\Services\DropboxService.cs:line 217
+2025-05-13 18:22:02.163 +06:00 [ERR] Error uploading to Dropbox
+System.Exception: Error ensuring folder exists in Dropbox: Failed to create folder in Dropbox: BadRequest - Error in call to API function "files/create_folder_v2": Your app is not permitted to access this endpoint because it does not have the required scope 'files.content.write'. The owner of the app can enable the scope for the app using the Permissions tab on the App Console.
+ ---> System.Exception: Failed to create folder in Dropbox: BadRequest - Error in call to API function "files/create_folder_v2": Your app is not permitted to access this endpoint because it does not have the required scope 'files.content.write'. The owner of the app can enable the scope for the app using the Permissions tab on the App Console.
+   at FormsApp.Services.DropboxService.EnsureFolderExistsAsync() in C:\Users\MD_Sh\Downloads\New folder\New folder (2)\Itransition_Internship\FormsApp\Services\DropboxService.cs:line 217
+   --- End of inner exception stack trace ---
+   at FormsApp.Services.DropboxService.EnsureFolderExistsAsync() in C:\Users\MD_Sh\Downloads\New folder\New folder (2)\Itransition_Internship\FormsApp\Services\DropboxService.cs:line 225
+   at FormsApp.Services.DropboxService.UploadJsonFileAsync(String jsonContent, String fileName) in C:\Users\MD_Sh\Downloads\New folder\New folder (2)\Itransition_Internship\FormsApp\Services\DropboxService.cs:line 49
+2025-05-13 18:22:02.415 +06:00 [ERR] Error submitting support ticket
+System.Exception: Error uploading to Dropbox: Error ensuring folder exists in Dropbox: Failed to create folder in Dropbox: BadRequest - Error in call to API function "files/create_folder_v2": Your app is not permitted to access this endpoint because it does not have the required scope 'files.content.write'. The owner of the app can enable the scope for the app using the Permissions tab on the App Console.
+ ---> System.Exception: Error ensuring folder exists in Dropbox: Failed to create folder in Dropbox: BadRequest - Error in call to API function "files/create_folder_v2": Your app is not permitted to access this endpoint because it does not have the required scope 'files.content.write'. The owner of the app can enable the scope for the app using the Permissions tab on the App Console.
+ ---> System.Exception: Failed to create folder in Dropbox: BadRequest - Error in call to API function "files/create_folder_v2": Your app is not permitted to access this endpoint because it does not have the required scope 'files.content.write'. The owner of the app can enable the scope for the app using the Permissions tab on the App Console.
+   at FormsApp.Services.DropboxService.EnsureFolderExistsAsync() in C:\Users\MD_Sh\Downloads\New folder\New folder (2)\Itransition_Internship\FormsApp\Services\DropboxService.cs:line 217
+   --- End of inner exception stack trace ---
+   at FormsApp.Services.DropboxService.EnsureFolderExistsAsync() in C:\Users\MD_Sh\Downloads\New folder\New folder (2)\Itransition_Internship\FormsApp\Services\DropboxService.cs:line 225
+   at FormsApp.Services.DropboxService.UploadJsonFileAsync(String jsonContent, String fileName) in C:\Users\MD_Sh\Downloads\New folder\New folder (2)\Itransition_Internship\FormsApp\Services\DropboxService.cs:line 49
+   --- End of inner exception stack trace ---
+   at FormsApp.Services.DropboxService.UploadJsonFileAsync(String jsonContent, String fileName) in C:\Users\MD_Sh\Downloads\New folder\New folder (2)\Itransition_Internship\FormsApp\Services\DropboxService.cs:line 97
+   at FormsApp.Services.DropboxService.UploadJsonFileAsync(SupportTicket ticket) in C:\Users\MD_Sh\Downloads\New folder\New folder (2)\Itransition_Internship\FormsApp\Services\DropboxService.cs:line 112
+   at FormsApp.Controllers.SupportController.CreateTicket(SupportTicketViewModel model) in C:\Users\MD_Sh\Downloads\New folder\New folder (2)\Itransition_Internship\FormsApp\Controllers\SupportController.cs:line 129
+2025-05-13 18:23:18.473 +06:00 [INF] CreateTicket POST received with model: {"Summary":"afdafdeawdfawdf","Priority":"Average","ReportedBy":"admin@formsapp.com","Template":"NoTemplate","Link":"/Support/CreateTicket","ReturnUrl":"https://localhost:7179/","$type":"SupportTicketViewModel"}
+2025-05-13 18:23:18.473 +06:00 [INF] Template value from form: NoTemplate
+2025-05-13 18:23:18.474 +06:00 [INF] Uploading ticket to Dropbox: {"Id":0,"ReportedBy":"admin@formsapp.com","Summary":"afdafdeawdfawdf","Template":"NoTemplate","Link":"/Support/CreateTicket","Priority":"Average","CreatedAt":"2025-05-13T12:23:18.4740952Z","$type":"SupportTicket"}
+2025-05-13 18:23:18.474 +06:00 [INF] Starting upload to Dropbox for file support_ticket_20250513_122318
+2025-05-13 18:23:18.888 +06:00 [INF] Folder /SupportTicketsForms doesn't exist, creating it
+2025-05-13 18:23:19.129 +06:00 [ERR] Failed to create folder in Dropbox. Status: "Unauthorized", Response: {"error":{".tag":"missing_scope","required_scope":"files.content.write"},"error_summary":"missing_scope/"}
+2025-05-13 18:23:19.265 +06:00 [ERR] Error ensuring folder exists in Dropbox
+System.Exception: Failed to create folder in Dropbox: Unauthorized - {"error":{".tag":"missing_scope","required_scope":"files.content.write"},"error_summary":"missing_scope/"}
+   at FormsApp.Services.DropboxService.EnsureFolderExistsAsync() in C:\Users\MD_Sh\Downloads\New folder\New folder (2)\Itransition_Internship\FormsApp\Services\DropboxService.cs:line 217
+2025-05-13 18:23:19.345 +06:00 [ERR] Error uploading to Dropbox
+System.Exception: Error ensuring folder exists in Dropbox: Failed to create folder in Dropbox: Unauthorized - {"error":{".tag":"missing_scope","required_scope":"files.content.write"},"error_summary":"missing_scope/"}
+ ---> System.Exception: Failed to create folder in Dropbox: Unauthorized - {"error":{".tag":"missing_scope","required_scope":"files.content.write"},"error_summary":"missing_scope/"}
+   at FormsApp.Services.DropboxService.EnsureFolderExistsAsync() in C:\Users\MD_Sh\Downloads\New folder\New folder (2)\Itransition_Internship\FormsApp\Services\DropboxService.cs:line 217
+   --- End of inner exception stack trace ---
+   at FormsApp.Services.DropboxService.EnsureFolderExistsAsync() in C:\Users\MD_Sh\Downloads\New folder\New folder (2)\Itransition_Internship\FormsApp\Services\DropboxService.cs:line 225
+   at FormsApp.Services.DropboxService.UploadJsonFileAsync(String jsonContent, String fileName) in C:\Users\MD_Sh\Downloads\New folder\New folder (2)\Itransition_Internship\FormsApp\Services\DropboxService.cs:line 49
+2025-05-13 18:23:19.583 +06:00 [ERR] Error submitting support ticket
+System.Exception: Error uploading to Dropbox: Error ensuring folder exists in Dropbox: Failed to create folder in Dropbox: Unauthorized - {"error":{".tag":"missing_scope","required_scope":"files.content.write"},"error_summary":"missing_scope/"}
+ ---> System.Exception: Error ensuring folder exists in Dropbox: Failed to create folder in Dropbox: Unauthorized - {"error":{".tag":"missing_scope","required_scope":"files.content.write"},"error_summary":"missing_scope/"}
+ ---> System.Exception: Failed to create folder in Dropbox: Unauthorized - {"error":{".tag":"missing_scope","required_scope":"files.content.write"},"error_summary":"missing_scope/"}
+   at FormsApp.Services.DropboxService.EnsureFolderExistsAsync() in C:\Users\MD_Sh\Downloads\New folder\New folder (2)\Itransition_Internship\FormsApp\Services\DropboxService.cs:line 217
+   --- End of inner exception stack trace ---
+   at FormsApp.Services.DropboxService.EnsureFolderExistsAsync() in C:\Users\MD_Sh\Downloads\New folder\New folder (2)\Itransition_Internship\FormsApp\Services\DropboxService.cs:line 225
+   at FormsApp.Services.DropboxService.UploadJsonFileAsync(String jsonContent, String fileName) in C:\Users\MD_Sh\Downloads\New folder\New folder (2)\Itransition_Internship\FormsApp\Services\DropboxService.cs:line 49
+   --- End of inner exception stack trace ---
+   at FormsApp.Services.DropboxService.UploadJsonFileAsync(String jsonContent, String fileName) in C:\Users\MD_Sh\Downloads\New folder\New folder (2)\Itransition_Internship\FormsApp\Services\DropboxService.cs:line 97
+   at FormsApp.Services.DropboxService.UploadJsonFileAsync(SupportTicket ticket) in C:\Users\MD_Sh\Downloads\New folder\New folder (2)\Itransition_Internship\FormsApp\Services\DropboxService.cs:line 112
+   at FormsApp.Controllers.SupportController.CreateTicket(SupportTicketViewModel model) in C:\Users\MD_Sh\Downloads\New folder\New folder (2)\Itransition_Internship\FormsApp\Controllers\SupportController.cs:line 129
+2025-05-13 18:35:23.384 +06:00 [INF] Starting application...
+2025-05-13 18:35:26.285 +06:00 [INF] Checking for role 'Admin'. Exists: true
+2025-05-13 18:35:26.388 +06:00 [INF] Existing admin user 'admin@formsapp.com' already exists.
+2025-05-13 18:35:26.446 +06:00 [INF] Existing admin user 'admin@formsapp.com' already has the 'Admin' role.
+2025-05-13 18:35:37.289 +06:00 [INF] CreateTicket POST received with model: {"Summary":"dassdadsasd","Priority":"High","ReportedBy":"admin@formsapp.com","Template":"NoTemplate","Link":"/Support/CreateTicket","ReturnUrl":"https://localhost:7179/UserProfile","$type":"SupportTicketViewModel"}
+2025-05-13 18:35:37.292 +06:00 [INF] Template value from form: NoTemplate
+2025-05-13 18:35:37.295 +06:00 [INF] Uploading ticket to Dropbox: {"Id":0,"ReportedBy":"admin@formsapp.com","Summary":"dassdadsasd","Template":"NoTemplate","Link":"/Support/CreateTicket","Priority":"High","CreatedAt":"2025-05-13T12:35:37.2937017Z","$type":"SupportTicket"}
+2025-05-13 18:35:37.306 +06:00 [INF] Starting upload to Dropbox for file support_ticket_20250513_123537
+2025-05-13 18:35:37.307 +06:00 [INF] Folder /SupportTicketsForms already exists in Dropbox, skipping folder creation
+2025-05-13 18:35:37.307 +06:00 [INF] Target Dropbox path: /SupportTicketsForms/support_ticket_20250513_123537.json
+2025-05-13 18:35:37.310 +06:00 [DBG] Dropbox API arguments: {"path":"/SupportTicketsForms/support_ticket_20250513_123537.json","mode":"add","autorename":true,"mute":false}
+2025-05-13 18:35:37.311 +06:00 [INF] Sending request to Dropbox API...
+2025-05-13 18:35:37.817 +06:00 [ERR] Failed to upload file to Dropbox. Status: "BadRequest", Response: Error in call to API function "files/upload": Bad HTTP "Content-Type" header: "application/octet-stream; charset=utf-8".  Expecting one of "application/octet-stream", "text/plain; charset=dropbox-cors-hack".
+2025-05-13 18:35:37.908 +06:00 [ERR] Error uploading to Dropbox
+System.Exception: Failed to upload file to Dropbox: BadRequest - Error in call to API function "files/upload": Bad HTTP "Content-Type" header: "application/octet-stream; charset=utf-8".  Expecting one of "application/octet-stream", "text/plain; charset=dropbox-cors-hack".
+   at FormsApp.Services.DropboxService.UploadJsonFileAsync(String jsonContent, String fileName) in C:\Users\MD_Sh\Downloads\New folder\New folder (2)\Itransition_Internship\FormsApp\Services\DropboxService.cs:line 82
+2025-05-13 18:35:38.143 +06:00 [ERR] Error submitting support ticket
+System.Exception: Error uploading to Dropbox: Failed to upload file to Dropbox: BadRequest - Error in call to API function "files/upload": Bad HTTP "Content-Type" header: "application/octet-stream; charset=utf-8".  Expecting one of "application/octet-stream", "text/plain; charset=dropbox-cors-hack".
+ ---> System.Exception: Failed to upload file to Dropbox: BadRequest - Error in call to API function "files/upload": Bad HTTP "Content-Type" header: "application/octet-stream; charset=utf-8".  Expecting one of "application/octet-stream", "text/plain; charset=dropbox-cors-hack".
+   at FormsApp.Services.DropboxService.UploadJsonFileAsync(String jsonContent, String fileName) in C:\Users\MD_Sh\Downloads\New folder\New folder (2)\Itransition_Internship\FormsApp\Services\DropboxService.cs:line 82
+   --- End of inner exception stack trace ---
+   at FormsApp.Services.DropboxService.UploadJsonFileAsync(String jsonContent, String fileName) in C:\Users\MD_Sh\Downloads\New folder\New folder (2)\Itransition_Internship\FormsApp\Services\DropboxService.cs:line 97
+   at FormsApp.Services.DropboxService.UploadJsonFileAsync(SupportTicket ticket) in C:\Users\MD_Sh\Downloads\New folder\New folder (2)\Itransition_Internship\FormsApp\Services\DropboxService.cs:line 112
+   at FormsApp.Controllers.SupportController.CreateTicket(SupportTicketViewModel model) in C:\Users\MD_Sh\Downloads\New folder\New folder (2)\Itransition_Internship\FormsApp\Controllers\SupportController.cs:line 129
+2025-05-13 18:37:03.497 +06:00 [WRN] Compiling a query which loads related collections for more than one collection navigation, either via 'Include' or through projection, but no 'QuerySplittingBehavior' has been configured. By default, Entity Framework will use 'QuerySplittingBehavior.SingleQuery', which can potentially result in slow query performance. See https://go.microsoft.com/fwlink/?linkid=2134277 for more information. To identify the query that's triggering this warning call 'ConfigureWarnings(w => w.Throw(RelationalEventId.MultipleCollectionIncludeWarning))'.
+2025-05-13 18:37:09.713 +06:00 [INF] CreateTicket POST received with model: {"Summary":"fasfdsaf","Priority":"High","ReportedBy":"admin@formsapp.com","Template":"NoTemplate","Link":"/Support/CreateTicket","ReturnUrl":"https://localhost:7179/FormTemplate/Details/2","$type":"SupportTicketViewModel"}
+2025-05-13 18:37:09.713 +06:00 [INF] Template value from form: NoTemplate
+2025-05-13 18:37:09.713 +06:00 [INF] Uploading ticket to Dropbox: {"Id":0,"ReportedBy":"admin@formsapp.com","Summary":"fasfdsaf","Template":"NoTemplate","Link":"/Support/CreateTicket","Priority":"High","CreatedAt":"2025-05-13T12:37:09.7139422Z","$type":"SupportTicket"}
+2025-05-13 18:37:09.714 +06:00 [INF] Starting upload to Dropbox for file support_ticket_20250513_123709
+2025-05-13 18:37:09.714 +06:00 [INF] Folder /SupportTicketsForms already exists in Dropbox, skipping folder creation
+2025-05-13 18:37:09.714 +06:00 [INF] Target Dropbox path: /SupportTicketsForms/support_ticket_20250513_123709.json
+2025-05-13 18:37:09.715 +06:00 [DBG] Dropbox API arguments: {"path":"/SupportTicketsForms/support_ticket_20250513_123709.json","mode":"add","autorename":true,"mute":false}
+2025-05-13 18:37:09.715 +06:00 [INF] Sending request to Dropbox API...
+2025-05-13 18:37:10.131 +06:00 [ERR] Failed to upload file to Dropbox. Status: "BadRequest", Response: Error in call to API function "files/upload": Bad HTTP "Content-Type" header: "application/octet-stream; charset=utf-8".  Expecting one of "application/octet-stream", "text/plain; charset=dropbox-cors-hack".
+2025-05-13 18:37:10.234 +06:00 [ERR] Error uploading to Dropbox
+System.Exception: Failed to upload file to Dropbox: BadRequest - Error in call to API function "files/upload": Bad HTTP "Content-Type" header: "application/octet-stream; charset=utf-8".  Expecting one of "application/octet-stream", "text/plain; charset=dropbox-cors-hack".
+   at FormsApp.Services.DropboxService.UploadJsonFileAsync(String jsonContent, String fileName) in C:\Users\MD_Sh\Downloads\New folder\New folder (2)\Itransition_Internship\FormsApp\Services\DropboxService.cs:line 82
+2025-05-13 18:37:10.377 +06:00 [ERR] Error submitting support ticket
+System.Exception: Error uploading to Dropbox: Failed to upload file to Dropbox: BadRequest - Error in call to API function "files/upload": Bad HTTP "Content-Type" header: "application/octet-stream; charset=utf-8".  Expecting one of "application/octet-stream", "text/plain; charset=dropbox-cors-hack".
+ ---> System.Exception: Failed to upload file to Dropbox: BadRequest - Error in call to API function "files/upload": Bad HTTP "Content-Type" header: "application/octet-stream; charset=utf-8".  Expecting one of "application/octet-stream", "text/plain; charset=dropbox-cors-hack".
+   at FormsApp.Services.DropboxService.UploadJsonFileAsync(String jsonContent, String fileName) in C:\Users\MD_Sh\Downloads\New folder\New folder (2)\Itransition_Internship\FormsApp\Services\DropboxService.cs:line 82
+   --- End of inner exception stack trace ---
+   at FormsApp.Services.DropboxService.UploadJsonFileAsync(String jsonContent, String fileName) in C:\Users\MD_Sh\Downloads\New folder\New folder (2)\Itransition_Internship\FormsApp\Services\DropboxService.cs:line 97
+   at FormsApp.Services.DropboxService.UploadJsonFileAsync(SupportTicket ticket) in C:\Users\MD_Sh\Downloads\New folder\New folder (2)\Itransition_Internship\FormsApp\Services\DropboxService.cs:line 112
+   at FormsApp.Controllers.SupportController.CreateTicket(SupportTicketViewModel model) in C:\Users\MD_Sh\Downloads\New folder\New folder (2)\Itransition_Internship\FormsApp\Controllers\SupportController.cs:line 129
+2025-05-13 18:42:22.724 +06:00 [INF] Starting application...
+2025-05-13 18:42:25.753 +06:00 [INF] Checking for role 'Admin'. Exists: true
+2025-05-13 18:42:25.910 +06:00 [INF] Existing admin user 'admin@formsapp.com' already exists.
+2025-05-13 18:42:25.979 +06:00 [INF] Existing admin user 'admin@formsapp.com' already has the 'Admin' role.
+2025-05-13 18:43:34.548 +06:00 [INF] CreateTicket POST received with model: {"Summary":"fadsfsadf","Priority":"High","ReportedBy":"admin@formsapp.com","Template":"NoTemplate","Link":"/Support/CreateTicket","ReturnUrl":"https://localhost:7179/","$type":"SupportTicketViewModel"}
+2025-05-13 18:43:34.552 +06:00 [INF] Template value from form: NoTemplate
+2025-05-13 18:43:34.554 +06:00 [INF] Uploading ticket to Dropbox: {"Id":0,"ReportedBy":"admin@formsapp.com","Summary":"fadsfsadf","Template":"NoTemplate","Link":"/Support/CreateTicket","Priority":"High","CreatedAt":"2025-05-13T12:43:34.5534334Z","$type":"SupportTicket"}
+2025-05-13 18:43:34.571 +06:00 [INF] Starting upload to Dropbox for file support_ticket_20250513_124334
+2025-05-13 18:43:34.572 +06:00 [INF] Folder /SupportTicketsForms already exists in Dropbox, skipping folder creation
+2025-05-13 18:43:34.572 +06:00 [INF] Target Dropbox path: /SupportTicketsForms/support_ticket_20250513_124334.json
+2025-05-13 18:43:34.576 +06:00 [DBG] Dropbox API arguments: {"path":"/SupportTicketsForms/support_ticket_20250513_124334.json","mode":"add","autorename":true,"mute":false}
+2025-05-13 18:43:34.576 +06:00 [INF] Sending request to Dropbox API...
+2025-05-13 18:43:35.109 +06:00 [ERR] Failed to upload file to Dropbox. Status: "Unauthorized", Response: {"error_summary": "missing_scope/..", "error": {".tag": "missing_scope", "required_scope": "files.content.write"}}
+2025-05-13 18:43:35.192 +06:00 [ERR] Error uploading to Dropbox
+System.Exception: Failed to upload file to Dropbox: Unauthorized - {"error_summary": "missing_scope/..", "error": {".tag": "missing_scope", "required_scope": "files.content.write"}}
+   at FormsApp.Services.DropboxService.UploadJsonFileAsync(String jsonContent, String fileName) in C:\Users\MD_Sh\Downloads\New folder\New folder (2)\Itransition_Internship\FormsApp\Services\DropboxService.cs:line 87
+2025-05-13 18:43:35.489 +06:00 [ERR] Error submitting support ticket
+System.Exception: Error uploading to Dropbox: Failed to upload file to Dropbox: Unauthorized - {"error_summary": "missing_scope/..", "error": {".tag": "missing_scope", "required_scope": "files.content.write"}}
+ ---> System.Exception: Failed to upload file to Dropbox: Unauthorized - {"error_summary": "missing_scope/..", "error": {".tag": "missing_scope", "required_scope": "files.content.write"}}
+   at FormsApp.Services.DropboxService.UploadJsonFileAsync(String jsonContent, String fileName) in C:\Users\MD_Sh\Downloads\New folder\New folder (2)\Itransition_Internship\FormsApp\Services\DropboxService.cs:line 87
+   --- End of inner exception stack trace ---
+   at FormsApp.Services.DropboxService.UploadJsonFileAsync(String jsonContent, String fileName) in C:\Users\MD_Sh\Downloads\New folder\New folder (2)\Itransition_Internship\FormsApp\Services\DropboxService.cs:line 102
+   at FormsApp.Services.DropboxService.UploadJsonFileAsync(SupportTicket ticket) in C:\Users\MD_Sh\Downloads\New folder\New folder (2)\Itransition_Internship\FormsApp\Services\DropboxService.cs:line 117
+   at FormsApp.Controllers.SupportController.CreateTicket(SupportTicketViewModel model) in C:\Users\MD_Sh\Downloads\New folder\New folder (2)\Itransition_Internship\FormsApp\Controllers\SupportController.cs:line 129
+2025-05-13 19:02:29.801 +06:00 [INF] Starting application...
+2025-05-13 19:02:32.698 +06:00 [INF] Checking for role 'Admin'. Exists: true
+2025-05-13 19:02:32.793 +06:00 [INF] Existing admin user 'admin@formsapp.com' already exists.
+2025-05-13 19:02:32.849 +06:00 [INF] Existing admin user 'admin@formsapp.com' already has the 'Admin' role.
+2025-05-13 19:02:41.333 +06:00 [INF] CreateTicket POST received with model: {"Summary":"jghhfv","Priority":"High","ReportedBy":"admin@formsapp.com","Template":"NoTemplate","Link":"/Support/CreateTicket","ReturnUrl":"https://localhost:7179/","$type":"SupportTicketViewModel"}
+2025-05-13 19:02:41.337 +06:00 [INF] Template value from form: NoTemplate
+2025-05-13 19:02:41.339 +06:00 [INF] Uploading ticket to Dropbox: {"Id":0,"ReportedBy":"admin@formsapp.com","Summary":"jghhfv","Template":"NoTemplate","Link":"/Support/CreateTicket","Priority":"High","CreatedAt":"2025-05-13T13:02:41.3379581Z","$type":"SupportTicket"}
+2025-05-13 19:02:41.355 +06:00 [INF] Starting upload to Dropbox for file support_ticket_20250513_130241
+2025-05-13 19:02:41.356 +06:00 [INF] Folder /SupportTicketsForms already exists in Dropbox, skipping folder creation
+2025-05-13 19:02:41.356 +06:00 [INF] Target Dropbox path: /SupportTicketsForms/support_ticket_20250513_130241.json
+2025-05-13 19:02:41.358 +06:00 [DBG] Dropbox API arguments: {"path":"/SupportTicketsForms/support_ticket_20250513_130241.json","mode":"add","autorename":true,"mute":false}
+2025-05-13 19:02:41.358 +06:00 [INF] Sending request to Dropbox API...
+2025-05-13 19:02:41.848 +06:00 [ERR] Failed to upload file to Dropbox. Status: "Unauthorized", Response: {"error_summary": "missing_scope/.", "error": {".tag": "missing_scope", "required_scope": "files.content.write"}}
+2025-05-13 19:02:41.934 +06:00 [ERR] Error uploading to Dropbox
+System.Exception: Failed to upload file to Dropbox: Unauthorized - {"error_summary": "missing_scope/.", "error": {".tag": "missing_scope", "required_scope": "files.content.write"}}
+   at FormsApp.Services.DropboxService.UploadJsonFileAsync(String jsonContent, String fileName) in C:\Users\MD_Sh\Downloads\New folder\New folder (2)\Itransition_Internship\FormsApp\Services\DropboxService.cs:line 88
+2025-05-13 19:02:42.166 +06:00 [ERR] Error submitting support ticket
+System.Exception: Error uploading to Dropbox: Failed to upload file to Dropbox: Unauthorized - {"error_summary": "missing_scope/.", "error": {".tag": "missing_scope", "required_scope": "files.content.write"}}
+ ---> System.Exception: Failed to upload file to Dropbox: Unauthorized - {"error_summary": "missing_scope/.", "error": {".tag": "missing_scope", "required_scope": "files.content.write"}}
+   at FormsApp.Services.DropboxService.UploadJsonFileAsync(String jsonContent, String fileName) in C:\Users\MD_Sh\Downloads\New folder\New folder (2)\Itransition_Internship\FormsApp\Services\DropboxService.cs:line 88
+   --- End of inner exception stack trace ---
+   at FormsApp.Services.DropboxService.UploadJsonFileAsync(String jsonContent, String fileName) in C:\Users\MD_Sh\Downloads\New folder\New folder (2)\Itransition_Internship\FormsApp\Services\DropboxService.cs:line 103
+   at FormsApp.Services.DropboxService.UploadJsonFileAsync(SupportTicket ticket) in C:\Users\MD_Sh\Downloads\New folder\New folder (2)\Itransition_Internship\FormsApp\Services\DropboxService.cs:line 118
+   at FormsApp.Controllers.SupportController.CreateTicket(SupportTicketViewModel model) in C:\Users\MD_Sh\Downloads\New folder\New folder (2)\Itransition_Internship\FormsApp\Controllers\SupportController.cs:line 129
+2025-05-13 19:06:32.489 +06:00 [INF] Starting application...
+2025-05-13 19:06:37.252 +06:00 [INF] Checking for role 'Admin'. Exists: true
+2025-05-13 19:06:37.392 +06:00 [INF] Existing admin user 'admin@formsapp.com' already exists.
+2025-05-13 19:06:37.454 +06:00 [INF] Existing admin user 'admin@formsapp.com' already has the 'Admin' role.
+2025-05-13 19:06:44.005 +06:00 [INF] CreateTicket POST received with model: {"Summary":"asdad","Priority":"Average","ReportedBy":"admin@formsapp.com","Template":"NoTemplate","Link":"/Support/CreateTicket","ReturnUrl":"https://localhost:7179/","$type":"SupportTicketViewModel"}
+2025-05-13 19:06:44.009 +06:00 [INF] Template value from form: NoTemplate
+2025-05-13 19:06:44.012 +06:00 [INF] Uploading ticket to Dropbox: {"Id":0,"ReportedBy":"admin@formsapp.com","Summary":"asdad","Template":"NoTemplate","Link":"/Support/CreateTicket","Priority":"Average","CreatedAt":"2025-05-13T13:06:44.0102762Z","$type":"SupportTicket"}
+2025-05-13 19:06:44.028 +06:00 [INF] Starting upload to Dropbox for file support_ticket_20250513_130644
+2025-05-13 19:06:44.029 +06:00 [INF] Folder /SupportTicketsForms already exists in Dropbox, skipping folder creation
+2025-05-13 19:06:44.029 +06:00 [INF] Target Dropbox path: /SupportTicketsForms/support_ticket_20250513_130644.json
+2025-05-13 19:06:44.031 +06:00 [DBG] Dropbox API arguments: {"path":"/SupportTicketsForms/support_ticket_20250513_130644.json","mode":"add","autorename":true,"mute":false}
+2025-05-13 19:06:44.032 +06:00 [INF] Sending request to Dropbox API...
+2025-05-13 19:06:44.481 +06:00 [ERR] Failed to upload file to Dropbox. Status: "Unauthorized", Response: {"error_summary": "invalid_access_token/.", "error": {".tag": "invalid_access_token"}}
+2025-05-13 19:06:44.568 +06:00 [ERR] Error uploading to Dropbox
+System.Exception: Failed to upload file to Dropbox: Unauthorized - {"error_summary": "invalid_access_token/.", "error": {".tag": "invalid_access_token"}}
+   at FormsApp.Services.DropboxService.UploadJsonFileAsync(String jsonContent, String fileName) in C:\Users\MD_Sh\Downloads\New folder\New folder (2)\Itransition_Internship\FormsApp\Services\DropboxService.cs:line 88
+2025-05-13 19:06:44.872 +06:00 [ERR] Error submitting support ticket
+System.Exception: Error uploading to Dropbox: Failed to upload file to Dropbox: Unauthorized - {"error_summary": "invalid_access_token/.", "error": {".tag": "invalid_access_token"}}
+ ---> System.Exception: Failed to upload file to Dropbox: Unauthorized - {"error_summary": "invalid_access_token/.", "error": {".tag": "invalid_access_token"}}
+   at FormsApp.Services.DropboxService.UploadJsonFileAsync(String jsonContent, String fileName) in C:\Users\MD_Sh\Downloads\New folder\New folder (2)\Itransition_Internship\FormsApp\Services\DropboxService.cs:line 88
+   --- End of inner exception stack trace ---
+   at FormsApp.Services.DropboxService.UploadJsonFileAsync(String jsonContent, String fileName) in C:\Users\MD_Sh\Downloads\New folder\New folder (2)\Itransition_Internship\FormsApp\Services\DropboxService.cs:line 103
+   at FormsApp.Services.DropboxService.UploadJsonFileAsync(SupportTicket ticket) in C:\Users\MD_Sh\Downloads\New folder\New folder (2)\Itransition_Internship\FormsApp\Services\DropboxService.cs:line 118
+   at FormsApp.Controllers.SupportController.CreateTicket(SupportTicketViewModel model) in C:\Users\MD_Sh\Downloads\New folder\New folder (2)\Itransition_Internship\FormsApp\Controllers\SupportController.cs:line 129
+2025-05-13 19:20:53.956 +06:00 [INF] Starting application...
+2025-05-13 19:20:56.940 +06:00 [INF] Checking for role 'Admin'. Exists: true
+2025-05-13 19:20:57.055 +06:00 [INF] Existing admin user 'admin@formsapp.com' already exists.
+2025-05-13 19:20:57.121 +06:00 [INF] Existing admin user 'admin@formsapp.com' already has the 'Admin' role.
+2025-05-13 19:21:16.421 +06:00 [INF] CreateTicket POST received with model: {"Summary":"ddzfcszdf","Priority":"Average","ReportedBy":"admin@formsapp.com","Template":"NoTemplate","Link":"/Support/CreateTicket","ReturnUrl":"https://localhost:7179/","$type":"SupportTicketViewModel"}
+2025-05-13 19:21:16.424 +06:00 [INF] Template value from form: NoTemplate
+2025-05-13 19:21:16.426 +06:00 [INF] Uploading ticket to Dropbox: {"Id":0,"ReportedBy":"admin@formsapp.com","Summary":"ddzfcszdf","Template":"NoTemplate","Link":"/Support/CreateTicket","Priority":"Average","CreatedAt":"2025-05-13T13:21:16.4252569Z","$type":"SupportTicket"}
+2025-05-13 19:21:16.444 +06:00 [INF] Starting upload to Dropbox for file support_ticket_20250513_132116
+2025-05-13 19:21:16.446 +06:00 [INF] Folder /SupportTicketsForms already exists in Dropbox, skipping folder creation
+2025-05-13 19:21:16.446 +06:00 [INF] Target Dropbox path: /SupportTicketsForms/support_ticket_20250513_132116.json
+2025-05-13 19:21:16.450 +06:00 [DBG] Dropbox API arguments: {"path":"/SupportTicketsForms/support_ticket_20250513_132116.json","mode":"add","autorename":true,"mute":false}
+2025-05-13 19:21:16.451 +06:00 [INF] Sending request to Dropbox API...
+2025-05-13 19:21:17.650 +06:00 [DBG] Dropbox API response: {"name": "support_ticket_20250513_132116.json", "path_lower": "/supportticketsforms/support_ticket_20250513_132116.json", "path_display": "/SupportTicketsForms/support_ticket_20250513_132116.json", "id": "id:FJsPdX3j3Y4AAAAAAAAABg", "client_modified": "2025-05-13T13:21:17Z", "server_modified": "2025-05-13T13:21:17Z", "rev": "01635044ec441df00000002e647d683", "size": 220, "is_downloadable": true, "content_hash": "a7cfca5a2ce52ae4910bb5192f979e52611d4fbf17fd9abf753f2f5b7c411e3b"}
+2025-05-13 19:21:17.653 +06:00 [INF] File successfully uploaded to Dropbox. Path: null, Name: null
+2025-05-13 19:21:17.653 +06:00 [INF] Ticket successfully uploaded to Dropbox path: /SupportTicketsForms/support_ticket_20250513_132116.json

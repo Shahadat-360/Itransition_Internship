@@ -1,0 +1,9 @@
+{
+  "Id": 999,
+  "ReportedBy": "test.user@example.com",
+  "Summary": "Test support ticket",
+  "Template": "Test Template",
+  "Link": "https://formsapp.com/test",
+  "Priority": "High",
+  "CreatedAt": "2023-08-15T14:30:00Z"
+} 

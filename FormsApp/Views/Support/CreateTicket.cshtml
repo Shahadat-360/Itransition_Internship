@@ -1,0 +1,62 @@
+@model FormsApp.ViewModels.SupportTicketViewModel
+
+@{
+    ViewData["Title"] = "Create Support Ticket";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Create Support Ticket</h4>
+                </div>
+                <div class="card-body">
+                    <form asp-controller="Support" asp-action="CreateTicket" method="post" id="support-form">
+                        <div asp-validation-summary="All" class="text-danger"></div>
+
+                        <!-- Hidden fields -->
+                        <input type="hidden" asp-for="ReportedBy" value="@User.Identity.Name" />
+                        <input type="hidden" name="Template" id="Template" value="NoTemplate" />
+                        <input type="hidden" asp-for="Link" value="@Context.Request.Path" />
+                        <input type="hidden" asp-for="ReturnUrl" value="@(Model.ReturnUrl ?? Context.Request.Headers["Referer"].ToString())" />
+
+                        <div class="mb-3">
+                            <label asp-for="Summary" class="form-label">Summary</label>
+                            <textarea asp-for="Summary" class="form-control" rows="3" placeholder="Please describe your issue..." required></textarea>
+                            <span asp-validation-for="Summary" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Priority" class="form-label">Priority</label>
+                            <select asp-for="Priority" class="form-select" required>
+                                <option value="">-- Select Priority --</option>
+                                <option value="High">High</option>
+                                <option value="Average">Average</option>
+                                <option value="Low">Low</option>
+                            </select>
+                            <span asp-validation-for="Priority" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                            <a href="@Model.ReturnUrl" class="btn btn-secondary me-md-2">Cancel</a>
+                            <button type="submit" class="btn btn-primary">Submit Ticket</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="~/js/support.js" asp-append-version="true"></script>
+    <script>
+        // Debug submission issues
+        document.getElementById('support-form').addEventListener('submit', function(e) {
+            console.log('Form submitted');
+            document.getElementById('Template').value = 'NoTemplate';
+        });
+    </script>
+} 

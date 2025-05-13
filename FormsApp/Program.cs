@@ -76,6 +76,9 @@ try
     builder.Services.Configure<SalesforceConfig>(builder.Configuration.GetSection("Salesforce"));
     builder.Services.AddHttpClient<ISalesforceService, SalesforceService>();
 
+    // Register Dropbox service
+    builder.Services.AddHttpClient<IDropboxService, DropboxService>();
+
     var app = builder.Build();
 
     // Configure the HTTP request pipeline.

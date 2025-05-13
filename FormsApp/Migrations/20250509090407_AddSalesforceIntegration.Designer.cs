@@ -4,6 +4,7 @@ using FormsApp.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FormsApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250509090407_AddSalesforceIntegration")]
+    partial class AddSalesforceIntegration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -59,41 +62,6 @@ namespace FormsApp.Migrations
                     b.HasIndex("ResponseId");
 
                     b.ToTable("Answers");
-                });
-
-            modelBuilder.Entity("FormsApp.Models.ApiToken", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("LastUsed")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Token")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Token")
-                        .IsUnique();
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("ApiTokens");
                 });
 
             modelBuilder.Entity("FormsApp.Models.ApplicationUser", b =>
@@ -524,9 +492,6 @@ namespace FormsApp.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Name")
-                        .IsUnique();
-
                     b.ToTable("Topics");
                 });
 
@@ -680,17 +645,6 @@ namespace FormsApp.Migrations
                     b.Navigation("Question");
 
                     b.Navigation("Response");
-                });
-
-            modelBuilder.Entity("FormsApp.Models.ApiToken", b =>
-                {
-                    b.HasOne("FormsApp.Models.ApplicationUser", "User")
-                        .WithMany("ApiTokens")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("FormsApp.Models.Comment", b =>
@@ -898,8 +852,6 @@ namespace FormsApp.Migrations
 
             modelBuilder.Entity("FormsApp.Models.ApplicationUser", b =>
                 {
-                    b.Navigation("ApiTokens");
-
                     b.Navigation("CreatedTemplates");
 
                     b.Navigation("FilledForms");

@@ -65,6 +65,16 @@ try
 
     // Add service registrations
     builder.Services.AddScoped<FormResponseService>();
+    
+    // Add API token service
+    builder.Services.AddScoped<IApiTokenService, ApiTokenService>();
+    
+    // Add form aggregation service
+    builder.Services.AddScoped<FormAggregationService>();
+    
+    // Configure Salesforce
+    builder.Services.Configure<SalesforceConfig>(builder.Configuration.GetSection("Salesforce"));
+    builder.Services.AddHttpClient<ISalesforceService, SalesforceService>();
 
     var app = builder.Build();
 

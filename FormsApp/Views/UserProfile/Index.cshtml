@@ -1,0 +1,55 @@
+@model FormsApp.Models.ApplicationUser
+@{
+    ViewData["Title"] = "User Profile";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="mb-0">User Profile</h2>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-4 font-weight-bold">Email:</div>
+                        <div class="col-md-8">@Model.Email</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 font-weight-bold">Username:</div>
+                        <div class="col-md-8">@Model.UserName</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 font-weight-bold">Registered:</div>
+                        <div class="col-md-8">@Model.RegisteredAt.ToString("MMMM dd, yyyy")</div>
+                    </div>
+
+                    <hr />
+
+                    <div class="d-flex flex-column flex-md-row gap-2 mt-4">
+                        <a asp-controller="Account" asp-action="ChangePassword" class="btn btn-outline-primary">
+                            Change Password
+                        </a>
+                        
+                        @if (Model.SalesforceProfile == null)
+                        {
+                            <a asp-controller="UserProfile" asp-action="SalesforceIntegration" class="btn btn-success">
+                                <i class="bi bi-cloud-plus"></i> Connect to CRM
+                            </a>
+                        }
+                        else
+                        {
+                            <button class="btn btn-success" disabled>
+                                <i class="bi bi-cloud-check"></i> Connected to CRM
+                            </button>
+                        }
+                        
+                        <a asp-controller="UserProfile" asp-action="ApiToken" class="btn btn-info">
+                            <i class="bi bi-key"></i> Manage API Token
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 
